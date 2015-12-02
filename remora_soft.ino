@@ -47,7 +47,7 @@
   #include <ArduinoOTA.h>
   #include <Wire.h>
   #include <SPI.h>
-  #include <NeoPixelBus.h>
+  #include "./LibNeoPixelBus.h"
   #include "./LibMCP23017.h"
   #include "./LibSSD1306.h"
   #include "./LibGFX.h"
@@ -418,8 +418,7 @@ void mysetup()
       ESP.restart(); 
     });
 
-    server.on("/json", sendJSON);
-    server.on("/tinfo.json", tinfoJSONTable);
+    server.on("/tinfo", tinfoJSON);
     server.onNotFound(handleNotFound);
     server.begin();
     Serial.println(F("HTTP server started"));
