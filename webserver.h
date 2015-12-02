@@ -31,7 +31,6 @@ extern uint16_t response_idx;
 // declared exported function from webserver.cpp
 // ===================================================
 void handleNotFound(void);
-void tinfoJSONTable(void);
-void sendJSON(void);
+void tinfoJSON(void);
 
 #endif

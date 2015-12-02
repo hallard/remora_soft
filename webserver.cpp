@@ -67,122 +67,14 @@ void formatNumberJSON( String &response, char * value)
   }
 }
 
-
 /* ======================================================================
-Function: tinfoJSONTable
-Purpose : dump all teleinfo values in JSON table format for browser
-Input   : linked list pointer on the concerned data
-          true to dump all values, false for only modified ones
-Output  : -
-Comments: -
-====================================================================== */
-void tinfoJSONTable(void)
-{
-  #ifdef MOD_TELEINFO
-
-  ValueList * me = tinfo.getList();
-  String response = "";
-
-  // Just to debug where we are
-  Serial.print(F("Serving /tinfoJSONTable page...\r\n"));
-
-  // Got at least one ?
-  if (me) {
-    uint8_t index=0;
-
-    boolean first_item = true;
-    // Json start
-    response += F("[\r\n");
-
-    // Loop thru the node
-    while (me->next) {
-
-      // we're there
-      #ifdef ESP8266
-      ESP.wdtFeed();
-      #endif
-
-      // go to next node
-      me = me->next;
-
-      // First item do not add , separator
-      if (first_item)
-        first_item = false;
-      else
-        response += F(",\r\n");
-
-      Serial.print(F("(")) ;
-      Serial.print(++index) ;
-      Serial.print(F(") ")) ;
-
-      if (me->name) Serial.print(me->name) ;
-      else Serial.print(F("NULL")) ;
-
-      Serial.print(F("=")) ;
-
-      if (me->value) Serial.print(me->value) ;
-      else Serial.print(F("NULL")) ;
-
-      Serial.print(F(" '")) ;
-      Serial.print(me->checksum) ;
-      Serial.print(F("' "));
-
-      // Flags management
-      if ( me->flags) {
-        Serial.print(F("Flags:0x"));
-        Serial.print(me->flags, HEX);
-        Serial.print(F(" => "));
-        Serial.print(me->flags);
-        if ( me->flags & TINFO_FLAGS_EXIST)
-          Serial.print(F("Exist ")) ;
-        if ( me->flags & TINFO_FLAGS_UPDATED)
-          Serial.print(F("Updated ")) ;
-        if ( me->flags & TINFO_FLAGS_ADDED)
-          Serial.print(F("New ")) ;
-      }
-
-      Serial.println() ;
-
-      response += F("{\"na\":\"");
-      response +=  me->name ;
-      response += F("\", \"va\":\"") ;
-      response += me->value;
-      response += F("\", \"ck\":\"") ;
-      if (me->checksum == '"' || me->checksum == '\\' || me->checksum == '/')
-        response += '\\';
-      response += (char) me->checksum;
-      response += F("\", \"fl\":");
-      response += me->flags ;
-      response += '}' ;
-
-    }
-   // Json end
-   response += F("\r\n]");
-
-  } else {
-    Serial.println(F("sending 404..."));
-    server.send ( 404, "text/plain", "No data" );
-  }
-  Serial.print(F("sending..."));
-  server.send ( 200, "text/json", response );
-  Serial.print(F("OK!"));
-
-  #else
-    server.send ( 404, "text/plain", "teleinfo not enabled" );
-  #endif
-
-}
-
-
-/* ======================================================================
-Function: sendJSON
+Function: tinfoJSON
 Purpose : dump all values in JSON
-Input   : linked list pointer on the concerned data
-          true to dump all values, false for only modified ones
+Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void sendJSON(void)
+void tinfoJSON(void)
 {
   #ifdef MOD_TELEINFO
     ValueList * me = tinfo.getList();
