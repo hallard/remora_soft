@@ -34,15 +34,15 @@ API Exposée (NodeMCU uniquement)
 
 Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est que l'API retourne du JSON
 
-- Activer le relais http://ip_du_remora/?relais=1
+- Activer le relais *http://ip_du_remora/?relais=1*
 
-- Desactiver le relais http://ip_du_remora/?relais=0
+- Desactiver le relais *http://ip_du_remora/?relais=0*
 
-- Récupérer une étiquette Téléinfo (ex PAPP) http://ip_du_remora/PAPP
+- Récupérer une étiquette Téléinfo (ex PAPP) *http://ip_du_remora/PAPP*
 
-- Récupérer toutes les valeurs Téléinfo http://ip_du_remora/tinfo
+- Récupérer toutes les valeurs Téléinfo *http://ip_du_remora/tinfo*
 
-- selectionne le mode d'un des fils pilotes http://ip_du_remora/?setfp=CMD
+- selectionne le mode d'un des fils pilotes *http://ip_du_remora/?setfp=CMD*
     CMD=commande numéro du fil pilote + commande optionelle
       C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2
       ex: 1A => FP1 Arrêt
@@ -53,7 +53,7 @@ Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est 
       ex: 1 => si état FP1 est "arret" retourne code ASCII du "A" (65)
       retourne 0 ou etat commande, si ok -1 sinon
 
-- Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup http://ip_du_remora/?fp=CMD
+- Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup *http://ip_du_remora/?fp=CMD*
     CMD=commande numéro du fil pilote + commande optionelle
       -=rien, C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2,
       ex: 1A => FP1 Arrêt
@@ -83,6 +83,7 @@ Historiques des Modifications
 
 30/09/2015 : voir le post [dédié][6].   
 
+02/12/2015 : Ajout [Version 1.3][7] Remora NodeMCU
 
 
 Exemple
@@ -104,3 +105,4 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 [4]: http://www.ebay.com/itm/291216700457
 [5]: https://github.com/hallard/Particle2NodeMCU/blob/master/README.md
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
+[7]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.3
