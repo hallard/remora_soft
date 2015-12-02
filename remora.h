@@ -76,7 +76,7 @@
   #include "Arduino.h"
   #include <ESP8266WiFi.h>
   #include <ESP8266WebServer.h>
-  #include <NeoPixelBus.h>
+  #include "./LibNeoPixelBus.h"
   #include "./LibMCP23017.h"
   //#include "./RFM69registers.h"
   //#include "./RFM69.h"
