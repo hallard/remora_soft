@@ -43,6 +43,7 @@ Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est 
 - Récupérer toutes les valeurs Téléinfo **http://ip_du_remora/tinfo**
 
 - selectionne le mode d'un des fils pilotes **http://ip_du_remora/?setfp=CMD**
+````
     CMD=commande numéro du fil pilote + commande optionelle
       C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2
       ex: 1A => FP1 Arrêt
@@ -52,8 +53,10 @@ Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est 
       Si la commande est absente la fonction retourne l'état du FP
       ex: 1 => si état FP1 est "arret" retourne code ASCII du "A" (65)
       retourne 0 ou etat commande, si ok -1 sinon
+````
 
 - Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup **http://ip_du_remora/?fp=CMD**
+````
     CMD=commande numéro du fil pilote + commande optionelle
       -=rien, C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2,
       ex: 1A => FP1 Arrêt
@@ -65,6 +68,7 @@ Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est 
         E-CHA12 => FP2 Eco  , FP2 inchangé, FP3 confort, FP4 hors gel
                    FP5 arrêt, FP6 Eco-1    , FP7 Eco-2
 		retourne 0 si ok -1 sinon
+````
 
 A faire
 -------
