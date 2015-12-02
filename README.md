@@ -29,10 +29,42 @@ Installation (Arduino ESP8266)
 - Lancer la compilation + upload 
 - La procédure OTA sera détaillée ultérieurement
 
-API Exposée
------------
+API Exposée (NodeMCU uniquement)
+--------------------------------
 
-Description complète bientôt
+Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est que l'API retourne du JSON
+
+- Activer le relais http://ip_du_remora/?relais=1
+
+- Desactiver le relais http://ip_du_remora/?relais=0
+
+- Récupérer une étiquette Téléinfo (ex PAPP) http://ip_du_remora/PAPP
+
+- Récupérer toutes les valeurs Téléinfo http://ip_du_remora/tinfo
+
+- selectionne le mode d'un des fils pilotes http://ip_du_remora/?setfp=CMD
+    CMD=commande numéro du fil pilote + commande optionelle
+      C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2
+      ex: 1A => FP1 Arrêt
+          41 => FP4 eco -1 (To DO)
+          6C => FP6 confort
+          72 => FP7 eco -2 (To DO)
+      Si la commande est absente la fonction retourne l'état du FP
+      ex: 1 => si état FP1 est "arret" retourne code ASCII du "A" (65)
+      retourne 0 ou etat commande, si ok -1 sinon
+
+- Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup http://ip_du_remora/?fp=CMD
+    CMD=commande numéro du fil pilote + commande optionelle
+      -=rien, C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2,
+      ex: 1A => FP1 Arrêt
+        CCCCCCC => Commande tous les fils pilote en mode confort (ON)
+        AAAAAAA => Commande tous les fils pilote en mode arrêt
+        EEEEEEE => Commande tous les fils pilote en mode éco
+        CAAAAAA => Tous OFF sauf le fil pilote 1 en confort
+        A-AAAAA => Tous OFF sauf le fil pilote 2 inchangé
+        E-CHA12 => FP2 Eco  , FP2 inchangé, FP3 confort, FP4 hors gel
+                   FP5 arrêt, FP6 Eco-1    , FP7 Eco-2
+		retourne 0 si ok -1 sinon
 
 A faire
 -------
@@ -50,8 +82,6 @@ Historiques des Modifications
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
 
 30/09/2015 : voir le post [dédié][6].   
-
-02/12/2015 : Nouvelle version supportant l'ESP8266 via NodeMCU et les cartes Remora [V1.3][7].
 
 
 
@@ -74,4 +104,3 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 [4]: http://www.ebay.com/itm/291216700457
 [5]: https://github.com/hallard/Particle2NodeMCU/blob/master/README.md
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
-[7]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.3
