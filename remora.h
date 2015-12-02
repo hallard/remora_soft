@@ -66,8 +66,8 @@
   // Définir ici les identifiants de
   // connexion à votre réseau Wifi
   // =====================================
-  #define DEFAULT_WIFI_SSID "HOME-HOTSPOT"
-  #define DEFAULT_WIFI_PASS "Wireless@Home"
+//  #define DEFAULT_WIFI_SSID "VotreSSID"
+//  #define DEFAULT_WIFI_PASS "VotreClé"
   #define DEFAULT_WIFI_AP_PASS "Remora_WiFi"
   // =====================================
   #define DEFAULT_OTA_PORT  8266
