@@ -32,30 +32,127 @@ Installation (Arduino ESP8266)
 API Exposée (NodeMCU uniquement)
 --------------------------------
 
-Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est que l'API retourne du JSON
+Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles en fonction de si l'on veut récupérer des données ou exécuter des action avec le Remora. Caque requete se vera retourner des données (ou un code de bonne éxécution) au format JSON.
 
-- Activer le relais **http://ip_du_remora/?relais=1**
+Toute requête sera donc adressée sous la forme 
+`http://adresse_ip_du_remora/requete_plus_ou_moins_longue` dans les examples ci dessous l'adresse IP de mon Remora est la 192.168.1.201, veillez à bien la changer pour mettre la votre. Les exemples ont été exécutés depuis la ligne de commande avec curl mais elles pourraient l'être depuis la barre d'addresse de votre navigateur.
 
-- Desactiver le relais **http://ip_du_remora/?relais=0**
+** Les Etats de fil pilote**
 
-- Récupérer une étiquette Téléinfo (ex PAPP) **http://ip_du_remora/PAPP**
+Les différents états possibles de fil pilote dans l'API correspondent à la notation suivante, une lettre représente l'état lu ou le mode à positionner tel que :
+```
+C = Confort
+A = Arrêt
+E = Eco
+H = Hors gel
+1 = Eco-1 (non géré pour le moment)
+2 = Eco-2 (non géré pour le moment)
+```
 
-- Récupérer toutes les valeurs Téléinfo **http://ip_du_remora/tinfo**
+** Les API d'intérrogation**
 
-- selectionne le mode d'un des fils pilotes **http://ip_du_remora/?setfp=CMD**
+Les API d'intérrogation se presentent sous la forme 
+`http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
+
+- Etat du relais `http://ip_du_remora/relais`
+````shell
+    ~ # curl http://192.168.1.201/relais
+    { "relais": 0 }
+    ~ #
 ````
-    CMD=commande numéro du fil pilote + commande optionelle
-      C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2
-      ex: 1A => FP1 Arrêt
-          41 => FP4 eco -1 (To DO)
-          6C => FP6 confort
-          72 => FP7 eco -2 (To DO)
-      Si la commande est absente la fonction retourne l'état du FP
-      ex: 1 => si état FP1 est "arret" retourne code ASCII du "A" (65)
-      retourne 0 ou etat commande, si ok -1 sinon
+- Etat du delestage `http://ip_du_remora/delestage`
+````shell
+		~ # curl http://192.168.1.201/delestage
+		{ "niveau": 0, "zone": 1 }
+		~ #
 ````
+- Etat d'un fil pilote `http://ip_du_remora/fpn` avec n = numéro du fil pilote (1 à 7)
+````shell
+		~ # curl http://192.168.1.201/fp3
+		{ "fp3": "E" }
+		~ #
+````
+- Etat de tous les fils pilotes **http://ip_du_remora/fp**
+````shell
+		~ # curl http://192.168.1.201/fp
+		{
+		"fp1": "A",
+		"fp2": "E",
+		"fp3": "E",
+		"fp4": "E",
+		"fp5": "C",
+		"fp6": "H",
+		"fp7": "C"
+		}
+		~ #
+````
+- Récupérer une étiquette Téléinfo par non nom `http://ip_du_remora/Nom_Etiquette`
+````shell
+		~ # curl http://192.168.1.201/PAPP
+		{ "PAPP": 170 }
+		~ # curl http://192.168.1.201/IINST
+		{ "IINST": 1 }
+		~ # curl http://192.168.1.201/PTEC
+		{ "PTEC":"HC.." }
+		~ #
+````
+- Récupérer toutes les étiquettes Téléinfo en une fois `http://ip_du_remora/tinfo`
+````shell
+		~ # curl http://192.168.1.201/tinfo
+		{ "_UPTIME":1614,"ADCO":31428067147,"OPTARIF":"HC..","ISOUSC":15,"HCHC":410994,"HCHP":0,"PTEC":"HC..","IINST":1,"IMAX":1,"PAPP":170,"HHPHC":3,"MOTDETAT":0 }
+		~ #
+````
+A noter la présence de certaines étiquettes virtuelles commencant par un `_`
 
-- Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup **http://ip_du_remora/?fp=CMD**
+
+** Les API d'action**
+
+Les API d'action se presentent sous la forme 
+`http://adresse_ip_du_remora/?action=ma_donnee` et le resultat est retourné au format JSON avec un code reponse, il est 
+- négatif en cas d'erreur
+- à 0 si tout est OK
+- positif pour indiquer un code retour OK différent si besoin.
+
+Note, il est possible d'enchainer les actions en une requête mais un seul code d'erreur sera retourné pour l'ensemble, si une des commandes échoue, il faudra intérroger afin de savoir laquelle n'a pas fonctionnée.
+
+- Activer le relais `http://ip_du_remora/?relais=1`
+````
+		# curl http://192.168.1.201/?relais=1
+		{ "response": 0 }
+		~ #
+````
+- désactiver le relais `http://ip_du_remora/?relais=0`
+````
+		# curl http://192.168.1.201/?relais=0
+		{ "response": 0 }
+		~ #
+````
+- Exemple d'erreur avec le relais `http://ip_du_remora/?relais=3`
+````
+		# curl http://192.168.1.201/?relais=3
+		{ "response": -1 }
+		~ #
+````
+- selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)
+  Fil pilote 1 en arret
+````
+		# curl http://192.168.1.201?setfp=1a
+		{ "response": 0 }
+		~ #
+````
+  Fil pilote 7 en Eco
+````
+		# curl http://192.168.1.201?setfp=7E
+		{ "response": 0 }
+		~ #
+````
+  Mauvaise commande
+````
+		curl http://192.168.1.201?setfp=5X
+		{ "response": -1 }
+		~ #
+````
+- Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup `http://ip_du_remora/?fp=CMD` avec 7 commandes de fil pilote.
 ````
     CMD=commande numéro du fil pilote + commande optionelle
       -=rien, C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2,
@@ -69,6 +166,43 @@ Description complète bientôt, mais pour le moment, ce qu'il faut savoir c'est 
                    FP5 arrêt, FP6 Eco-1    , FP7 Eco-2
 		retourne 0 si ok -1 sinon
 ````
+  Tous les fils pilote en confort
+````
+		curl http://192.168.1.201/?fp=CCCCCCC
+		{ "response": 0 }
+		~ #
+````
+  Tous les fils pilote en arret
+````
+		curl http://192.168.1.201/?fp=AAAAAAA
+		{ "response": 0 }
+		~ #
+````
+  Tous les fils pilote en eco
+````
+		curl http://192.168.1.201/?fp=EEEEEEE
+		{ "response": 0 }
+		~ #
+````
+  Tous OFF sauf le fil pilote 1 en confort
+````
+		curl http://192.168.1.201/?fp=CAAAAAA
+		{ "response": 0 }
+		~ #
+````
+  Tous OFF sauf le fil pilote 2 A-AAAAA
+````
+		curl http://192.168.1.201/?fp=CCCCCCC
+		{ "response": 0 }
+		~ #
+````
+  FP1 Eco, FP2 inchangé, FP3 confort, FP4 hors gel, FP5 arrêt, FP6 Eco-1, FP7 Eco-2
+````
+		curl http://192.168.1.201/?fp=E-CHA12
+		{ "response": -1 }
+		~ #
+````
+Erreur car les modes ECO-1 et ECO-1 ne sont pas gérés pour le moment.
 
 A faire
 -------

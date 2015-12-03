@@ -11,7 +11,8 @@
 //
 // Written by Charles-Henri Hallard (http://hallard.me)
 //
-// History : V1.00 2015-06-14 - First release
+// History 2015-06-14 - First release
+//         2015-11-31 - Added Remora API
 //
 // All text above must be included in any redistribution.
 //

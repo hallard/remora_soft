@@ -11,7 +11,8 @@
 //
 // Written by Charles-Henri Hallard (http://hallard.me)
 //
-// History : V1.00 2015-06-14 - First release
+// History 2015-06-14 - First release
+//         2015-11-31 - Added Remora API
 //
 // All text above must be included in any redistribution.
 //
@@ -53,7 +54,7 @@ void formatNumberJSON( String &response, char * value)
       if (!isNumber) {
         response += '\"' ;
         response += value ;
-        response += F("\":") ;
+        response += F("\"") ;
       } else {
         // this will remove leading zero on numbers
         p = value;
@@ -69,7 +70,7 @@ void formatNumberJSON( String &response, char * value)
 
 /* ======================================================================
 Function: tinfoJSON
-Purpose : dump all values in JSON
+Purpose : dump all teleinfo values in JSON
 Input   : -
 Output  : -
 Comments: -
@@ -83,7 +84,8 @@ void tinfoJSON(void)
     // Got at least one ?
     if (me) {
       // Json start
-      response += F("{\"_UPTIME\":");
+      response += FPSTR("{\r\n");
+      response += F("\"_UPTIME\":");
       response += uptime;
 
       // Loop thru the node
@@ -96,9 +98,8 @@ void tinfoJSON(void)
         response += F("\":") ;
         formatNumberJSON(response, me->value);
       }
-     // Json end
-     response += F("}\r\n") ;
-
+      // Json end
+      response += FPSTR("\r\n}\r\n") ;
     } else {
       server.send ( 404, "text/plain", "No data" );
     }
@@ -106,6 +107,77 @@ void tinfoJSON(void)
   #else
     server.send ( 404, "text/plain", "teleinfo not enabled" );
   #endif
+}
+
+
+/* ======================================================================
+Function: fpJSON
+Purpose : return fp values in JSON
+Input   : string
+          fp number 1 to NB_FILS_PILOTE (0=ALL)
+Output  : -
+Comments: -
+====================================================================== */
+void fpJSON(String & response, uint8_t fp)
+{
+  bool first_elem = true;
+
+  // petite verif
+  if (fp>=1 && fp<=NB_FILS_PILOTES) {
+    response = FPSTR("{\r\n");
+
+    // regarder l'état de tous les fils Pilotes
+    for (uint8_t i=1; i<=NB_FILS_PILOTES; i++)
+    {
+      // Tout les fils pilote ou juste celui demandé
+      if (fp==0 || fp==i) {
+        if (!first_elem)
+          response+= ",\r\n";
+        else
+          first_elem=false;
+
+        response+= "\"fp";
+        response+= String(i);
+        response+= "\": \"";
+        response+= etatFP[i-1];
+        response+= "\"";
+      }
+    }
+    response+= FPSTR("\r\n}\r\n");
+  }
+}
+
+
+/* ======================================================================
+Function: relaisJSON
+Purpose : return relais value in JSON
+Input   : -
+Output  : -
+Comments: -
+====================================================================== */
+void relaisJSON(String & response)
+{
+  response = FPSTR("{\r\n");
+  response+= "\"relais\": ";
+  response+= String(etatrelais);
+  response+= FPSTR("\r\n}\r\n");
+}
+
+/* ======================================================================
+Function: delestageJSON
+Purpose : return delestage values in JSON
+Input   : -
+Output  : -
+Comments: -
+====================================================================== */
+void delestageJSON(String & response)
+{
+    response = FPSTR("{\r\n");
+    response += FPSTR("\"niveau\": ");
+    response += String(nivDelest);
+    response += FPSTR(", \"zone\": ");
+    response += String(plusAncienneZoneDelestee);
+    response += FPSTR("\r\n}\r\n");
 }
 
 /* ======================================================================
@@ -121,7 +193,8 @@ void handleNotFound(void)
   String response = "";
 
   const char * uri;
-  boolean found = false;
+  bool found = false;
+  bool first_elem = true;
 
   // convert uri to char * for compare
   uri = server.uri().c_str();
@@ -135,58 +208,83 @@ void handleNotFound(void)
 
       // Loop thru the linked list of values
       while (me->next && !found) {
-
-        // we're there
-        ESP.wdtFeed();
-
         // go to next node
         me = me->next;
 
         //Debugf("compare to '%s' ", me->name);
         // Do we have this one ?
-        if (stricmp (me->name, uri) == 0 )
-        {
+        if (!stricmp(me->name, uri)) {
           // no need to continue
           found = true;
 
           // Add to respone
-          response += F("{\"") ;
+          response += FPSTR("{\r\n\"") ;
           response += me->name ;
           response += F("\":") ;
           formatNumberJSON(response, me->value);
-          response += F("}\r\n");
+          response += FPSTR("\r\n}\r\n");
         }
       }
     }
   #endif
 
-  if ( server.hasArg("setfp") ) {
-    response = "{";
-    response+= "\"setfp\": ";
-    response+= setfp(server.arg("setfp"));
-    response+= "}";
+  // Requêtes d'interrogation
+  // ========================
+  uint8_t len = strlen(uri);
+
+  Serial.print("URI[");
+  Serial.print(len);
+  Serial.print("]='");
+  Serial.print(uri);
+  Serial.println("'");
+
+  // http://ip_remora/relais    
+  if (!stricmp("relais", uri)) {
+    relaisJSON(response);
     found = true;
-  }
-
-  if ( server.hasArg("fp") ) {
-    response = "{";
-    response+= "\"fp\": ";
-    response+= setfp(server.arg("fp"));
-    response+= "}";
+  // http://ip_remora/delestage
+  } else if (!stricmp("delestage", uri)) {
+    delestageJSON(response);
     found = true;
-  }
-
-  if ( server.hasArg("relais") || server.hasArg("etatrelais")) {
-    response = "{";
-    response+= "\"relais\": ";
-
-    if (server.hasArg("relais")) {
-      relais(server.arg("relais"));
+  // http://ip_remora/fp ou http://ip_remora/fpx
+  } else if ( len==2 || len==3 ) {
+    if ( (uri[0]=='f'||uri[0]=='F') && (uri[1]=='p'||uri[1]=='P') ) {
+      fpJSON(response, len==2 ? 0 : uri[2]-'0');
+      found = true;
     }
+  } 
+  
+  // Requêtes modifiantes (cumulable)
+  // ================================
+  if (  server.hasArg("fp") || 
+        server.hasArg("setfp") || 
+        server.hasArg("relais")) {
 
-    response+= etatrelais;
-    response+= "}";
-    found = true;
+      int error = 0;
+      response = FPSTR("{\r\n");
+
+      // http://ip_remora/?setfp=CMD
+      if ( server.hasArg("setfp") ) {
+        error += setfp(server.arg("setfp"));
+      }
+      // http://ip_remora/?fp=CMD
+      if ( server.hasArg("fp") ) {
+        error += fp(server.arg("fp"));
+        found = true;
+      }
+
+      // http://ip_remora/?relais=n
+      if ( server.hasArg("relais") ) {
+        // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
+        if ( relais( server.arg("relais")) != server.arg("relais").toInt() ) 
+          error -=1;
+      }
+
+      response += FPSTR("\"response\": ") ;
+      response += String(error) ;
+
+      response += FPSTR("\r\n}\r\n");
+      found = true;
   }
 
 
