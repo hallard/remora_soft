@@ -17,7 +17,7 @@ License along with NeoPixel.  If not, see
 --------------------------------------------------------------------*/
 #pragma once
 
-#include <Arduino.h>
+#include "Arduino.h"
 #include "LibRgbColor.h"
 
 // '_flagsPixels' flags for LED _pixels (third parameter to constructor):
@@ -31,9 +31,9 @@ License along with NeoPixel.  If not, see
 #define NEO_SPDMASK 0x02
 #define NEO_DIRTY   0x80 // a change was made it _pixels that requires a show
 
-// v1 NeoPixels aren't handled by default, include the following define before the 
+// v1 NeoPixels aren't handled by default, include the following define before the
 // NeoPixelBus library include to support the slower bus speeds
-//#define INCLUDE_NEO_KHZ400_SUPPORT 
+//#define INCLUDE_NEO_KHZ400_SUPPORT
 
 class NeoPixelBus
 {
@@ -49,9 +49,9 @@ public:
 
     void Begin();
     void Show();
-    inline bool CanShow(void) 
-    { 
-        return (micros() - _endTime) >= 50L; 
+    inline bool CanShow(void)
+    {
+        return (micros() - _endTime) >= 50L;
     }
     void ClearTo(uint8_t r, uint8_t g, uint8_t b);
     void ClearTo(RgbColor c)
@@ -110,7 +110,7 @@ private:
 
     const uint16_t    _countPixels;       // Number of RGB LEDs in strip
     const uint16_t    _sizePixels;      // Size of '_pixels' buffer below
-    
+
     uint8_t _flagsPixels;          // Pixel flags (400 vs 800 KHz, RGB vs GRB color)
     uint8_t _pin;           // Output pin number
     uint8_t* _pixels;        // Holds LED color values (3 bytes each)
@@ -134,4 +134,3 @@ private:
     uint32_t _animationLastTick;
 
 };
-
