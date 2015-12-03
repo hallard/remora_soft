@@ -27,7 +27,7 @@ Installation (Arduino ESP8266)
 - Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
 - choisir la carte NodeMCU 1.0 (ESP12E-Module) ainsi que le bon serial port
 - mettre votre SSID et mot de passe Wifi dans le fichier remora.h
-````
+````arduino
 		// Définir ici les identifiants de
 		// connexion à votre réseau Wifi
 		// =====================================
@@ -186,25 +186,21 @@ Note, il est possible d'enchainer les actions en une requête mais un seul code 
 ````shell
 		curl http://192.168.1.201/?fp=EEEEEEE
 		{ "response": 0 }
-		~ #
 ````
   Tous OFF sauf le fil pilote 1 en confort
 ````shell
 		curl http://192.168.1.201/?fp=CAAAAAA
 		{ "response": 0 }
-		~ #
 ````
   Tous OFF sauf le fil pilote 2 A-AAAAA
 ````shell
 		curl http://192.168.1.201/?fp=CCCCCCC
 		{ "response": 0 }
-		~ #
 ````
   FP1 Eco, FP2 inchangé, FP3 confort, FP4 hors gel, FP5 arrêt, FP6 Eco-1, FP7 Eco-2
 ````shell
 		curl http://192.168.1.201/?fp=E-CHA12
 		{ "response": -1 }
-		~ #
 ````
 Erreur car les modes ECO-1 et ECO-1 ne sont pas gérés pour le moment.
 
