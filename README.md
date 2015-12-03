@@ -21,23 +21,33 @@ Installation (Particle)
 Installation (Arduino ESP8266)
 ------------------------------
 
-- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino)
-- Ouvrir ensuite depuis l'IDE le ficher remora.ino
+- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention Arduino 1.6.5 pas 1.6.6 avec la version d'ESP8266 Stable du 30 novembre 2015
+- Ouvrir ensuite depuis l'IDE le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier remora.h (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
 - choisir la carte NodeMCU 1.0 (ESP12E-Module) ainsi que le bon serial port
+- mettre votre SSID et mot de passe Wifi dans le fichier remora.h
+````
+		// Définir ici les identifiants de
+		// connexion à votre réseau Wifi
+		// =====================================
+		#define DEFAULT_WIFI_SSID "VotreSSID"
+		#define DEFAULT_WIFI_PASS "VotreClé"
+		#define DEFAULT_WIFI_AP_PASS "Remora_WiFi"
+		// =====================================		
+````
 - Lancer la compilation + upload 
 - La procédure OTA sera détaillée ultérieurement
 
 API Exposée (NodeMCU uniquement)
 --------------------------------
 
-Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles en fonction de si l'on veut récupérer des données ou exécuter des action avec le Remora. Caque requete se vera retourner des données (ou un code de bonne éxécution) au format JSON.
+Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles si l'on veut récupérer des données ou exécuter des action avec le Remora. Chaque requête se verra retourner des données (ou un code de bonne éxécution) au format JSON.
 
-Toute requête sera donc adressée sous la forme 
-`http://adresse_ip_du_remora/requete_plus_ou_moins_longue` dans les examples ci dessous l'adresse IP de mon Remora est la 192.168.1.201, veillez à bien la changer pour mettre la votre. Les exemples ont été exécutés depuis la ligne de commande avec curl mais elles pourraient l'être depuis la barre d'addresse de votre navigateur.
+Toute requête sera donc adressée sous la forme     
+`http://adresse_ip_du_remora/requete_plus_ou_moins_longue` dans les exemples ci dessous l'adresse IP de mon Remora est la 192.168.1.201, veillez à bien la changer pour mettre la vôtre. Les exemples ont été exécutés depuis la ligne de commande avec curl mais ils pourraient l'être depuis la barre d'addresse de votre navigateur.
 
-** Les Etats de fil pilote**
+**Les Etats de fil pilote**
 
 Les différents états possibles de fil pilote dans l'API correspondent à la notation suivante, une lettre représente l'état lu ou le mode à positionner tel que :
 ```
@@ -49,7 +59,7 @@ H = Hors gel
 2 = Eco-2 (non géré pour le moment)
 ```
 
-** Les API d'intérrogation**
+**Les API d'intérrogation**
 
 Les API d'intérrogation se presentent sous la forme 
 `http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
@@ -58,19 +68,16 @@ Les API d'intérrogation se presentent sous la forme
 ````shell
     ~ # curl http://192.168.1.201/relais
     { "relais": 0 }
-    ~ #
 ````
-- Etat du delestage `http://ip_du_remora/delestage`
+- Etat du délestage `http://ip_du_remora/delestage`
 ````shell
 		~ # curl http://192.168.1.201/delestage
 		{ "niveau": 0, "zone": 1 }
-		~ #
 ````
 - Etat d'un fil pilote `http://ip_du_remora/fpn` avec n = numéro du fil pilote (1 à 7)
 ````shell
 		~ # curl http://192.168.1.201/fp3
 		{ "fp3": "E" }
-		~ #
 ````
 - Etat de tous les fils pilotes **http://ip_du_remora/fp**
 ````shell
@@ -84,7 +91,6 @@ Les API d'intérrogation se presentent sous la forme
 		"fp6": "H",
 		"fp7": "C"
 		}
-		~ #
 ````
 - Récupérer une étiquette Téléinfo par non nom `http://ip_du_remora/Nom_Etiquette`
 ````shell
@@ -94,21 +100,31 @@ Les API d'intérrogation se presentent sous la forme
 		{ "IINST": 1 }
 		~ # curl http://192.168.1.201/PTEC
 		{ "PTEC":"HC.." }
-		~ #
 ````
 - Récupérer toutes les étiquettes Téléinfo en une fois `http://ip_du_remora/tinfo`
 ````shell
 		~ # curl http://192.168.1.201/tinfo
-		{ "_UPTIME":1614,"ADCO":31428067147,"OPTARIF":"HC..","ISOUSC":15,"HCHC":410994,"HCHP":0,"PTEC":"HC..","IINST":1,"IMAX":1,"PAPP":170,"HHPHC":3,"MOTDETAT":0 }
-		~ #
+		{ "_UPTIME":1614,
+			"ADCO":31428067147,
+			"OPTARIF":"HC..",
+			"ISOUSC":15,
+			"HCHC":410994,
+			"HCHP":0,
+			"PTEC":"HC..",
+			"IINST":1,
+			"IMAX":1,
+			"PAPP":170,
+			"HHPHC":3,
+			"MOTDETAT":0 
+		}
 ````
 A noter la présence de certaines étiquettes virtuelles commencant par un `_`
 
 
-** Les API d'action**
+**Les API d'action**
 
 Les API d'action se presentent sous la forme 
-`http://adresse_ip_du_remora/?action=ma_donnee` et le resultat est retourné au format JSON avec un code reponse, il est 
+`http://adresse_ip_du_remora/?action=ma_donnee`, notez la différence avec les intérrogations, le `?`. Le résultat est retourné au format JSON avec un code réponse, il est :     
 - négatif en cas d'erreur
 - à 0 si tout est OK
 - positif pour indiquer un code retour OK différent si besoin.
@@ -116,88 +132,67 @@ Les API d'action se presentent sous la forme
 Note, il est possible d'enchainer les actions en une requête mais un seul code d'erreur sera retourné pour l'ensemble, si une des commandes échoue, il faudra intérroger afin de savoir laquelle n'a pas fonctionnée.
 
 - Activer le relais `http://ip_du_remora/?relais=1`
-````
+````shell
 		# curl http://192.168.1.201/?relais=1
 		{ "response": 0 }
-		~ #
 ````
 - désactiver le relais `http://ip_du_remora/?relais=0`
-````
+````shell
 		# curl http://192.168.1.201/?relais=0
 		{ "response": 0 }
-		~ #
 ````
 - Exemple d'erreur avec le relais `http://ip_du_remora/?relais=3`
-````
+````shell
 		# curl http://192.168.1.201/?relais=3
 		{ "response": -1 }
-		~ #
 ````
-- selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)
+- selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)    
   Fil pilote 1 en arret
-````
+````shell
 		# curl http://192.168.1.201?setfp=1a
 		{ "response": 0 }
-		~ #
 ````
   Fil pilote 7 en Eco
-````
+````shell
 		# curl http://192.168.1.201?setfp=7E
 		{ "response": 0 }
-		~ #
 ````
   Mauvaise commande
-````
+````shell
 		curl http://192.168.1.201?setfp=5X
 		{ "response": -1 }
-		~ #
 ````
 - Selectionne le mode d'un ou plusieurs les fils pilotes d'un coup `http://ip_du_remora/?fp=CMD` avec 7 commandes de fil pilote.
-````
-    CMD=commande numéro du fil pilote + commande optionelle
-      -=rien, C=Confort, A=Arrêt, E=Eco, H=Hors gel, 1=Eco-1, 2=Eco-2,
-      ex: 1A => FP1 Arrêt
-        CCCCCCC => Commande tous les fils pilote en mode confort (ON)
-        AAAAAAA => Commande tous les fils pilote en mode arrêt
-        EEEEEEE => Commande tous les fils pilote en mode éco
-        CAAAAAA => Tous OFF sauf le fil pilote 1 en confort
-        A-AAAAA => Tous OFF sauf le fil pilote 2 inchangé
-        E-CHA12 => FP2 Eco  , FP2 inchangé, FP3 confort, FP4 hors gel
-                   FP5 arrêt, FP6 Eco-1    , FP7 Eco-2
-		retourne 0 si ok -1 sinon
-````
   Tous les fils pilote en confort
-````
+````shell
 		curl http://192.168.1.201/?fp=CCCCCCC
 		{ "response": 0 }
-		~ #
 ````
   Tous les fils pilote en arret
-````
+````shell
 		curl http://192.168.1.201/?fp=AAAAAAA
 		{ "response": 0 }
-		~ #
 ````
   Tous les fils pilote en eco
-````
+````shell
 		curl http://192.168.1.201/?fp=EEEEEEE
 		{ "response": 0 }
 		~ #
 ````
   Tous OFF sauf le fil pilote 1 en confort
-````
+````shell
 		curl http://192.168.1.201/?fp=CAAAAAA
 		{ "response": 0 }
 		~ #
 ````
   Tous OFF sauf le fil pilote 2 A-AAAAA
-````
+````shell
 		curl http://192.168.1.201/?fp=CCCCCCC
 		{ "response": 0 }
 		~ #
 ````
   FP1 Eco, FP2 inchangé, FP3 confort, FP4 hors gel, FP5 arrêt, FP6 Eco-1, FP7 Eco-2
-````
+````shell
 		curl http://192.168.1.201/?fp=E-CHA12
 		{ "response": -1 }
 		~ #

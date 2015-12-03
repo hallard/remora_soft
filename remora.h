@@ -7,7 +7,7 @@
 // History : 15/01/2015 Charles-Henri Hallard (http://hallard.me)
 //                      Intégration de version 1.2 de la carte electronique
 //           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
-//           01/12/2015 Charles-Henri Hallard : Ajout compatibilité board V1.3
+//           02/12/2015 Charles-Henri Hallard : Ajout API WEB ESP8266 et Remora V1.3
 //
 // **********************************************************************************
 #ifndef REMORA_h
