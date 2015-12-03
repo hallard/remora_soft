@@ -21,7 +21,7 @@ Installation (Particle)
 Installation (Arduino ESP8266)
 ------------------------------
 
-- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention Arduino 1.6.5 pas 1.6.6 avec la version d'ESP8266 Stable du 30 novembre 2015
+- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention Arduino 1.6.5 pas 1.6.6
 - Ouvrir ensuite depuis l'IDE le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier remora.h (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
@@ -39,8 +39,17 @@ Installation (Arduino ESP8266)
 - Lancer la compilation + upload 
 - La procédure OTA sera détaillée ultérieurement
 
-API Exposée (NodeMCU uniquement)
---------------------------------
+
+API Exposée (Particle)
+----------------------
+
+Toutes les API se font via des requêtes HTTP sur le cloud Particle. 
+
+A documenter!
+
+
+API Exposée (ESP8266 NodeMCU)
+-----------------------------
 
 Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles si l'on veut récupérer des données ou exécuter des action avec le Remora. Chaque requête se verra retourner des données (ou un code de bonne éxécution) au format JSON.
 
