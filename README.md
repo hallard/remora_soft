@@ -26,7 +26,8 @@ Installation (Arduino ESP8266)
 - Selectionner la version de carte utilisé dans le fichier remora.h (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
 - choisir la carte NodeMCU 1.0 (ESP12E-Module) ainsi que le bon serial port
-- mettre votre SSID et mot de passe Wifi dans le fichier remora.h
+- mettre votre SSID et mot de passe Wifi dans le fichier remora.h.    
+`DEFAULT_WIFI_AP_PASS` est le mot de passe de connection Wifi au remora quand celui ci se positionne en point d'accès (lorsqu'il n'arrive pas à se connecter à vôtre Wifi par exemple) sont IP est alors 192.168.4.1
 ````arduino
 		// Définir ici les identifiants de
 		// connexion à votre réseau Wifi
