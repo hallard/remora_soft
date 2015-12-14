@@ -18,8 +18,8 @@ Installation (Particle)
 - Lancer la compilation+upload (icone éclair en haut à gauche)
 - Si vous avez une erreur de type "App code was invalid" durant la compilation, supprimer le ficher README.md du dossier
 
-Installation (Arduino ESP8266)
-------------------------------
+Installation (Arduino ESP8266 NodeMCU)
+--------------------------------------
 
 - Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention Arduino 1.6.5 pas 1.6.6
 - Ouvrir ensuite depuis l'IDE le ficher `remora_soft.ino`
@@ -38,7 +38,10 @@ Installation (Arduino ESP8266)
 		// =====================================		
 ````
 - Lancer la compilation + upload 
-- La procédure OTA sera détaillée ultérieurement
+
+Attention, pour afficher les informations de debug dans une console, celle-ci doit être configurée à la même vitesse que la téléinfo (car c'est le même port série) donc 1200 bps, parité paire et 7 bits de data, or **cette configuration n'est pas possible dans le moniteur série de l'Arduino**. Il faut alors prendre un autre terminal comme putty, coolterm, ...    
+
+- La procédure OTA (télédéversement sans fil)
 
 
 API Exposée (Particle)
