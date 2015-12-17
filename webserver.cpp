@@ -123,7 +123,7 @@ void fpJSON(String & response, uint8_t fp)
   bool first_elem = true;
 
   // petite verif
-  if (fp>=1 && fp<=NB_FILS_PILOTES) {
+  if (fp>=0 && fp<=NB_FILS_PILOTES) {
     response = FPSTR("{\r\n");
 
     // regarder l'état de tous les fils Pilotes
@@ -247,9 +247,22 @@ void handleNotFound(void)
     delestageJSON(response);
     found = true;
   // http://ip_remora/fp ou http://ip_remora/fpx
-  } else if ( len==2 || len==3 ) {
-    if ( (uri[0]=='f'||uri[0]=='F') && (uri[1]=='p'||uri[1]=='P') ) {
-      fpJSON(response, len==2 ? 0 : uri[2]-'0');
+  } else if ( (len==2 || len==3) && (uri[0]=='f'||uri[0]=='F') && (uri[1]=='p'||uri[1]=='P') ) {
+    int8_t fp = -1;
+
+    // http://ip_remora/fp
+    if (len==2) {
+      fp=0;
+
+    // http://ip_remora/fpx
+    } else if ( len==3 ) {
+      fp = uri[2];
+      if ( fp>='1' && fp<=('0'+NB_FILS_PILOTES) ) 
+       fp -= '0';
+    }
+
+    if (fp>=0 && fp<=NB_FILS_PILOTES) {
+      fpJSON(response, fp);
       found = true;
     }
   } 
