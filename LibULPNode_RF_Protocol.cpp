@@ -22,7 +22,7 @@
 #include "LibULPNode_RF_Protocol.h"
 
 #ifdef ARDUINO
-#include <arduino.h>
+#include <Arduino.h>
 #endif
 
 
