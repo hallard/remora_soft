@@ -392,13 +392,13 @@ void mysetup()
     // OTA callbacks
     ArduinoOTA.onStart([]() { 
       LedRGBON(COLOR_MAGENTA);
-      Serial.print(F("Update Started"));
+      Serial.print(F("\r\nUpdate Started.."));
       ota_blink = true;
     });
 
     ArduinoOTA.onEnd([]() { 
       LedRGBOFF();
-      Serial.print(F("Update finished restarting"));
+      Serial.println(F("Update finished restarting"));
     });
 
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
