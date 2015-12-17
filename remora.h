@@ -18,7 +18,7 @@
 #include "application.h"
 #endif
 
-// Définir ici le type de carte utilsé
+// Définir ici le type de carte utilisé
 //#define REMORA_BOARD_V10  // Version 1.0
 //#define REMORA_BOARD_V11  // Version 1.1
 //#define REMORA_BOARD_V12  // Version 1.2
@@ -29,6 +29,9 @@
 //#define MOD_OLED      /* Afficheur  */
 #define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
+
+// Version logicielle remora
+#define REMORA_VERSION "1.3.0"
 
 // Librairies du projet remora Pour Particle
 #ifdef SPARK

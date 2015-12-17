@@ -164,6 +164,9 @@ int WifiHandleConn(boolean setup = false)
     WiFi.printDiag(Serial);
     Serial.println(F("========== SDK Saved parameters End")); 
 
+
+    
+
     #if defined (DEFAULT_WIFI_SSID) && defined (DEFAULT_WIFI_PASS)
       Serial.print(F("Connection au Wifi : ")); 
       Serial.print(DEFAULT_WIFI_SSID); 
@@ -424,12 +427,13 @@ void mysetup()
     server.begin();
     Serial.println(F("HTTP server started"));
 
-
   #endif
 
   // Init bus I2C
   i2c_init();
 
+  Serial.print("Remora Version ");
+  Serial.println(REMORA_VERSION);
   Serial.print("Compile avec les fonctions : ");
 
   #if defined (REMORA_BOARD_V10)
