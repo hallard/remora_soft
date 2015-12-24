@@ -39,9 +39,11 @@ Installation (Arduino ESP8266 NodeMCU)
 ````
 - Lancer la compilation + upload 
 
-Attention, pour afficher les informations de debug dans une console, celle-ci doit être configurée à la même vitesse que la téléinfo (car c'est le même port série) donc 1200 bps, parité paire et 7 bits de data, or **cette configuration n'est pas possible dans le moniteur série de l'Arduino**. Il faut alors prendre un autre terminal comme putty, coolterm, ...    
+**Attention**, pour pouvoir uploader via le cable USB, la téléinfo ne doit pas être connectée (en OTA pas de soucis avec ça) car le port série est partagé. Donc soit il faut la débrancher soit il faut sortir le module NodeMCU du support.
 
-- La procédure OTA (télédéversement sans fil)
+Pour les mêmes raisons, et afin d'afficher les informations de debug dans une console, celle-ci doit être configurée à la même vitesse que la téléinfo (car c'est le même port série) donc 1200 bps, parité paire et 7 bits de data, or **cette configuration n'est pas possible dans le moniteur série de l'Arduino**. Il faut alors prendre un autre terminal comme putty, coolterm, ...    
+
+- La procédure OTA (télédéversement sans fil) est disponible [ici][8]
 
 
 API Exposée (Particle)
@@ -248,3 +250,4 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 [5]: https://github.com/hallard/Particle2NodeMCU/blob/master/README.md
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
 [7]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.3
+[8]: http://hallard.me/esp8266-ota/
