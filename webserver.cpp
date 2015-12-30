@@ -199,106 +199,111 @@ void handleNotFound(void)
   // convert uri to char * for compare
   uri = server.uri().c_str();
 
-  #ifdef MOD_TELEINFO
-    // We check for an known label
-    ValueList * me = tinfo.getList();
-
-    // Got at least one and consistent URI ?
-    if (me && uri && *uri=='/' && *++uri ) {
-
-      // Loop thru the linked list of values
-      while (me->next && !found) {
-        // go to next node
-        me = me->next;
-
-        //Debugf("compare to '%s' ", me->name);
-        // Do we have this one ?
-        if (!stricmp(me->name, uri)) {
-          // no need to continue
-          found = true;
-
-          // Add to respone
-          response += FPSTR("{\r\n\"") ;
-          response += me->name ;
-          response += F("\":") ;
-          formatNumberJSON(response, me->value);
-          response += FPSTR("\r\n}\r\n");
-        }
-      }
-    }
-  #endif
-
-  // Requêtes d'interrogation
-  // ========================
-  uint8_t len = strlen(uri);
-
   Serial.print("URI[");
-  Serial.print(len);
+  Serial.print(strlen(uri));
   Serial.print("]='");
   Serial.print(uri);
   Serial.println("'");
 
-  // http://ip_remora/relais    
-  if (!stricmp("relais", uri)) {
-    relaisJSON(response);
-    found = true;
-  // http://ip_remora/delestage
-  } else if (!stricmp("delestage", uri)) {
-    delestageJSON(response);
-    found = true;
-  // http://ip_remora/fp ou http://ip_remora/fpx
-  } else if ( (len==2 || len==3) && (uri[0]=='f'||uri[0]=='F') && (uri[1]=='p'||uri[1]=='P') ) {
-    int8_t fp = -1;
+  // Got consistent URI, skip fisrt / ?
+  if (uri && *uri=='/' && *++uri ) {
+    uint8_t len = strlen(uri);
 
-    // http://ip_remora/fp
-    if (len==2) {
-      fp=0;
+    #ifdef MOD_TELEINFO
+      // We check for an known label
+      ValueList * me = tinfo.getList();
 
-    // http://ip_remora/fpx
-    } else if ( len==3 ) {
-      fp = uri[2];
-      if ( fp>='1' && fp<=('0'+NB_FILS_PILOTES) ) 
-       fp -= '0';
-    }
+      // Got at least one ?
+      if (me) {
 
-    if (fp>=0 && fp<=NB_FILS_PILOTES) {
-      fpJSON(response, fp);
-      found = true;
-    }
-  } 
-  
-  // Requêtes modifiantes (cumulable)
-  // ================================
-  if (  server.hasArg("fp") || 
-        server.hasArg("setfp") || 
-        server.hasArg("relais")) {
+        // Loop thru the linked list of values
+        while (me->next && !found) {
+          // go to next node
+          me = me->next;
 
-      int error = 0;
-      response = FPSTR("{\r\n");
+          //Debugf("compare to '%s' ", me->name);
+          // Do we have this one ?
+          if (!stricmp(me->name, uri)) {
+            // no need to continue
+            found = true;
 
-      // http://ip_remora/?setfp=CMD
-      if ( server.hasArg("setfp") ) {
-        error += setfp(server.arg("setfp"));
+            // Add to respone
+            response += FPSTR("{\r\n\"") ;
+            response += me->name ;
+            response += F("\":") ;
+            formatNumberJSON(response, me->value);
+            response += FPSTR("\r\n}\r\n");
+          }
+        }
       }
-      // http://ip_remora/?fp=CMD
-      if ( server.hasArg("fp") ) {
-        error += fp(server.arg("fp"));
+    #endif
+
+    // Requêtes d'interrogation
+    // ========================
+
+    // http://ip_remora/relais    
+    if (!stricmp("relais", uri)) {
+      relaisJSON(response);
+      found = true;
+    // http://ip_remora/delestage
+    } else if (!stricmp("delestage", uri)) {
+      delestageJSON(response);
+      found = true;
+    // http://ip_remora/fp ou http://ip_remora/fpx
+    } else if ( (len==2 || len==3) && (uri[0]=='f'||uri[0]=='F') && (uri[1]=='p'||uri[1]=='P') ) {
+      int8_t fp = -1;
+
+      // http://ip_remora/fp
+      if (len==2) {
+        fp=0;
+
+      // http://ip_remora/fpx
+      } else if ( len==3 ) {
+        fp = uri[2];
+        if ( fp>='1' && fp<=('0'+NB_FILS_PILOTES) ) 
+         fp -= '0';
+      }
+
+      if (fp>=0 && fp<=NB_FILS_PILOTES) {
+        fpJSON(response, fp);
         found = true;
       }
+    } 
+    
+    // Requêtes modifiantes (cumulable)
+    // ================================
+    if (  server.hasArg("fp") || 
+          server.hasArg("setfp") || 
+          server.hasArg("relais")) {
 
-      // http://ip_remora/?relais=n
-      if ( server.hasArg("relais") ) {
-        // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
-        if ( relais( server.arg("relais")) != server.arg("relais").toInt() ) 
-          error -=1;
-      }
+        int error = 0;
+        response = FPSTR("{\r\n");
 
-      response += FPSTR("\"response\": ") ;
-      response += String(error) ;
+        // http://ip_remora/?setfp=CMD
+        if ( server.hasArg("setfp") ) {
+          error += setfp(server.arg("setfp"));
+        }
+        // http://ip_remora/?fp=CMD
+        if ( server.hasArg("fp") ) {
+          error += fp(server.arg("fp"));
+          found = true;
+        }
 
-      response += FPSTR("\r\n}\r\n");
-      found = true;
-  }
+        // http://ip_remora/?relais=n
+        if ( server.hasArg("relais") ) {
+          // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
+          if ( relais( server.arg("relais")) != server.arg("relais").toInt() ) 
+            error -=1;
+        }
+
+        response += FPSTR("\"response\": ") ;
+        response += String(error) ;
+
+        response += FPSTR("\r\n}\r\n");
+        found = true;
+    }
+
+  } // valide URI
 
 
   // Got it, send json
