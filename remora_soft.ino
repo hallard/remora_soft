@@ -422,6 +422,16 @@ void mysetup()
       ESP.restart(); 
     });
 
+    // handler for uptime
+    server.on("/uptime", [&](){
+      String response = "";
+      response += FPSTR("{\r\n");
+      response += F("\"uptime\":");
+      response += uptime;
+      response += FPSTR("\r\n}\r\n") ;
+      server.send ( 200, "text/json", response );
+    });
+
     server.on("/tinfo", tinfoJSON);
     server.onNotFound(handleNotFound);
     server.begin();
