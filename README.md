@@ -79,6 +79,11 @@ H = Hors gel
 Les API d'intérrogation se presentent sous la forme 
 `http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
 
+- Durée de fonctionnement en secondes depuis le dernier reboot/reset/allumage `http://ip_du_remora/uptime`
+````shell
+    ~ # curl http://192.168.1.201/uptime
+    { "uptime": 120 }
+````
 - Etat du relais `http://ip_du_remora/relais`
 ````shell
     ~ # curl http://192.168.1.201/relais
