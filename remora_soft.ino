@@ -11,6 +11,7 @@
 //                      (passage en 1 seul appel) et liberation de variables
 //           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
 //           02/12/2015 Charles-Henri Hallard : Ajout API WEB ESP8266 et Remora V1.3
+//           04/01/2016 Charles-Henri Hallard : Ajout Interface WEB GUIT
 //
 // **********************************************************************************
 
