@@ -151,6 +151,18 @@ Les API d'action se presentent sous la forme
 
 Note, il est possible d'enchainer les actions en une requête mais un seul code d'erreur sera retourné pour l'ensemble, si une des commandes échoue, il faudra intérroger afin de savoir laquelle n'a pas fonctionnée.
 
+- Faire un reset (reboot) `http://ip_du_remora/reset`
+````shell
+		# curl http://192.168.1.201/reset
+		OK, Redémarrage en cours
+````
+
+- Faire une remise à zero usine `http://ip_du_remora/factory_reset`, **attention tout va être vidé**, y compris le système de fichier SPIFFS, c'est comme si votre NodeMCU arrivait d'usine
+````shell
+		# curl http://192.168.1.201/factory_reset
+		OK, Redémarrage en cours
+````
+
 - Activer le relais `http://ip_du_remora/?relais=1`
 ````shell
 		# curl http://192.168.1.201/?relais=1
@@ -234,6 +246,7 @@ Historiques des Modifications
 
 02/12/2015 : Ajout [Version 1.3][7] Remora NodeMCU
 
+04/01/2016 : Integration Interface WEB
 
 Exemple
 -------
