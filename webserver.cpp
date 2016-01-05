@@ -176,11 +176,14 @@ Comments: -
 ====================================================================== */
 void tinfoJSONTable(void)
 {
-  ValueList * me = tinfo.getList();
-  String response = "";
 
   // Just to debug where we are
   Debug(F("Serving /tinfo page...\r\n"));
+
+  #ifdef MOD_TELEINFO
+
+  ValueList * me = tinfo.getList();
+  String response = "";
 
   // Got at least one ?
   if (me) {
@@ -228,6 +231,12 @@ void tinfoJSONTable(void)
   Debug(F("sending..."));
   server.send ( 200, "text/json", response );
   Debugln(F("OK!"));
+
+  #else
+    Debugln(F("sending 404..."));
+    server.send ( 404, "text/plain", "Teleinfo non activée" );
+  #endif // MOD_TELEINFO
+
 }
 
 /* ======================================================================

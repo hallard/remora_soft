@@ -73,6 +73,8 @@ boolean emoncmsPost(void)
 {
   boolean ret = false;
 
+  #ifdef MOD_TELEINFO  
+
   // Some basic checking
   if (*config.emoncms.host) {
     ValueList * me = tinfo.getList();
@@ -170,6 +172,9 @@ boolean emoncmsPost(void)
       ret = httpPost( config.emoncms.host, config.emoncms.port, (char *) url.c_str()) ;
     } // if me
   } // if host
+
+  #endif // MOD_TELEINFO
+
   return ret;
 }
 
@@ -183,6 +188,8 @@ Comments: -
 boolean jeedomPost(void)
 {
   boolean ret = false;
+
+  #ifdef MOD_TELEINFO  
 
   // Some basic checking
   if (*config.jeedom.host) {
@@ -234,6 +241,9 @@ boolean jeedomPost(void)
       ret = httpPost( config.jeedom.host, config.jeedom.port, (char *) url.c_str()) ;
     } // if me
   } // if host
+
+  #endif // MOD_TELEINFO
+
   return ret;
 }
 
