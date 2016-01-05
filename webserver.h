@@ -13,6 +13,7 @@
 //
 // History 2015-06-14 - First release
 //         2015-11-31 - Added Remora API
+//         2016-01-04 - Added Web Interface part
 //
 // All text above must be included in any redistribution.
 //
@@ -24,14 +25,22 @@
 // Include main project include file
 #include "remora.h"
 
-// Exported variables/object instancied in main sketch
-// ===================================================
+// Exported variables/object instanciated in main sketch
+// =====================================================
 extern char response[];
 extern uint16_t response_idx;
 
 // declared exported function from webserver.cpp
 // ===================================================
 void handleNotFound(void);
+void handleFormConfig(void) ;
 void tinfoJSON(void);
+void handleFactoryReset(void);
+void handleReset(void);
+void tinfoJSONTable(void);
+void sysJSONTable(void);
+void confJSONTable(void);
+void spiffsJSONTable(void);
+void wifiScanJSON(void);
 
 #endif

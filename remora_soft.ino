@@ -41,13 +41,17 @@
 
 // Arduino IDE need include in main INO file
 #ifdef ESP8266
+  #include <EEPROM.h>
+  #include <FS.h>
   #include <ESP8266WiFi.h>
+  #include <ESP8266HTTPClient.h>
   #include <ESP8266WebServer.h>
   #include <ESP8266mDNS.h>
   #include <WiFiUdp.h>
   #include <ArduinoOTA.h>
   #include <Wire.h>
   #include <SPI.h>
+  #include <Ticker.h>
   #include "./LibNeoPixelBus.h"
   #include "./LibMCP23017.h"
   #include "./LibSSD1306.h"
@@ -87,6 +91,12 @@ int my_cloud_disconnect = 0;
 
   // define whole brigtness level for RGBLED
   uint8_t rgb_brightness = 127;
+
+  Ticker Tick_emoncms;
+  Ticker Tick_jeedom;
+
+  volatile boolean task_emoncms = false;
+  volatile boolean task_jeedom = false;
 
   bool ota_blink;
 #endif
@@ -146,6 +156,31 @@ void spark_expose_cloud(void)
 // Wifi management and OTA updates
 // ====================================================
 #ifdef ESP8266
+
+/* ======================================================================
+Function: Task_emoncms
+Purpose : callback of emoncms ticker
+Input   : 
+Output  : -
+Comments: Like an Interrupt, need to be short, we set flag for main loop
+====================================================================== */
+void Task_emoncms()
+{
+  task_emoncms = true;
+}
+
+/* ======================================================================
+Function: Task_jeedom
+Purpose : callback of jeedom ticker
+Input   : 
+Output  : -
+Comments: Like an Interrupt, need to be short, we set flag for main loop
+====================================================================== */
+void Task_jeedom()
+{
+  task_jeedom = true;
+}
+
 /* ======================================================================
 Function: WifiHandleConn
 Purpose : Handle Wifi connection / reconnection and OTA updates
@@ -163,9 +198,6 @@ int WifiHandleConn(boolean setup = false)
     Serial.print(F("========== SDK Saved parameters Start")); 
     WiFi.printDiag(Serial);
     Serial.println(F("========== SDK Saved parameters End")); 
-
-
-    
 
     #if defined (DEFAULT_WIFI_SSID) && defined (DEFAULT_WIFI_PASS)
       Serial.print(F("Connection au Wifi : ")); 
@@ -386,6 +418,53 @@ void mysetup()
     // Init de la téléinformation
     Serial.begin(1200, SERIAL_7E1);
 
+    // Clear our global flags
+    config.config = 0;
+
+    // Our configuration is stored into EEPROM
+    //EEPROM.begin(sizeof(_Config));
+    EEPROM.begin(1024);
+
+    DebugF("Config size="); Debug(sizeof(_Config));
+    DebugF(" (emoncms=");   Debug(sizeof(_emoncms));
+    DebugF("  jeedom=");   Debug(sizeof(_jeedom));
+    Debugln(')');
+    Debugflush();
+
+    // Check File system init 
+    if (!SPIFFS.begin())
+    {
+      // Serious problem
+      DebuglnF("SPIFFS Mount failed");
+    } else {
+     
+      DebuglnF("SPIFFS Mount succesfull");
+
+      Dir dir = SPIFFS.openDir("/");
+      while (dir.next()) {    
+        String fileName = dir.fileName();
+        size_t fileSize = dir.fileSize();
+        Debugf("FS File: %s, size: %d\n", fileName.c_str(), fileSize);
+      }
+      DebuglnF("");
+    }
+    
+    // Read Configuration from EEP
+    if (readConfig()) {
+        DebuglnF("Good CRC, not set!");
+    } else {
+      // Reset Configuration
+      resetConfig();
+
+      // save back
+      saveConfig();
+
+      // Indicate the error in global flags
+      config.config |= CFG_BAD_CRC;
+
+      DebuglnF("Reset to default");
+    }
+
     // Connection au Wifi ou Vérification
     WifiHandleConn(true);
 
@@ -432,8 +511,84 @@ void mysetup()
       server.send ( 200, "text/json", response );
     });
 
+    server.on("/config_form.json", handleFormConfig);
+    server.on("/factory_reset",handleFactoryReset );
+    server.on("/reset", handleReset);
     server.on("/tinfo", tinfoJSON);
+    server.on("/tinfo.json", tinfoJSONTable);
+    server.on("/system.json", sysJSONTable);
+    server.on("/config.json", confJSONTable);
+    server.on("/spiffs.json", spiffsJSONTable);
+    server.on("/wifiscan.json", wifiScanJSON);
+
+    // handler for the hearbeat
+    server.on("/hb.htm", HTTP_GET, [&](){
+        server.sendHeader("Connection", "close");
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(200, "text/html", R"(OK)");
+    });
+
+    // handler for the /update form POST (once file upload finishes)
+    server.on("/update", HTTP_POST, 
+      // handler once file upload finishes
+      [&]() {
+        server.sendHeader("Connection", "close");
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
+        ESP.restart();
+      },
+      // handler for upload, get's the sketch bytes, 
+      // and writes them through the Update object
+      [&]() {
+        HTTPUpload& upload = server.upload();
+
+        if(upload.status == UPLOAD_FILE_START) {
+          uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+          WiFiUDP::stopAll();
+          Debugf("Update: %s\n", upload.filename.c_str());
+          LedRGBON(COLOR_MAGENTA);
+          ota_blink = true;
+
+          //start with max available size
+          if(!Update.begin(maxSketchSpace)) 
+            Update.printError(Serial1);
+
+        } else if(upload.status == UPLOAD_FILE_WRITE) {
+          if (ota_blink) {
+            LedRGBON(COLOR_MAGENTA);
+          } else {
+            LedRGBOFF();
+          }
+          ota_blink = !ota_blink;
+          Debug(".");
+          if(Update.write(upload.buf, upload.currentSize) != upload.currentSize) 
+            Update.printError(Serial1);
+
+        } else if(upload.status == UPLOAD_FILE_END) {
+          //true to set the size to the current progress
+          if(Update.end(true)) 
+            Debugf("Update Success: %u\nRebooting...\n", upload.totalSize);
+          else 
+            Update.printError(Serial1);
+
+          LedRGBOFF();
+
+        } else if(upload.status == UPLOAD_FILE_ABORTED) {
+          Update.end();
+          LedRGBOFF();
+          DebuglnF("Update was aborted");
+        }
+        delay(0);
+      }
+    );
+
     server.onNotFound(handleNotFound);
+
+    // serves all SPIFFS Web file with 24hr max-age control
+    // to avoid multiple requests to ESP
+    server.serveStatic("/font", SPIFFS, "/font","max-age=86400"); 
+    server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400"); 
+    server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400"); 
     server.begin();
     Serial.println(F("HTTP server started"));
 
@@ -639,6 +794,14 @@ void loop()
     // Webserver 
     server.handleClient();
     ArduinoOTA.handle();
+
+    if (task_emoncms) { 
+      emoncmsPost(); 
+      task_emoncms=false; 
+    } else if (task_jeedom) { 
+      jeedomPost();  
+      task_jeedom=false;
+    }
   #endif
 
 }

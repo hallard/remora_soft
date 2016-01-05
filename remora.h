@@ -31,7 +31,10 @@
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.0"
+#define REMORA_VERSION "1.3.1"
+
+
+
 
 // Librairies du projet remora Pour Particle
 #ifdef SPARK
@@ -58,6 +61,7 @@
   //#include "mfGFX_local.h"
 
   #define _yield()  Particle.process()
+  #define DEBUG_SERIAL  Serial
 #endif
 
 // Librairies du projet remora Pour Particle
@@ -77,8 +81,17 @@
   #define DEFAULT_OTA_PASS  "Remora_OTA"
   #define DEFAULT_HOSTNAME  "remora"
   #include "Arduino.h"
+  #include <EEPROM.h>
+  #include <FS.h>
   #include <ESP8266WiFi.h>
+  #include <ESP8266HTTPClient.h>
   #include <ESP8266WebServer.h>
+  #include <Ticker.h>
+
+extern "C" {
+#include "user_interface.h"
+}
+
   #include "./LibNeoPixelBus.h"
   #include "./LibMCP23017.h"
   //#include "./RFM69registers.h"
@@ -91,9 +104,32 @@
   #include "./LibRHReliableDatagram.h"
 
   #define _yield()  yield()
+  #define DEBUG_SERIAL  Serial
+#endif
+
+#define DEBUG
+
+// I prefix debug macro to be sure to use specific for THIS library
+// debugging, this should not interfere with main sketch or other 
+// libraries
+#ifdef DEBUG
+#define Debug(x)    DEBUG_SERIAL.print(x)
+#define Debugln(x)  DEBUG_SERIAL.println(x)
+#define DebugF(x)   DEBUG_SERIAL.print(F(x))
+#define DebuglnF(x) DEBUG_SERIAL.println(F(x))
+#define Debugf(...) DEBUG_SERIAL.printf(__VA_ARGS__)
+#define Debugflush  DEBUG_SERIAL.flush
+#else
+#define Debug(x)    {}
+#define Debugln(x)  {}
+#define DebugF(x)   {}
+#define DebuglnF(x) {}
+#define Debugf(...) {}
+#define Debugflush  {}
 #endif
 
 // Includes du projets remora
+#include "config.h"
 #include "linked_list.h"
 #include "i2c.h"
 #include "rfm.h"
@@ -101,6 +137,7 @@
 #include "pilotes.h"
 #include "tinfo.h"
 #include "webserver.h"
+#include "webclient.h"
 
 // RGB LED related MACROS
 #if defined (SPARK)
@@ -206,6 +243,9 @@ extern unsigned long uptime ;
 
   // define whole brigtness level for RGBLED
   extern uint8_t rgb_brightness;
+
+  extern Ticker Tick_emoncms;
+  extern Ticker Tick_jeedom;
 #endif
 
 
@@ -214,5 +254,7 @@ extern uint16_t status; // status global de l'application
 // Function exported for other source file
 // =======================================
 char * timeAgo(unsigned long);
+void Task_emoncms();
+void Task_jeedom();
 
 #endif
