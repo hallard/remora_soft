@@ -263,7 +263,7 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 
 [1]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.2
 [2]: https://www.particle.io/dev
-[3]: /remora_soft/archive/master.zip
+[3]: https://github.com/hallard/remora_soft/archive/master.zip
 [4]: http://www.ebay.com/itm/291216700457
 [5]: https://github.com/hallard/Particle2NodeMCU/blob/master/README.md
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
