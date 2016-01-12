@@ -21,7 +21,7 @@ Installation (Particle)
 Installation (Arduino ESP8266 NodeMCU)
 --------------------------------------
 
-- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention Arduino 1.6.5 pas 1.6.6
+- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention ~~Arduino 1.6.5 pas 1.6.6~~ Maintenant c'est compatible Arduino 1.6.7 et je vous conseille d'utiliser la version git
 - Ouvrir ensuite depuis l'IDE le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier remora.h (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
