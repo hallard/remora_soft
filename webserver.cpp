@@ -152,7 +152,7 @@ void formatNumberJSON( String &response, char * value)
       if (!isNumber) {
         response += '\"' ;
         response += value ;
-        response += F("\"") ;
+        response += '\"' ;
       } else {
         // this will remove leading zero on numbers
         p = value;
@@ -161,8 +161,12 @@ void formatNumberJSON( String &response, char * value)
         response += p ;
       }
     } else {
-      Serial.println(F("formatNumberJSON error!"));
+      response += "\"Error Value too long\"" ;
+      Serial.println(F("formatNumberJSON Value too long!"));
     }
+  } else {
+    response += "\"Error Bad Value\"" ;
+    Serial.println(F("formatNumberJSON Bad Value!"));
   }
 }
 
@@ -596,10 +600,13 @@ void tinfoJSON(void)
         // go to next node
         me = me->next;
 
-        response += F(",\"") ;
-        response += me->name ;
-        response += F("\":") ;
-        formatNumberJSON(response, me->value);
+        if (tinfo.calcChecksum(me->name,me->value) == me->checksum) {
+          response += F(",\"") ;
+          response += me->name ;
+          response += F("\":") ;
+          formatNumberJSON(response, me->value);
+        }
+
       }
       // Json end
       response += FPSTR(FP_JSON_END) ;
