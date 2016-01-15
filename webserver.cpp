@@ -605,8 +605,19 @@ void tinfoJSON(void)
           response += me->name ;
           response += F("\":") ;
           formatNumberJSON(response, me->value);
-        }
+        } else {
+          response = "\"_Error\":\"";
+          response = me->name;
+          response = "=";
+          response = me->value;
+          response = " CHK=";
+          response = (char) me->checksum;
+          response = "\"";
 
+          // Error stop immediatly and send result
+          response += FPSTR(FP_JSON_END) ;
+          server.send ( 200, "text/json", response );
+        }
       }
       // Json end
       response += FPSTR(FP_JSON_END) ;
