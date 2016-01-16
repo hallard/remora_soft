@@ -590,10 +590,14 @@ void tinfoJSON(void)
 
     // Got at least one ?
     if (me) {
+      char * p;
+      long value;
+
       // Json start
       response += FPSTR(FP_JSON_START);
       response += F("\"_UPTIME\":");
       response += uptime;
+      response += FPSTR(FP_NL) ;
 
       // Loop thru the node
       while (me->next) {
@@ -604,20 +608,34 @@ void tinfoJSON(void)
           response += F(",\"") ;
           response += me->name ;
           response += F("\":") ;
-          formatNumberJSON(response, me->value);
+
+          // Check if value is a number
+          value = strtol(me->value, &p, 10);
+
+          // conversion failed, add "value"
+          if (*p) {
+            response += F("\"") ;
+            response += me->value ;
+            response += F("\"") ;
+
+          // number, add "value"
+          } else {
+            response += value ;
+          }
+          //formatNumberJSON(response, me->value);
         } else {
-          response = "\"_Error\":\"";
+          response = F(",\"_Error\":\"");
           response = me->name;
           response = "=";
           response = me->value;
-          response = " CHK=";
+          response = F(" CHK=");
           response = (char) me->checksum;
           response = "\"";
-
-          // Error stop immediatly and send result
-          response += FPSTR(FP_JSON_END) ;
-          server.send ( 200, "text/json", response );
         }
+
+        // Add new line to see more easier end of field
+        response += FPSTR(FP_NL) ;
+
       }
       // Json end
       response += FPSTR(FP_JSON_END) ;
