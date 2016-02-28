@@ -181,6 +181,9 @@ void initFP(void)
   {
     cmd[0]='0' + i;
     setfp(cmd);
+    #ifdef ESP8266
+      ESP.wdtFeed();
+    #endif
   }
 }
 
