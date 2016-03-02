@@ -326,6 +326,11 @@ int fp(String command)
         if (setfp(cmd) == -1)
           returnValue = -1;
       }
+
+      #ifdef ESP8266
+        ESP.wdtFeed();
+      #endif
+
     }
     return returnValue;
   }
