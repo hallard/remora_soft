@@ -111,8 +111,21 @@ void DataCallback(ValueList * me, uint8_t flags)
   if (!strcmp(me->name, "IINST"))  myiInst   = atoi(me->value);
   if (!strcmp(me->name, "HCHC"))   myindexHC = atol(me->value);
   if (!strcmp(me->name, "HCHP"))   myindexHP = atol(me->value);
-  if (!strcmp(me->name, "ISOUSC")) myisousc  = atoi(me->value);
   if (!strcmp(me->name, "IMAX"))   myimax    = atoi(me->value);
+
+  // Isousc permet de connaitre l'intensité max pour le delestage
+  if (!strcmp(me->name, "ISOUSC")) {
+    myisousc = atoi(me->value);
+    myDelestLimit = ratio_delestage * myisousc;
+    // Calcul de quand on déclenchera le relestage
+    myRelestLimit = ratio_relestage * myisousc;
+
+    // Maintenant on connait notre contrat, on peut commencer 
+    // A traiter le delestage eventuel et si celui-ci 
+    // n'a jamais été initialisé on le fait maintenant
+    if ( timerDelestRelest == 0 )
+      timerDelestRelest = millis();
+  }
 
   Serial.println();
 
@@ -174,14 +187,9 @@ void UpdatedFrame(ValueList * me)
   #endif
   //Serial.println(buff);
 
-
-  myDelestLimit = myisousc * ratio_delestage;
-
-  // Calcul de quand on déclenchera le relestage
-  myRelestLimit = myisousc * ratio_relestage;
-
   //On publie toutes les infos teleinfos dans un seul appel :
-  sprintf(mytinfo,"{\"papp\":%u,\"iinst\":%u,\"isousc\":%u,\"ptec\":%u,\"indexHP\":%u,\"indexHC\":%u,\"imax\":%u,\"ADCO\":%u}",mypApp,myiInst,myisousc,ptec,myindexHP,myindexHC,myimax,mycompteur);
+  sprintf(mytinfo,"{\"papp\":%u,\"iinst\":%u,\"isousc\":%u,\"ptec\":%u,\"indexHP\":%u,\"indexHC\":%u,\"imax\":%u,\"ADCO\":%u}",
+                    mypApp,myiInst,myisousc,ptec,myindexHP,myindexHC,myimax,mycompteur);
   // Posibilité de faire une pseudo serial avec la fonction suivante :
   //Spark.publish("Teleinfo",mytinfo);
 
@@ -266,6 +274,8 @@ void tinfo_loop(void)
 #ifdef MOD_TELEINFO
   char c;
   uint8_t nb_char=0;
+  // Evitons les conversions hasardeuses, parlons float
+  float fiInst = myiInst; 
 
   // on a la téléinfo présente ?
   if ( status & STATUS_TINFO) {
@@ -309,7 +319,7 @@ void tinfo_loop(void)
 
   // Faut-il enclencher le delestage ?
   //On dépasse le courant max?
-  if (myiInst > myDelestLimit) {
+  if (fiInst > myDelestLimit) {
     if ((millis() - timerDelestRelest) > 5000L)  {
       //On ne passe pas dans la boucle si l'on a délesté ou relesté une zone il y a moins de 5s
       //On évite ainsi de délester d'autres zones avant que le délestage précédent ne fasse effet
@@ -323,7 +333,7 @@ void tinfo_loop(void)
     // pour éviter les délestage/relestage trop rapprochés
     if (nivDelest > 0 && (millis() - timerDelestRelest) > 180000L) {
       //Le courant est suffisamment bas pour relester
-      if (myiInst < myRelestLimit) {
+      if (fiInst < myRelestLimit) {
         relester1zone();
         timerDelestRelest = millis();
       } else {
