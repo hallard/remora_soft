@@ -363,6 +363,16 @@ void getSysJSONData(String & response)
   response += "\"},\r\n"; 
 
   response += "{\"na\":\"Delestage\",\"va\":\"";
+  response += String(myDelestLimit);
+  response += "A";
+  response += "\"},\r\n"; 
+
+  response += "{\"na\":\"Relestage\",\"va\":\"";
+  response += String(myRelestLimit);
+  response += "A";
+  response += "\"},\r\n"; 
+
+  response += "{\"na\":\"Etat Delestage\",\"va\":\"";
   response += "Niveau ";
   response += String(nivDelest);
   response += " Zone ";
