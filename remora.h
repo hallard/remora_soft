@@ -32,7 +32,7 @@
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.1"
+#define REMORA_VERSION "1.3.2"
 
 
 
@@ -62,6 +62,7 @@
   //#include "mfGFX_local.h"
 
   #define _yield()  Particle.process()
+  #define _wdt_feed {}
   #define DEBUG_SERIAL  Serial
 #endif
 
@@ -104,7 +105,8 @@ extern "C" {
   #include "./LibRadioHead.h"
   #include "./LibRHReliableDatagram.h"
 
-  #define _yield()  yield()
+  #define _yield  yield
+  #define _wdt_feed ESP.wdtFeed
   #define DEBUG_SERIAL  Serial
 #endif
 
