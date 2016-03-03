@@ -195,6 +195,8 @@ int WifiHandleConn(boolean setup = false)
   uint8_t timeout ;
 
   if (setup) {
+    // Feed the dog
+    _wdt_feed();
 
     Serial.print(F("========== SDK Saved parameters Start")); 
     WiFi.printDiag(Serial);
@@ -251,6 +253,9 @@ int WifiHandleConn(boolean setup = false)
       Serial.print(F("IP address   : ")); Serial.println(WiFi.softAPIP());
       Serial.print(F("MAC address  : ")); Serial.println(WiFi.softAPmacAddress());
     }
+
+    // Feed the dog
+    _wdt_feed();
 
     // Set OTA parameters
     ArduinoOTA.setPort(DEFAULT_OTA_PORT);
@@ -446,10 +451,11 @@ void mysetup()
         String fileName = dir.fileName();
         size_t fileSize = dir.fileSize();
         Debugf("FS File: %s, size: %d\n", fileName.c_str(), fileSize);
+        _wdt_feed();
       }
       DebuglnF("");
     }
-    
+
     // Read Configuration from EEP
     if (readConfig()) {
         DebuglnF("Good CRC, not set!");
@@ -646,6 +652,9 @@ void mysetup()
       status |= STATUS_RFM ;
   #endif
 
+  // Feed the dog
+  _wdt_feed();
+    
   #ifdef MOD_TELEINFO
     // Initialiser la téléinfo et attente d'une trame valide
     // Le status est mis à jour dans les callback de la teleinfo
@@ -664,6 +673,9 @@ void mysetup()
     for (uint8_t i=0; i<20; i++)
     {
       delay(10);
+     // Feed the dog
+     _wdt_feed();
+
       // Ne pas bloquer la reception et
       // la gestion de la téléinfo
       #ifdef MOD_TELEINFO
