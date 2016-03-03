@@ -181,9 +181,9 @@ void initFP(void)
   {
     cmd[0]='0' + i;
     setfp(cmd);
-    #ifdef ESP8266
-      ESP.wdtFeed();
-    #endif
+
+    // Feed the dog
+    _wdt_feed();
   }
 }
 
@@ -327,10 +327,8 @@ int fp(String command)
           returnValue = -1;
       }
 
-      #ifdef ESP8266
-        ESP.wdtFeed();
-      #endif
-
+      // Feed the dog
+      _wdt_feed();
     }
     return returnValue;
   }
