@@ -22,12 +22,18 @@ Installation (Arduino ESP8266 NodeMCU)
 --------------------------------------
 
 - Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention ~~Arduino 1.6.5 pas 1.6.6~~ Maintenant c'est compatible Arduino 1.6.7 et je vous conseille d'utiliser la version git
-- Ouvrir ensuite depuis l'IDE le ficher `remora_soft.ino`
-- Selectionner la version de carte utilisé dans le fichier remora.h (les defines REMORA_BOARD_Vxx)
-- Selectionner les modules utilisés dans le fichier remora.h (les defines MOD_xxxx)
-- choisir la carte NodeMCU 1.0 (ESP12E-Module) ainsi que le bon serial port
+- Installer le plugins SPIFFS pour l'IDE Arduino comme indiqué [ici](https://github.com/esp8266/arduino-esp8266fs-plugin)
+- Lancer l'IDE Arduino
+- Installer la librairie [NeoPixelBus](https://github.com/Makuna/NeoPixelBus) depuis l'IDE Menu Sketch / Include Library / Manage Library => NeoPixelBus by Makuna
+- Installer la librairie [Blynk](https://github.com/blynkkk/blynk-library) depuis l'IDE Menu Sketch / Include Library / Manage Library / Blynk by Volodymyr Shymanskyy
+- Lancer ensuite l'IDE Arduino et ouvrir depuis celui-ci le ficher `remora_soft.ino`
+- Selectionner la version de carte utilisé dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L22-L26) (les defines REMORA_BOARD_Vxx)
+- Selectionner les modules utilisés dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L28-32) (les defines MOD_xxxx)
+- choisir dans l'IDE Arduino Menu Tools / Board => **NodeMCU 1.0 (ESP12E-Module)** ainsi que le bon serial port
+- choisir dans l'IDE Arduino Menu Tools / CPU Frequency => **160MHz**
+- choisir dans l'IDE Arduino Menu Tools / Flash Size => **4M (1M SPIFFS)**
 - mettre votre SSID et mot de passe Wifi dans le fichier remora.h.    
-`DEFAULT_WIFI_AP_PASS` est le mot de passe de connection Wifi au remora quand celui ci se positionne en point d'accès (lorsqu'il n'arrive pas à se connecter à vôtre Wifi par exemple) sont IP est alors 192.168.4.1
+`DEFAULT_WIFI_AP_PASS` est le mot de passe de connection Wifi au remora quand celui ci se positionne en point d'accès (lorsqu'il n'arrive pas à se connecter à vôtre Wifi par exemple) son IP est alors 192.168.4.1
 ````arduino
 		// Définir ici les identifiants de
 		// connexion à votre réseau Wifi
@@ -37,7 +43,8 @@ Installation (Arduino ESP8266 NodeMCU)
 		#define DEFAULT_WIFI_AP_PASS "Remora_WiFi"
 		// =====================================		
 ````
-- Lancer la compilation + upload 
+- Lancer l'upload SPIFFS (les fichiers WEB) Menu Tools / ESP8266 Sketch Data Upload (c'est assez long)
+- Lancer la compilation + upload (CTRL-U)
 
 **Attention**, pour pouvoir uploader via le cable USB, la téléinfo ne doit pas être connectée (en OTA pas de soucis avec ça) car le port série est partagé. Donc soit il faut la débrancher soit il faut sortir le module NodeMCU du support.
 
