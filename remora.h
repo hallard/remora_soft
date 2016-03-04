@@ -128,7 +128,7 @@ extern "C" {
 #define DebugF(x)   {}
 #define DebuglnF(x) {}
 #define Debugf(...) {}
-#define Debugflush  {}
+#define Debugflush(){}
 #endif
 
 // Includes du projets remora

@@ -153,10 +153,11 @@ bool saveConfig (void)
   
   DebugF("Write config ");
   
-  if (ret_code)
+  if (ret_code) {
     Debugln(F("OK!"));
-  else
+  } else {
     Debugln(F("Error!"));
+  }
 
   //eepromDump(32);
   

@@ -573,10 +573,11 @@ void mysetup()
 
         } else if(upload.status == UPLOAD_FILE_END) {
           //true to set the size to the current progress
-          if(Update.end(true)) 
+          if(Update.end(true)) {
             Debugf("Update Success: %u\nRebooting...\n", upload.totalSize);
-          else 
+          } else {
             Update.printError(Serial1);
+          }
 
           LedRGBOFF();
 
