@@ -185,6 +185,7 @@ void showConfig()
   if (config.config & CFG_RGB_LED) DebugF(" RGB"); 
   if (config.config & CFG_DEBUG)   DebugF(" DEBUG"); 
   if (config.config & CFG_LCD)     DebugF(" LCD"); 
+  _wdt_feed();
 
   DebuglnF("\r\n===== Emoncms"); 
   DebugF("host     :"); Debugln(config.emoncms.host); 
@@ -193,6 +194,7 @@ void showConfig()
   DebugF("key      :"); Debugln(config.emoncms.apikey); 
   DebugF("node     :"); Debugln(config.emoncms.node); 
   DebugF("freq     :"); Debugln(config.emoncms.freq); 
+  _wdt_feed();
 
   DebuglnF("\r\n===== Jeedom"); 
   DebugF("host     :"); Debugln(config.jeedom.host); 
@@ -201,6 +203,7 @@ void showConfig()
   DebugF("key      :"); Debugln(config.jeedom.apikey); 
   DebugF("compteur :"); Debugln(config.jeedom.adco); 
   DebugF("freq     :"); Debugln(config.jeedom.freq); 
+  _wdt_feed();
 }
 
 /* ======================================================================
