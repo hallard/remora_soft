@@ -780,6 +780,7 @@ void handleFormConfig(void)
 {
   String response="";
   int ret ;
+  boolean showconfig = false;
 
   // We validated config ?
   if (server.hasArg("save"))
@@ -839,7 +840,7 @@ void handleFormConfig(void)
       response = PSTR("Unable to save configuration");
     }
 
-    showConfig();
+    showconfig = true;
   }
   else
   {
@@ -852,6 +853,10 @@ void handleFormConfig(void)
   Debug(":"); 
   Debugln(response); 
   server.send ( ret, "text/plain", response);
+
+  // This is slow, do it after response sent
+  if (showconfig)
+    showConfig();
 }
 
 /* ======================================================================
