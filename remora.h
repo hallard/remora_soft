@@ -34,8 +34,9 @@
 // Version logicielle remora
 #define REMORA_VERSION "1.3.2"
 
-
-
+// Définir ici votre authentification blynk, cela
+// Activera automatiquement blynk http://blynk.cc
+//#define BLYNK_AUTH "YourBlynkAuthToken"
 
 // Librairies du projet remora Pour Particle
 #ifdef SPARK
@@ -89,12 +90,12 @@
   #include <ESP8266HTTPClient.h>
   #include <ESP8266WebServer.h>
   #include <Ticker.h>
-
+  #include <NeoPixelBus.h>
+  
 extern "C" {
 #include "user_interface.h"
 }
 
-  #include "./LibNeoPixelBus.h"
   #include "./LibMCP23017.h"
   //#include "./RFM69registers.h"
   //#include "./RFM69.h"
@@ -170,8 +171,8 @@ extern "C" {
 
   // On ESP8266 we use NeopixelBus library to drive neopixel RGB LED
   #define RGB_LED_PIN 0 // RGB Led driven by GPIO0
-  #define LedRGBOFF() { rgb_led.SetPixelColor(0,0,0,0); rgb_led.Show(); }
-  #define LedRGBON(x) { rgb_led.SetPixelColor(0,x); rgb_led.Show(); }
+  #define LedRGBOFF() { rgb_led.SetPixelColor(0,0); rgb_led.Show(); }
+  #define LedRGBON(x) { RgbColor color(x); rgb_led.SetPixelColor(0,color); rgb_led.Show(); }
   //#define LedRGBOFF() {}
   //#define LedRGBON(x) {}
 
@@ -239,10 +240,18 @@ extern unsigned long uptime ;
 #endif
 
 #ifdef ESP8266
+
+  typedef NeoPixelBus<NeoRgbFeature, NeoEsp8266BitBang800KbpsMethod> MyPixelBus;
+
   // ESP8266 WebServer
   extern ESP8266WebServer server;
     // RGB LED
-  extern NeoPixelBus rgb_led;
+  //extern NeoPixelBus rgb_led;
+  //extern NeoPixelBus rgb_led(1, RGB_LED_PIN);
+  //extern template ReallyBigFunction<int>();
+  //extern  class NeoPixelBus rgb_led();
+  extern MyPixelBus rgb_led;
+  //extern  template class NeoPixelBus<NeoRgbFeature, NeoEsp8266BitBang800KbpsMethod> rgb_led;
 
   // define whole brigtness level for RGBLED
   extern uint8_t rgb_brightness;

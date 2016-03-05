@@ -53,7 +53,8 @@
   #include <Wire.h>
   #include <SPI.h>
   #include <Ticker.h>
-  #include "./LibNeoPixelBus.h"
+  #include <NeoPixelBus.h>
+  #include <BlynkSimpleEsp8266.h>
   #include "./LibMCP23017.h"
   #include "./LibSSD1306.h"
   #include "./LibGFX.h"
@@ -74,7 +75,6 @@ bool first_setup;
 // Nombre de deconexion cloud detectée
 int my_cloud_disconnect = 0;
 
-
 #ifdef SPARK
   // Particle WebServer
   //WebServer server("", 80);
@@ -88,7 +88,7 @@ int my_cloud_disconnect = 0;
   // Use WiFiClient class to create a connection to WEB server
   WiFiClient client;
   // RGB LED (1 LED)
-  NeoPixelBus rgb_led = NeoPixelBus(1, RGB_LED_PIN, NEO_RGB | NEO_KHZ800);
+  MyPixelBus rgb_led(1, RGB_LED_PIN);
 
   // define whole brigtness level for RGBLED
   uint8_t rgb_brightness = 127;
@@ -211,7 +211,26 @@ int WifiHandleConn(boolean setup = false)
       Serial.flush();
       WiFi.begin(DEFAULT_WIFI_SSID, DEFAULT_WIFI_PASS);
     #else
-      Serial.print(F("Connection Wifi avec les parametres sauvegardes ")); 
+      if (*config.ssid) {
+        DebugF("Connection à: "); 
+        Debug(config.ssid);
+        Debugflush();
+
+        // Do wa have a PSK ?
+        if (*config.psk) {
+          // protected network
+          Debug(F(" avec la clé '"));
+          Debug(config.psk);
+          Debug(F("'..."));
+          Debugflush();
+          WiFi.begin(config.ssid, config.psk);
+        } else {
+          // Open network
+          Debug(F("AP Ouvert"));
+          Debugflush();
+          WiFi.begin(config.ssid);
+        }
+      }
     #endif
 
     timeout = 25; // 25 * 200 ms = 5 sec time out
@@ -421,6 +440,7 @@ void mysetup()
     //server.begin();
 
   #elif defined (ESP8266)
+
     // Init de la téléinformation
     Serial.begin(1200, SERIAL_7E1);
 
@@ -600,6 +620,10 @@ void mysetup()
     server.begin();
     Serial.println(F("HTTP server started"));
 
+    #ifdef BLYNK_AUTH
+      Blynk.config(BLYNK_AUTH);
+    #endif
+
   #endif
 
   // Init bus I2C
@@ -629,6 +653,9 @@ void mysetup()
   #endif
   #ifdef MOD_RF69
     Serial.print("RFM69 ");
+  #endif
+  #ifdef BLYNK_AUTH
+    Serial.print("BLYNK ");
   #endif
 
   Serial.println();
@@ -730,6 +757,19 @@ void loop()
     previousMillis = currentMillis;
     uptime++;
     refreshDisplay = true ;
+    #ifdef BLYNK_AUTH
+      if ( Blynk.connected() ) {
+        String up    = String(uptime) + "s";
+        String papp  = String(mypApp) + "W";
+        String iinst = String(myiInst)+ "A";
+        Blynk.virtualWrite(V0, up, papp, iinst, mypApp);
+        _yield();
+      }
+    #endif
+  } else {
+    #ifdef BLYNK_AUTH
+      Blynk.run(); // Initiates Blynk
+    #endif
   }
 
   #ifdef MOD_TELEINFO
