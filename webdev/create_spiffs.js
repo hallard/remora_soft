@@ -34,33 +34,33 @@ var gzhtm = "../data/" + htmfile + ".gz";
 var stream = fs.createWriteStream(jsfile);
 stream.once('open', function(fd) {
 
-	console.log('Uglifying .js files');
-	uglified = uglify.minify([ 
-		"js/ajaxq.js", 
-		"js/autofill.js", 
-		"js/validator.js" 
-	] 	); 
+  console.log('Uglifying .js files');
+  uglified = uglify.minify([ 
+    "js/ajaxq.js", 
+    "js/autofill.js", 
+    "js/validator.js" 
+  ]   ); 
 
   stream.write(uglified.code);
   stream.end();
 
-	console.log('Concataining already minified .js files');
-	concat([
-	  'js/jquery-2.1.4.min.js',
-	  'js/bootstrap.min.js',
-	  'js/bootstrap-table.min.js',
-	  'js/bootstrap-table-fr-FR.min.js',
-	  'js/bootstrap-notify.min.js',
-	   jsfile
-	], jsfile, function() {
-							var gzip = zlib.createGzip();
-							var inp = fs.createReadStream(jsfile);
-							var out = fs.createWriteStream(gzjs);
+  console.log('Concataining already minified .js files');
+  concat([
+    'js/jquery-2.1.4.min.js',
+    'js/bootstrap.min.js',
+    'js/bootstrap-table.min.js',
+    'js/bootstrap-table-fr-FR.min.js',
+    'js/bootstrap-notify.min.js',
+     jsfile
+  ], jsfile, function() {
+              var gzip = zlib.createGzip();
+              var inp = fs.createReadStream(jsfile);
+              var out = fs.createWriteStream(gzjs);
 
-							console.log('Compressing '+gzjs+' file');
-							inp.pipe(gzip).pipe(out);
-						  console.log('finished!');
-						});
+              console.log('Compressing '+gzjs+' file');
+              inp.pipe(gzip).pipe(out);
+              console.log('finished!');
+            });
 });
 
 
@@ -73,14 +73,14 @@ concat([
   'css/bootstrap-table.min.css',
   'css/remora.min.css'
 ], cssfile, function() {
-						var gzip = zlib.createGzip();
-						var inp = fs.createReadStream(cssfile);
-						var out = fs.createWriteStream(gzcss);
+            var gzip = zlib.createGzip();
+            var inp = fs.createReadStream(cssfile);
+            var out = fs.createWriteStream(gzcss);
 
-						console.log('Compressing '+gzcss+' file');
-						inp.pipe(gzip).pipe(out);
-					  console.log('finished!');
-					});
+            console.log('Compressing '+gzcss+' file');
+            inp.pipe(gzip).pipe(out);
+            console.log('finished!');
+          });
 
 
 // =================
