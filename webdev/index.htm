@@ -4,23 +4,25 @@
 		<meta charset="UTF-8">
 		<link rel="shortcut icon" href="favicon.ico" sizes="48x48">
 		<link rel="stylesheet" href="css/remora.css">
+		<link rel="stylesheet" href="css/jeedom.css">
 		<title>Remora</title>
 	</head>
 	<body>
 	  <div class="container">
 			<!--  Onglets  -->
 			<ul class="nav nav-tabs" id="myTab">
-			 	<li class="active"><a href="#tab_tinfo" data-toggle="tab"><span class="glyphicon glyphicon-flash">&nbsp;</span>Téléinformation&nbsp;<span class="badge" id="scharge"></span></a></li>
-			 	<li><a href="#tab_sys" data-toggle="tab"><span class="glyphicon glyphicon-cog">&nbsp;</span>Système</a></li>
-			 	<li><a href="#tab_cfg" data-toggle="tab"><span class="glyphicon glyphicon-wrench">&nbsp;</span>Configuration</a></li>
-			 	<li><a href="#tab_fs" data-toggle="tab"><span class="glyphicon glyphicon-folder-open">&nbsp;</span>Fichiers&nbsp;<span class="badge" id="sspiffs"></span></a></li>
+				<li class="active"><a href="#tab_tinfo" data-toggle="tab"><span class="glyphicon glyphicon-flash">&nbsp;</span>Téléinformation&nbsp;<span class="badge" id="scharge"></span></a></li>
+				<li><a href="#tab_sys" data-toggle="tab"><span class="glyphicon glyphicon-cog">&nbsp;</span>Système</a></li>
+				<li><a href="#tab_cfg" data-toggle="tab"><span class="glyphicon glyphicon-wrench">&nbsp;</span>Configuration</a></li>
+				<li><a href="#tab_fs" data-toggle="tab"><span class="glyphicon glyphicon-folder-open">&nbsp;</span>Fichiers&nbsp;<span class="badge" id="sspiffs"></span></a></li>
+				<li><a href="#tab_fp" data-toggle="tab"><span class="glyphicon glyphicon-tasks">&nbsp;</span>Zones</a></li>
 			</ul>
 
 			<!-- Contenu des onglets -->
 			<div class="tab-content">
-	  
+
 				<!-- tab teleinfo -->
-		    <div class="tab-pane fade in active" id="tab_tinfo">
+			<div class="tab-pane fade in active" id="tab_tinfo">
 					<h4>Données de Téléinformation</h4>
 					<div>
 						<span style="float:left;width:18ex;text-align:center;">Charge courante : </span>
@@ -32,15 +34,15 @@
 					</div>
 					<div id="toolbar">
 					</div>
-					<table  data-toggle="table" 
+					<table  data-toggle="table"
 									data-toolbar="#toolbar"
-									class="table table-striped" 
-									data-show-refresh="true" 
-									data-show-toggle="true" 
-									data-show-columns="true" 
-									data-search="true" 
-									data-row-style="rowStyle" 
-									id="tab_tinfo_data" 
+									class="table table-striped"
+									data-show-refresh="true"
+									data-show-toggle="true"
+									data-show-columns="true"
+									data-search="true"
+									data-row-style="rowStyle"
+									id="tab_tinfo_data"
 									data-select-item-name="toolbar1">
 						<thead>
 							<tr>
@@ -53,15 +55,15 @@
 					</table>
 				</div> <!-- tab pane teleinfo -->
 
-		  	<!-- tab Systeme -->
+			<!-- tab Systeme -->
 				<div class="tab-pane fade" id="tab_sys">
 					<h4>Données du système</h4>
-					<table 	data-toggle="table" 
-									class="table table-striped table-condensed" 
-									data-show-refresh="true" 
-									data-show-toggle="true" 
-									data-search="true" 
-									id="tab_sys_data" 
+					<table 	data-toggle="table"
+									class="table table-striped table-condensed"
+									data-show-refresh="true"
+									data-show-toggle="true"
+									data-search="true"
+									id="tab_sys_data"
 									data-select-item-name="toolbar2">
 						<thead>
 							<tr>
@@ -86,30 +88,30 @@
 					<!-- SPIFFS table toolbar -->
 					<!--
 					<div id="fs_toolbar">
-		       	<div class="form-inline" role="form">
-              <div class="form-group">
-                <span>Pour ajouter ou remplacer un fichier&nbsp;</span>
-              </div>
+						<div class="form-inline" role="form">
 							<div class="form-group">
-						    <div class="dropbase dropfilesmall" id="dz">
-				      		&nbsp;&nbsp;déposer le dans cette zone&nbsp;&nbsp;
-				    		</div>
+								<span>Pour ajouter ou remplacer un fichier&nbsp;</span>
 							</div>
-		       	</div>
-	       	</div>
+							<div class="form-group">
+								<div class="dropbase dropfilesmall" id="dz">
+									&nbsp;&nbsp;déposer le dans cette zone&nbsp;&nbsp;
+								</div>
+							</div>
+						</div>
+					</div>
 					-->
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">Système de fichiers SPIFFS</h3>
 						</div>
 						<div class="panel-body">
-							<table 	data-toggle="table" 
+							<table 	data-toggle="table"
 											data-toolbar="#fs_toolbar"
-											class="table table-striped table-condensed" 
-											data-show-refresh="true" 
-											data-show-columns="true" 
-											data-search="true" 
-											id="tab_fs_data" 
+											class="table table-striped table-condensed"
+											data-show-refresh="true"
+											data-show-columns="true"
+											data-search="true"
+											id="tab_fs_data"
 											data-select-item-name="toolbar4">
 								<thead>
 									<tr>
@@ -131,7 +133,7 @@
 								  <div class="col-xs-9">
 										<div class="input-group">
 											<span class="input-group-btn">
-												<span class="btn btn-info btn-file">Selectionner&hellip; 
+												<span class="btn btn-info btn-file">Selectionner&hellip;
 													<input id="file_fw" type="file" name="update"></input>
 												</span>
 											</span>
@@ -157,11 +159,11 @@
 						<div class="panel-footer">
 							<p id="fw_info"></p>
 						</div>
-					</div> 
+					</div>
 				</div> <!-- tab pane SPIFFS-->
 
-	 	  	<!-- tab Configuration -->
-		    <div class="tab-pane fade" id="tab_cfg">
+			<!-- tab Configuration -->
+			<div class="tab-pane fade" id="tab_cfg">
 					<h4>Configuration du système</h4>
 					<div>
 						<form class="form-horizontal row-border" method="post" data-toggle="validator" id="frm_config" action="">
@@ -174,13 +176,13 @@
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Générale<span class="pull-right glyphicon glyphicon-chevron-up"></span>
 										</h3>
 									</div>
-			            <div class="panel-collapse collapse in" id="col_cfg">
+						<div class="panel-collapse collapse in" id="col_cfg">
 									  <div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Réseau Wifi</label>
 												<div class="col-sm-9">
 													<div class="input-group">
-				 										<input type="text" class="form-control" id="ssid" name="ssid" maxlength="32" value="" placeholder="Nom de votre réseau Wifi">
+														<input type="text" class="form-control" id="ssid" name="ssid" maxlength="32" value="" placeholder="Nom de votre réseau Wifi">
 														<div class="input-group-btn">
 															<button class="btn btn-default dropdown-toggle" type="button" id="btn_scan" data-toggle="modal" data-target="#tab_scan">&nbsp;<span class="glyphicon glyphicon-zoom-in"></span></button>
 													  </div>
@@ -192,13 +194,13 @@
 												<div class="col-sm-9">
 													<input type="password" class="form-control" id="psk" name="psk" maxlength="64" value="" placeholder="Clé de votre reseau Wifi">
 												</div>
-									    </div>
-									    <div class="form-group">
+										</div>
+										<div class="form-group">
 												<label class="col-sm-3 control-label">Nom réseau</label>
 												<div class="col-sm-9">
 													<input type="text" class="form-control" id="host" name="host" maxlength="32" value="" placeholder="Nom réseau du module WiInfo">
 												</div>
-									    </div>
+										</div>
 									  </div> <!-- panel body-->
 										<div class="panel-footer">
 											<div class="text-center">
@@ -219,7 +221,7 @@
 											<span class="glyphicon glyphicon-leaf pull-left"></span>&nbsp;Emoncms<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-			            <div class="panel-collapse collapse out" id="col_emon">
+						<div class="panel-collapse collapse out" id="col_emon">
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Protocole</label>
@@ -274,7 +276,7 @@
 													<span class="help-block">Si à 0 alors pas de Node ID.</span>
 												</div>
 											</div>
-										</div> 
+										</div>
 										<div class="panel-footer">
 											<div class="text-center">
 												<div class="btn-group">
@@ -283,7 +285,7 @@
 											</div>
 										</div>
 									</div>
-								</div> 
+								</div>
 							</div> <!-- panel emoncms -->
 
 
@@ -295,7 +297,7 @@
 											<span class="glyphicon glyphicon-home"></span>&nbsp;Jeedom<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-			            <div class="panel-collapse collapse out" id="col_jdom">
+						<div class="panel-collapse collapse out" id="col_jdom">
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Protocole</label>
@@ -386,10 +388,10 @@
 										<label class="col-sm-3 control-label">Masque</label>
 										<div class="col-sm-9">
 											<input class="form-control" id="wifi_msk" type="text" pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" id="wifi_msk" name="wifi_msk">
-											<div class="help-block with-errors"></div> 
-				      				<span class="help-block">Laisser ces 3 champs vides si vous êtes en configuration DHCP.</span>
+											<div class="help-block with-errors"></div>
+									<span class="help-block">Laisser ces 3 champs vides si vous êtes en configuration DHCP.</span>
 										</div>
-		      				</div>
+							</div>
 									<div class="text-center">
 										<div class="btn-group">
 											<button type="submit" class="btn btn-default">Enregistrer</button>
@@ -397,7 +399,7 @@
 									</div>
 								</div>
 							</div>--> <!-- panel Reseau statique -->
-							
+
 							<!-- Advanced -->
 							<div class="panel-group" id="pan_advanced">
 								<div class="panel panel-danger">
@@ -406,14 +408,14 @@
 											<span class="glyphicon glyphicon-cog"></span>&nbsp;Avancée<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-				          <div class="panel-collapse collapse out" id="col_advanced">
+						  <div class="panel-collapse collapse out" id="col_advanced">
 										<div class="panel-body">
-									    <div class="form-group">
+										<div class="form-group">
 												<label class="col-sm-3 control-label">Clé en mode AP</label>
 												<div class="col-sm-9">
 													<input type="text" class="form-control" id="ap_psk" name="ap_psk" maxlength="64" value="" placeholder="Laisser vide pour un point d'accès ouvert">
 												</div>
-									    </div>
+										</div>
 
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Mot de passe OTA</label>
@@ -455,14 +457,36 @@
 												</div>
 											</div>
 										</div>
-									</div> 
-								</div> 
+									</div>
+								</div>
 							</div> <!-- advanced -->
 						</form> <!-- config form -->
-					</div> 
-		  	</div> <!-- tab config-->
+					</div>
+			</div> <!-- tab config-->
 
-	  	</div> <!-- tab content-->
+			<!-- tab fil pilote -->
+			<div class="tab-pane fade" id="tab_fp">
+				<h4>Gestion des zones</h4>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Fils pilotes</h3>
+					</div>
+					<div class="panel-body">
+						<div class="all">
+							<h5>Toutes les zones</h5>
+							<div>
+								<a href="#" class="actions btn btn-default conf" role="button">Confort</a>
+								<a href="#" class="actions btn btn-default eco" role="button">ECO</a>
+								<a href="#" class="actions btn btn-default hg" role="button">hors gel</a>
+								<a href="#" class="actions btn btn-default off" role="button">arrêt</a>
+							</div>
+						</div>
+						<div class="zones"></div>
+					</div>
+				</div>
+			</div>
+
+		</div> <!-- tab content-->
 
 			<!-- Modal Confirm -->
 			<div class="modal fade" id="confirm-raz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -498,13 +522,13 @@
 							<h4 class="modal-title">Liste des réseaux Wifi</h4>
 						</div>
 						<div class="modal-body">
-							<table 	id="tab_scan_data" 
-											class="table" 
-											data-toggle="table" 
-											data-cache="false" 
-											data-sort-name="rssi" 
-											data-sort-order="desc" 
-											data-show-refresh="true" 
+							<table 	id="tab_scan_data"
+											class="table"
+											data-toggle="table"
+											data-cache="false"
+											data-sort-name="rssi"
+											data-sort-order="desc"
+											data-show-refresh="true"
 											data-show-loading="true">
 								<thead>
 									<tr>
@@ -518,14 +542,14 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-error" data-dismiss="modal">Annuler</button>
 						</div>
-			   	</div> 
-			 	</div> 
+				</div>
+				</div>
 			</div> <!-- modal Wifi Scan -->
 
 			<!-- Modal Reboot -->
 			<div class="modal fade" id="mdl_wait" data-keyboard="false">
 			  <div class="modal-dialog">
-			    <div class="modal-content">
+				<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title">Redémarrage Remora en cours</h4>
 						</div>
@@ -547,9 +571,9 @@
 	  <!-- Scripts devant être chargés en fin de page -->
 		<script src="js/remora.js"></script>
 
-		<script>  
-			var Timer_sys;  
-			var Timer_tinfo;  
+		<script>
+			var Timer_sys;
+			var Timer_tinfo;
 			var counters={};
 			var isousc, iinst;
 			var elapsed = 0;
@@ -561,56 +585,56 @@
 			  return (bytes/1024/1024/1024).toFixed(0)+' GB';
 		  }
 
-			function rowStyle(row, index) {  
-				//var classes=['active','success','info','warning','danger'];  
-				var flags=parseInt(row.fl,10);  
+			function rowStyle(row, index) {
+				//var classes=['active','success','info','warning','danger'];
+				var flags=parseInt(row.fl,10);
 				//if (flags & 0x80) return {classes:classes[4]};
 				//if (flags & 0x02) return {classes:classes[3]};
 				//if (flags & 0x08) return {classes:classes[1]};
 				if (flags & 0x80) return {classes:'danger'};
 				if (flags & 0x02) return {classes:'warning'};
 				if (flags & 0x08) return {classes:'success'};
-				return {}; 
-			} 
+				return {};
+			}
 
-			function labelFormatter(value, row) {  
-				var flags=parseInt(row.fl,10);  
-				
-				if ( typeof counters[value]==='undefined') 
-					counters[value]=1;  
-				if ( flags & 0x88 ) 
-					counters[value]++;  
-				return value + ' <span class=\"badge\">'+counters[value]+'</span>';   
-				}  
+			function labelFormatter(value, row) {
+				var flags=parseInt(row.fl,10);
 
-			function valueFormatter(value, row) {  
-				if (row.na=="ISOUSC")  
-					isousc=parseInt(value);  
-				else if (row.na=="IINST") {  
-					var pb, pe, cl;  
-					iinst=parseInt(value);  
-					pe=parseInt(iinst*100/isousc);  
-					if (isNaN(pe)) 
-						pe=0;  
-					cl='success';  
-					if (pe>70) cl ='info';  
-					if (pe>80) cl ='warning';  
-					if (pe>90) cl ='danger';  
+				if ( typeof counters[value]==='undefined')
+					counters[value]=1;
+				if ( flags & 0x88 )
+					counters[value]++;
+				return value + ' <span class=\"badge\">'+counters[value]+'</span>';
+				}
 
-					cl = 'progress-bar-' + cl;  
-					if (pe>0) 
-						$('#scharge').text(pe+'%');  
-					if (typeof isousc!='undefined')  
-						$('#pcharge').text(iinst+'A / '+isousc+'A');  
-					$('#pbar').attr('class','progress-bar '+cl);  
+			function valueFormatter(value, row) {
+				if (row.na=="ISOUSC")
+					isousc=parseInt(value);
+				else if (row.na=="IINST") {
+					var pb, pe, cl;
+					iinst=parseInt(value);
+					pe=parseInt(iinst*100/isousc);
+					if (isNaN(pe))
+						pe=0;
+					cl='success';
+					if (pe>70) cl ='info';
+					if (pe>80) cl ='warning';
+					if (pe>90) cl ='danger';
+
+					cl = 'progress-bar-' + cl;
+					if (pe>0)
+						$('#scharge').text(pe+'%');
+					if (typeof isousc!='undefined')
+						$('#pcharge').text(iinst+'A / '+isousc+'A');
+					$('#pbar').attr('class','progress-bar '+cl);
 					$('#pbar').css('width', pe+'%');
-				}   
-				return value;         
-			}  
+				}
+				return value;
+			}
 
-			function fileFormatter(value, row) {  
+			function fileFormatter(value, row) {
 				var fname = row.na;
-				var htm = '';  
+				var htm = '';
 
 				//ht+= '<button type="button" class="btn btn-xs btn-danger" title="Supprimer">';
 				//ht+= '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;';
@@ -621,25 +645,25 @@
 				htm+= '<a href="' + fname + '">' + fname + '</a>';
 
 				return htm;
-			}  
+			}
 
-			function RSSIFormatter(value, row) {  
-				var rssi=parseInt(row.rssi);  
+			function RSSIFormatter(value, row) {
+				var rssi=parseInt(row.rssi);
 				var signal = Math.min(Math.max(2*(rssi+100),0),100);
-				var cl, htm;  
-				cl='success';  
-				if (signal<70) cl ='info';  
-				if (signal<50) cl ='warning';  
-				if (signal<30) cl ='danger';  
+				var cl, htm;
+				cl='success';
+				if (signal<70) cl ='info';
+				if (signal<50) cl ='warning';
+				if (signal<30) cl ='danger';
 
-				cl = 'progress-bar-' + cl;  
+				cl = 'progress-bar-' + cl;
 				htm = "<div class='progress progress-tbl'>";
 				htm+= "<div class='progress-bar "+cl+"' role='progressbar' aria-valuemin='0' aria-valuemax='100' ";
 				htm+= "aria-valuenow='"+signal+"' style='width:"+signal+"%'>"+rssi+"dB</div></div>";
 				return htm;
-			}  
+			}
 
-			function Notify(mydelay, myicon, mytype, mytitle, mymsg) {  
+			function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
 				$.notify(
 					{	icon:'glyphicon glyphicon-'+myicon,
 						title:'&nbsp;<strong>'+mytitle+'</strong>',
@@ -650,149 +674,278 @@
 						animate:{enter:'animated fadeInDown',exit:'animated fadeOutUp',delay:mydelay*1000}
 					}
 				);
-			}  
+			}
 
 			function progressUpload(data) {
 			  if(data.lengthComputable) {
-			  	var pe = (data.loaded/data.total*100).toFixed(0) ;
-			  	$('#pfw').css('width', pe +'%');
-			   	$('#psfw').text(formatSize(data.loaded)+' / '+formatSize(data.total));  
+				var pe = (data.loaded/data.total*100).toFixed(0) ;
+				$('#pfw').css('width', pe +'%');
+				$('#psfw').text(formatSize(data.loaded)+' / '+formatSize(data.total));
 			  }
 			}
 
 			function waitReboot() {
-   			var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + '/#tab_sys' ;
+			var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + '/#tab_sys' ;
 				$('#txt_srv').text('Tentative de connexion à '+url);
 				$('#mdl_wait').modal();
 
 				var thistimer=setInterval(function() {
-			    $.ajax({
-			      cache: false,
-			      type: 'GET',
-			      url: '/hb.htm',
-			      timeout: 900,
-			      success: function(data, textStatus, XMLHttpRequest) {
-			      	console.log(data);
-			        if (data === 'OK') {
-			  				$('#mdl_wait').modal('hide');	
-			  				clearInterval(thistimer);
-			  				window.location = url;
-			  				location.reload();
-		  					elapsed=0;
-			        }
-			      }
-			    });
+				$.ajax({
+				  cache: false,
+				  type: 'GET',
+				  url: '/hb.htm',
+				  timeout: 900,
+				  success: function(data, textStatus, XMLHttpRequest) {
+					console.log(data);
+					if (data === 'OK') {
+							$('#mdl_wait').modal('hide');
+							clearInterval(thistimer);
+							window.location = url;
+							location.reload();
+							elapsed=0;
+					}
+				  }
+				});
 					elapsed++;
 					$('#txt_elapsed').text('Temps écoulé ' + elapsed + ' s');
 				}
-				,1000);  
+				,1000);
 			}
 
-			$('a[data-toggle=\"tab\"]').on('shown.bs.tab', function (e) {  
-				clearTimeout(Timer_sys);  
-				clearTimeout(Timer_tinfo);  
-				var target = $(e.target).attr("href")  
-				console.log('activated ' + target );  
+			function addZoneTemplate(id, zones) {
+				// console.log('addZoneTemplate ', id, zones);
+				var template = '<div class="col-sm-6 col-md-4 zone">'
+							 + '  <div style="min-height:80px;" class="thumbnail" data-zone="#zone#" title="Gestion de la zone #zone#">'
+							 + '    <div class="caption"><h5>Zone #zone#</h5><span class="icon iconCmd" style="font-size: 3.5em;"></span>'
+							 + '    <div>'
+							 + '      <a href="#" class="actions btn btn-default conf" role="button">Confort</a>'
+							 + '      <a href="#" class="actions btn btn-default eco" role="button">ECO</a>'
+							 + '      <a href="#" class="actions btn btn-default hg" role="button">hors gel</a>'
+							 + '      <a href="#" class="actions btn btn-default off" role="button">arrêt</a>'
+							 + '    </div>'
+							 + '  </div>'
+							 + '</div>';
+				template = template.replace(/#zone#/g, id.replace('fp', ''));
+				// console.log('template: ' + template);
+				// console.log('tab_fp .panel-body', $('#tab_fp .panel-body'));
+				$('#tab_fp .zones').append(template); // On ajoute la template dans le body du panel
+				var $div = $('#tab_fp .zones div.zone:last');
+				// console.log('div.zone last', $div);
+				activeZone(id.replace('fp', ''), zones[id]); // On active le bon bouton et l'image associée
+				// On ajoute le bind sur click sur les boutons
+				$('.actions', $div).on('click', function(e) {
+					e.stopPropagation();
+					e.preventDefault();
+					var $this = $(this),
+					zone = $this.parents('.thumbnail').data('zone');
+					if ($this.hasClass('conf')) {
+						sendOrdre(zone, 'C');
+					} else if ($this.hasClass('eco')) {
+						sendOrdre(zone, 'E');
+					} else if ($this.hasClass('hg')) {
+						sendOrdre(zone, 'H');
+					} else if ($this.hasClass('off')) {
+						sendOrdre(zone, 'A');
+					}
+				});
+			}
 
-		    // IE10, Firefox, Chrome, etc.
-				if (history.pushState) 
-			    window.history.pushState(null, null, target);
-				else 
-			    window.location.hash = target;
+			function sendOrdre(id, ordre) {
+				$('body').removeClass('loaded');
+				// console.log('sendOrdre ', id, ordre);
+				var request = {setfp: id + ordre};
+				if (id == false) {
+					request = {fp: Array(8).join(ordre)};
+				}
+				// console.log('request', request);
+				$.getJSON('/', request)
+					.done(function(data, textStatus, jqXHR) {
+						// console.log('response ', request, data, textStatus, jqXHR);
+						if (data.hasOwnProperty('response') && data.response == 0) {
+							if (id === false) {
+								$('.zones .zone').each(function(index, elt) {
+									var id = $('.thumbnail', elt).data('zone');
+									activeZone(id, ordre);
+								});
+							} else {
+								activeZone(id, ordre);
+							}
+						} else {
+							console.error('Error lors de l\'envoi d\'ordre(%s) pour fil pilote(%s):', ordre, id, data);
+						}
+						$('body').addClass('loaded');
+					}).fail(function( jqxhr, textStatus, error ) {
+						var err = textStatus + ", " + error;
+						console.error("Request Failed: " + err);
+						// console.log(jqxhr);
+					});
+			}
+
+			function activeZone(id, state) {
+				// console.log('activeZone', id, state);
+				var $div = $('div.thumbnail[data-zone="'+id+'"]'),
+				$icon = $('span.icon', $div),
+				active,
+				img;
+				// console.log('div.zone: ', $div);
+				// console.log('icon: ', $icon);
+				switch (state) {
+					case 'C':
+						active = 'a.conf';
+						img = 'jeedom-pilote-conf';
+					break;
+					case 'E':
+						active = 'a.eco';
+						img = 'jeedom-pilote-eco';
+					break;
+					case 'H':
+						active = 'a.hg';
+						img = 'jeedom-pilote-hg';
+					break;
+					case 'A':
+						active = 'a.off';
+						img = 'jeedom-pilote-off';
+					break;
+				}
+				// console.log('active: %s - img: %s', active, img);
+				$icon.empty();
+				$('a.actions', $div).removeClass('active btn-success');
+				$(active, $div).addClass('active btn-success');
+				$icon.append('<i class="icon ' + img + '"></i>');
+			}
+
+			$('a[data-toggle=\"tab\"]').on('shown.bs.tab', function (e) {
+				clearTimeout(Timer_sys);
+				clearTimeout(Timer_tinfo);
+				var target = $(e.target).attr("href")
+				console.log('activated ' + target );
+
+			// IE10, Firefox, Chrome, etc.
+				if (history.pushState)
+				window.history.pushState(null, null, target);
+				else
+				window.location.hash = target;
 
 				if (target=='#tab_tinfo')  {
-					$('#tab_tinfo_data').bootstrapTable('refresh',{silent:true, url:'/tinfo.json'});  
+					$('#tab_tinfo_data').bootstrapTable('refresh',{silent:true, url:'/tinfo.json'});
 				} else if (target=='#tab_sys') {
-					$('#tab_sys_data').bootstrapTable('refresh',{silent:true, url:'/system.json'});  
+					$('#tab_sys_data').bootstrapTable('refresh',{silent:true, url:'/system.json'});
 				} else if (target=='#tab_fs') {
-					$.getJSON( "/spiffs.json", function(spiffs_data) { 
-						var pb, pe, cl;  		
-						total= spiffs_data.spiffs[0].Total; 
-						used = spiffs_data.spiffs[0].Used; 
-						freeram = spiffs_data.spiffs[0].Ram; 
+					$.getJSON( "/spiffs.json", function(spiffs_data) {
+						var pb, pe, cl;
+						total= spiffs_data.spiffs[0].Total;
+						used = spiffs_data.spiffs[0].Used;
+						freeram = spiffs_data.spiffs[0].Ram;
 
 						//$('#tab_fs_data').bootstrapTable({silent:true, showLoading:true});
-						$('#tab_fs_data').bootstrapTable('load', spiffs_data.files, {silent:true, showLoading:true});  
+						$('#tab_fs_data').bootstrapTable('load', spiffs_data.files, {silent:true, showLoading:true});
 
-						pe=parseInt(used*100/total);  
-						if (isNaN(pe)) 
-							pe=0;  
-						cl='success';  
-						if (pe>70) cl ='warning';  
-						if (pe>85) cl ='danger';  
+						pe=parseInt(used*100/total);
+						if (isNaN(pe))
+							pe=0;
+						cl='success';
+						if (pe>70) cl ='warning';
+						if (pe>85) cl ='danger';
 
-						cl = 'progress-bar-' + cl;  
-						if (pe>0) 
-							$('#sspiffs').text(pe+'%');  
-						$('#fs_use').text(formatSize(used)+' / '+formatSize(total));  
-						$('#pfsbar').attr('class','progress-bar '+cl);  
+						cl = 'progress-bar-' + cl;
+						if (pe>0)
+							$('#sspiffs').text(pe+'%');
+						$('#fs_use').text(formatSize(used)+' / '+formatSize(total));
+						$('#pfsbar').attr('class','progress-bar '+cl);
 						$('#pfsbar').css('width', pe+'%');
 
 					})
 					.fail(function() { console.log( "error while requestiong spiffs data" );	})
 				} else if (target=='#tab_cfg') {
-					$.getJSON( "/config.json", function(form_data) { 
-						$("#frm_config").autofill(form_data); 
+					$.getJSON( "/config.json", function(form_data) {
+						$("#frm_config").autofill(form_data);
 						})
 						.fail(function() { console.log( "error while requestiong configuration data" );	})
 
-					$('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});  
+					$('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});
 				}
-			});  
+				// Onglet de gestion des zones
+				else if (target == '#tab_fp') {
+					$('body').removeClass('loaded'); // On affiche le loader
+					// On récupère l'état de toutes les zones
+					$.getJSON('/fp', function(data) {
+						$('#tab_fp .zones').empty(); // On vide l'espace d'affichage des zones
+						for (var k in data) {
+							addZoneTemplate(k, data); // On ajoute l'affichage d'une zone
+						}
+						$('body').addClass('loaded'); // On masque le loader
+						// On ajoute un bind sur les boutons d'action généraux
+						$('#tab_fp .all .actions').unbind('click').click(function(e) {
+							e.stopPropagation();
+							e.preventDefault();
+							var $this = $(this);
+							if ($this.hasClass('conf')) {
+								sendOrdre(false, 'C');
+							} else if ($this.hasClass('eco')) {
+								sendOrdre(false, 'E');
+							} else if ($this.hasClass('hg')) {
+								sendOrdre(false, 'H');
+							} else if ($this.hasClass('off')) {
+								sendOrdre(false, 'A');
+							}
+						});
+					});
+				}
+			});
 
-			$('#tab_tinfo_data').on('load-success.bs.table', function (e, data) {  
-				console.log('#tab_tinfo_data loaded');  
-		 		if ($('.nav-tabs .active > a').attr('href')=='#tab_tinfo')  
-		  		Timer_tinfo=setTimeout(function(){$('#tab_tinfo_data').bootstrapTable('refresh',{silent: true})},1000);  
-			}); 
-			$('#tab_sys_data').on('load-success.bs.table', function (e, data) {  
-				console.log('#tab_sys_data loaded');  
-		 		if ($('.nav-tabs .active > a').attr('href')=='#tab_sys')  
-		  		Timer_sys=setTimeout(function(){$('#tab_sys_data').bootstrapTable('refresh',{silent: true})},1000);  
+			$('#tab_tinfo_data').on('load-success.bs.table', function (e, data) {
+				console.log('#tab_tinfo_data loaded');
+				if ($('.nav-tabs .active > a').attr('href')=='#tab_tinfo')
+				Timer_tinfo=setTimeout(function(){$('#tab_tinfo_data').bootstrapTable('refresh',{silent: true})},1000);
+			});
+			$('#tab_sys_data').on('load-success.bs.table', function (e, data) {
+				console.log('#tab_sys_data loaded');
+				if ($('.nav-tabs .active > a').attr('href')=='#tab_sys')
+				Timer_sys=setTimeout(function(){$('#tab_sys_data').bootstrapTable('refresh',{silent: true})},1000);
 			})
-			$('#tab_fs_data').on('load-success.bs.table', function (e, data) {  
-				console.log('#tab_fs_data loaded');  
+			$('#tab_fs_data').on('load-success.bs.table', function (e, data) {
+				console.log('#tab_fs_data loaded');
 			})
-			.on('load-error.bs.table', function (e, status) {  
-				console.log('Event: load-error.bs.table');  
-					// myTimer=setInterval(function(){myRefresh()},5000);  
-			});  
+			.on('load-error.bs.table', function (e, status) {
+				console.log('Event: load-error.bs.table');
+					// myTimer=setInterval(function(){myRefresh()},5000);
+			});
 
-			$('#tab_scan').on('click-row.bs.table', function (e, name, args) {  
-				var $form = $('#tab_cfg');  
-				$('#ssid').val(name.ssid);  
-				setTimeout(function(){$('#psk').focus()},500);  
-				$('#tab_scan').modal('hide');  
-			});  
-			$('#btn_scan').click(function () {  
-				$('#tab_scan_data').bootstrapTable('refresh',{url:'/wifiscan.json',showLoading:false,silent:true});  
-  		});  
-			$('#btn_reset').click(function () {  
-				$.post('/factory_reset');  
-			  waitReboot(); 
+			$('#tab_scan').on('click-row.bs.table', function (e, name, args) {
+				var $form = $('#tab_cfg');
+				$('#ssid').val(name.ssid);
+				setTimeout(function(){$('#psk').focus()},500);
+				$('#tab_scan').modal('hide');
+			});
+			$('#btn_scan').click(function () {
+				$('#tab_scan_data').bootstrapTable('refresh',{url:'/wifiscan.json',showLoading:false,silent:true});
+		});
+			$('#btn_reset').click(function () {
+				$.post('/factory_reset');
+			  waitReboot();
 			  return false;
-			});  
-			$('#btn_reboot').click(function () {  
-			  $.post('/reset'); 
-			  waitReboot(); 
+			});
+			$('#btn_reboot').click(function () {
+			  $.post('/reset');
+			  waitReboot();
 			  return false;
-			});  
+			});
 
 			$(document)
 				.on('change', '.btn-file :file', function() {
 				  var input = $(this),
-	      	numFiles = input.get(0).files ? input.get(0).files.length : 1,
-	      	label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-	  			input.trigger('fileselect', [numFiles, label]);
+			numFiles = input.get(0).files ? input.get(0).files.length : 1,
+			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+				input.trigger('fileselect', [numFiles, label]);
 				})
-		    .on('show.bs.collapse', '.panel-collapse', function () {
-		        var $span = $(this).parents('.panel').find('span.pull-right.glyphicon');
-		        $span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
-		    })
-		    .on('hide.bs.collapse', '.panel-collapse', function () {
-		        var $span = $(this).parents('.panel').find('span.pull-right.glyphicon');
-		        $span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
-		    })
+			.on('show.bs.collapse', '.panel-collapse', function () {
+				var $span = $(this).parents('.panel').find('span.pull-right.glyphicon');
+				$span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+			})
+			.on('hide.bs.collapse', '.panel-collapse', function () {
+				var $span = $(this).parents('.panel').find('span.pull-right.glyphicon');
+				$span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+			})
 		  ;
 
 			$('#frm_config').validator().on('submit', function (e) {
@@ -802,13 +955,13 @@
 					console.log("Form Submit");
 
 					$.post('/config_form.json', $("#frm_config").serialize())
-						.done( function(msg, textStatus, xhr) { 
-  						Notify(2, 'ok', 'success', 'Enregistrement effectué', xhr.status+' '+msg);
+						.done( function(msg, textStatus, xhr) {
+						Notify(2, 'ok', 'success', 'Enregistrement effectué', xhr.status+' '+msg);
 						})
 						.fail( function(xhr, textStatus, errorThrown) {
-  						Notify(4, 'remove', 'danger', 'Erreur lors de l\'enregistrement', xhr.status+' '+errorThrown);
- 						}
-   				);
+						Notify(4, 'remove', 'danger', 'Erreur lors de l\'enregistrement', xhr.status+' '+errorThrown);
+						}
+				);
 				}
 			});
 
@@ -826,7 +979,7 @@
 				console.log('type='+type);
 
 				$('#pgfw').removeClass('show').addClass('hide');
-				$('#sfw').text( name + ' : ');  
+				$('#sfw').text( name + ' : ');
 
 				if (!f.type.match('application/octet-stream')) {
 					Notify(3, 'remove', 'danger', 'Type de fichier non conforme', 'Le fichier de mise à jour doit être un fichier binaire');
@@ -855,53 +1008,58 @@
 			});
 
 			$('#btn_upload_fw').click(function() {
-		    var formData = new FormData($('#frm_fw')[0]);
-		    $.ajax({
-	        url: '/update',  
-	        type: 'POST',
-	        data: formData,
-	        cache: false,
-	        contentType: false,
-	        processData: false,
-	        xhr: function() {  
-            var myXhr = $.ajaxSettings.xhr();
-            if(myXhr.upload)
-              myXhr.upload.addEventListener('progress',progressUpload, false); 
-            return myXhr;
-	        },
-	        beforeSend: function () { 
- 						$('#pgfw').removeClass('hide');
-	        },
-					success: function(msg, textStatus, xhr) {	
-						Notify(2, 'floppy-saved', 'success','Envoi de la mise à jour terminé', '<strong>'+xhr.status+'</strong> '+msg); 
+			var formData = new FormData($('#frm_fw')[0]);
+			$.ajax({
+			url: '/update',
+			type: 'POST',
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+			xhr: function() {
+			var myXhr = $.ajaxSettings.xhr();
+			if(myXhr.upload)
+			  myXhr.upload.addEventListener('progress',progressUpload, false);
+			return myXhr;
+			},
+			beforeSend: function () {
+						$('#pgfw').removeClass('hide');
+			},
+					success: function(msg, textStatus, xhr) {
+						Notify(2, 'floppy-saved', 'success','Envoi de la mise à jour terminé', '<strong>'+xhr.status+'</strong> '+msg);
 						waitReboot();
 					},
 					error: function(xhr, textStatus, errorThrown) {
- 						$('#pfw').removeClass('progress-bar-success').addClass('progress-bar-danger');
+						$('#pfw').removeClass('progress-bar-success').addClass('progress-bar-danger');
 						Notify(4, 'floppy-remove', 'danger', 'Erreur lors de la mise à jour du fichier '+name,'<strong>'+xhr.status+'</strong> '+errorThrown);
 					}
-		    });
+			});
 			});
 
-			window.onload = function() {  
-				var url = document.location.toString();  
-   			var full = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			window.onload = function() {
+				var url = document.location.toString();
+			var full = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 				console.log (url);
 				console.log (full);
 				console.log (location.port);
-				
-				if (url.match('#')) {  
-					$('.nav-tabs a[href=#' + url.split('#')[1] + ']').tab('show');  
-				}  
-	
-				$('.nav-tabs a[href=#' + url.split('#')[1] + ']').on('shown', function(e) {  
-					window.location.hash = e.target.hash;  
-				});   
-			}  
+
+				if (url.match('#')) {
+					$('.nav-tabs a[href=#' + url.split('#')[1] + ']').tab('show');
+				}
+
+				$('.nav-tabs a[href=#' + url.split('#')[1] + ']').on('shown', function(e) {
+					window.location.hash = e.target.hash;
+				});
+			}
 
 			$('#btn_test').click(function(){ waitReboot(); });
 
 		</script>
+		<div id="loader-wrapper">
+			<div id="loader"></div>
+			<div class="loader-section section-left"></div>
+			<div class="loader-section section-right"></div>
+		</div>
 	</body>
 </html>
 
