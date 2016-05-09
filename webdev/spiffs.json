@@ -1,0 +1,14 @@
+{
+"files":[
+{"na":"/css/wifinfo.css.gz","va":"21490"}
+,{"na":"/fonts/glyphicons.woff","va":"23424"}
+,{"na":"/fonts/glyphicons.woff.gz","va":"23164"}
+,{"na":"/fonts/glyphicons.woff2","va":"18028"}
+,{"na":"/fonts/glyphicons.woff2.gz","va":"18061"}
+,{"na":"/index.htm.gz","va":"5073"}
+,{"na":"/js/wifinfo.js.gz","va":"53800"}
+],
+"spiffs":[
+{"Total":957314, "Used":165911, "ram":30112}
+]
+}

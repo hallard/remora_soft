@@ -1,0 +1,27 @@
+
+.nav-tabs {margin-top:4px;}
+.fixed-table-body {height:auto;}
+.progress {position:relative;}
+.progress span {position:absolute;display:block;width:100%;color:black;}
+.progress-tbl {margin-bottom:0px;}
+input[readonly] { background-color:white !important; cursor:text !important;}
+.btn-file { position:relative; overflow:hidden;}
+.btn-file input[type=file] { position:absolute; top:0; right:0; min-width:100%; min-height:100%; font-size:100px; text-align:right; filter:alpha(opacity=0); opacity:0; outline:none; background:white; cursor:inherit; display:block;}
+.clickable{ cursor:pointer; }
+.panel-heading span { font-size:15px; }
+.animated {-webkit-animation-duration:1s; animation-duration:1s; -webkit-animation-fill-mode:both; animation-fill-mode:both;}
+@-webkit-keyframes fadeInDown { from { opacity:0; -webkit-transform: translate3d(0,-100%,0); transform: translate3d(0,-100%,0); } to { opacity:1; -webkit-transform:none; transform:none; } }
+@keyframes fadeInDown { from { opacity:0; -webkit-transform: translate3d(0,-100%,0); transform:translate3d(0,-100%,0); } to { opacity:1; -webkit-transform:none; transform:none; } } 
+.fadeInDown { -webkit-animation-name: fadeInDown; animation-name: fadeInDown; }
+@-webkit-keyframes fadeOutUp { from { opacity:1; } to { opacity:0; -webkit-transform:translate3d(0,-100%,0); transform:translate3d(0,-100%,0); } }
+@keyframes fadeOutUp { from { opacity:1; } to { opacity:0; -webkit-transform: translate3d(0,-100%,0); transform: translate3d(0,-100%,0); } }
+.fadeOutUp { -webkit-animation-name:fadeOutUp; animation-name:fadeOutUp; }
+.dropbase{ border: 2px #BBBBBB dashed;}
+.dropfile{ height: 60px; line-height:55px; text-align: center; vertical-align: middle;webkit-border-radius: 10px;border-radius: 10px;}
+.dzdrop{ border: 2px red dashed;}
+.dzdroped{ border: 2px green dashed;}
+.dzleave{ border: 2px #BBBBBB dashed;}
+.dropfilesmall{ height: 40px; text-align: center; -webkit-border-radius: 5px; border-radius: 5px;}
+.glyphicon-refresh-animate{-animation:spin .7s infinite linear;-webkit-animation: spin2 .7s infinite linear;}
+@-webkit-keyframes spin2 {from { -webkit-transform: rotate(0deg);} to { -webkit-transform: rotate(360deg);}}
+@keyframes spin {from { transform: scale(1) rotate(0deg);} to { transform: scale(1) rotate(360deg);}}

@@ -1,0 +1,13 @@
+{
+"ssid":"myssid",
+"psk":"mypsk",
+"host":"WifInfo",
+"ap_psk":"",
+"emon_host":"emoncms.org",
+"emon_port":"80",
+"emon_url":"/input.json",
+"emon_apikey":"sdfsdsdsds",
+"emon_node":"0",
+"ota_auth":"WifInfo_8266",
+"ota_port":"8266"
+}

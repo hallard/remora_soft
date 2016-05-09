@@ -1,0 +1,16 @@
+[
+{"na":"Uptime","va":"00:02:16"},
+{"na":"Compile le","va":"Nov 22 2015 01:43:40"},
+{"na":"Free Ram","va":"30.68 KB"},
+{"na":"SDK Version","va":"1.3.0"},
+{"na":"Chip ID","va":"0xA67B93"},
+{"na":"Boot Version","va":"0x1F"},
+{"na":"Flash Real Size","va":"4.00 MB"},
+{"na":"Firmware Size","va":"269.23 KB"},
+{"na":"Free Size","va":"2.73 MB"},
+{"na":"Analog","va":"269 mV"},
+{"na":"SPIFFS Total","va":"934.88 KB"},
+{"na":"SPIFFS Used","va":"339.24 KB"},
+{"na":"SPIFFS Occupation","va":"36%"},
+{"na":"Free Ram","va":"30.27 KB"}
+]
