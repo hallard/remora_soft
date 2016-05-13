@@ -106,7 +106,7 @@ var spiffs = {
 	]
 }
 
-var wifiscan = { "wifiscan":[
+var wifiscan = [
 	{"ssid":"FreeWifi_secure","rssi":-59,"enc":"????","chan":1},
 	{"ssid":"HOME-FREEBOX","rssi":-60,"enc":"WPA2","chan":1},
 	{"ssid":"FreeWifi","rssi":-60,"enc":"Open","chan":1},
@@ -115,8 +115,6 @@ var wifiscan = { "wifiscan":[
 	{"ssid":"Livebox-0479","rssi":-93,"enc":"Auto","chan":6},
 	{"ssid":"HOME-HOTSPOT","rssi":-60,"enc":"WPA2","chan":9}
 	]
-}
-
 
 
 function system() {
@@ -192,26 +190,38 @@ dispatcher.onError(function(req, res) {
 	var query = url_parts.query;
 	var contentType ;
 
- 	console.log(util.inspect({query: query}));
+ 	//console.log(util.inspect({query: query}));
 
 		// Check first Query posted http://ip/?toto=titi
 		if (!isEmptyObject(query)) {
-
 
 		 	if (query.fp != undefined && query.fp.length==7){
 		 		console.log("FP="+query.fp);
 		 		for (var i=1; i<=7; i++) {
 		 			fp["fp"+i] = query.fp.charAt(i-1);
 		 		}
-
 		 		console.log( util.inspect({fp: fp}));
+			  res.writeHead(200, {"Content-Type": "text/json"});
+			  res.end('{"response":0}');
 
-		 	} else if  (query.setfp != undefined ) {
+		 	} else if  (query.setfp != undefined && query.setfp.length==2) {
 		 		console.log("setfp="+query.setfp);
+		 		var i = query.setfp.charAt(0);
+		 		var o = query.setfp.charAt(1).toUpperCase();
+
+			  res.writeHead(200, {"Content-Type": "text/json"});
+
+		 		if (i>='1' && i<='7' && (o=='C'||o=='A'||o=='E'||o=='H'||o=='1'||o=='2') ) {
+		 			fp["fp"+i] = o;
+			  	res.end('{"response":0}');
+			 		console.log( util.inspect({fp: fp}));
+		 		} else {
+				  res.end('{"response":1}');
+				}
+
 		 	} else {
         res.writeHead(500);
         res.end('Sorry, unknown or bad query received: '+query+' ..\n');
-        res.end(); 
 		 	}
 
 		// serve Web page
@@ -320,13 +330,13 @@ dispatcher.onGet("/?", function(req, res) {
 
 			form.on('end', function () {
 			  res.writeHead(200, {"Content-Type": "text/json"});
-			  res.end(JSON.stringify("{\"response\":1}"));
+ 			  res.end('{"response":0}');
 			});
 			form.parse(req);
 
 }); 
 
-dispatcher.onGet("/wifiscan", function(req, res) {
+dispatcher.onGet("/wifiscan.json", function(req, res) {
 			setTimeout(function() {
 	      						res.writeHead(200, {"Content-Type": "text/json"});
   	    						res.end(JSON.stringify(wifiscan));
