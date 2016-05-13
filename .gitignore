@@ -5,7 +5,9 @@
 node_modules/
 font-awesome-4.5.0/
 bootstrap-3.3.5-dist/
-webdev/
+index_dropzone.htm
+precache.html
+
 
 *.pydevproject
 .project
