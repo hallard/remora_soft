@@ -4,7 +4,6 @@
 		<meta charset="UTF-8">
 		<link rel="shortcut icon" href="favicon.ico" sizes="48x48">
 		<link rel="stylesheet" href="css/remora.css">
-		<link rel="stylesheet" href="css/jeedom.css">
 		<title>Remora</title>
 	</head>
 	<body>
@@ -664,6 +663,7 @@
 			}
 
 			function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
+				$('body').addClass('loaded');
 				$.notify(
 					{	icon:'glyphicon glyphicon-'+myicon,
 						title:'&nbsp;<strong>'+mytitle+'</strong>',
@@ -771,12 +771,14 @@
 								activeZone(id, ordre);
 							}
 						} else {
-							console.error('Error lors de l\'envoi d\'ordre(%s) pour fil pilote(%s):', ordre, id, data);
+							//console.error('Error lors de l\'envoi d\'ordre(%s) pour fil pilote(%s):', ordre, id, data);
+							Notify(4, 'remove', 'danger', 'Error ordre '+ordre+' pour fil pilote #'+id, jqXHR.status+' '+data);
 						}
 						$('body').addClass('loaded');
-					}).fail(function( jqxhr, textStatus, error ) {
+					}).fail(function( jqXHR, textStatus, error ) {
 						var err = textStatus + ", " + error;
-						console.error("Request Failed: " + err);
+						//console.error("Request Failed: " + err);
+						Notify(4, 'remove', 'danger', 'Error ordre '+ordre+' pour fil pilote #'+id, jqXHR.status+' '+err);
 						// console.log(jqxhr);
 					});
 			}
@@ -1050,6 +1052,9 @@
 				$('.nav-tabs a[href=#' + url.split('#')[1] + ']').on('shown', function(e) {
 					window.location.hash = e.target.hash;
 				});
+
+				// enlever le loader, tout est prêt
+				$('body').addClass('loaded');
 			}
 
 			$('#btn_test').click(function(){ waitReboot(); });
