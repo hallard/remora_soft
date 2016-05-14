@@ -119,17 +119,17 @@ class TInfo
 {
   public:
     TInfo();
-    void        init();
-    _State_e    process (char c);
-    void        attachADPS(void (*_fn_ADPS)(uint8_t phase));  
-    void        attachData(void (*_fn_data)(ValueList * valueslist, uint8_t state));  
-    void        attachNewFrame(void (*_fn_new_frame)(ValueList * valueslist));  
-    void        attachUpdatedFrame(void (*_fn_updated_frame)(ValueList * valueslist));  
-    ValueList * addCustomValue(char * name, char * value, uint8_t * flags);
-    ValueList * getList(void);
-    uint8_t     valuesDump(void);
-    char *      valueGet(char * name, char * value);
-    boolean     listDelete();
+    void         init();
+    _State_e      process (char c);
+    void          attachADPS(void (*_fn_ADPS)(uint8_t phase));  
+    void          attachData(void (*_fn_data)(ValueList * valueslist, uint8_t state));  
+    void          attachNewFrame(void (*_fn_new_frame)(ValueList * valueslist));  
+    void          attachUpdatedFrame(void (*_fn_updated_frame)(ValueList * valueslist));  
+    ValueList *   addCustomValue(char * name, char * value, uint8_t * flags);
+    ValueList *   getList(void);
+    uint8_t       valuesDump(void);
+    char *        valueGet(char * name, char * value);
+    boolean       listDelete();
     unsigned char calcChecksum(char *etiquette, char *valeur);
 
   private:
