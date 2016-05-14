@@ -35,11 +35,11 @@ var stream = fs.createWriteStream(jsfile);
 stream.once('open', function(fd) {
 
   console.log('Uglifying .js files');
-  uglified = uglify.minify([ 
-    "js/ajaxq.js", 
-    "js/autofill.js", 
-    "js/validator.js" 
-  ]   ); 
+  uglified = uglify.minify([
+    "js/ajaxq.js",
+    "js/autofill.js",
+    "js/validator.js"
+  ]   );
 
   stream.write(uglified.code);
   stream.end();
@@ -92,5 +92,14 @@ var out = fs.createWriteStream(gzhtm);
 
 console.log('Compressing ' + gzhtm + ' file');
 inp.pipe(gzip).pipe(out);
+
+// =================
+// fonts
+// =================
+var fonts = ["glyphicons.woff", "glyphicons.woff2", "jeedom.woff"];
+for (var i = 0; i < fonts.length; i++) {
+  console.log('Copy font: ' + fonts[i]);
+  fs.createReadStream('fonts/' + fonts[i]).pipe(fs.createWriteStream('../data/fonts/' + fonts[i]));
+}
 console.log('finished!');
 
