@@ -183,7 +183,6 @@ ValueList * TInfo::valueAdd(char * name, char * value, uint8_t checksum, uint8_t
   uint8_t lgname = strlen(name);
   uint8_t lgvalue = strlen(value);
   uint8_t thischeck = calcChecksum(name,value);
-  uint8_t thisflags = *flags;
   
   // just some paranoia 
   if (thischeck != checksum ) {
@@ -192,7 +191,7 @@ ValueList * TInfo::valueAdd(char * name, char * value, uint8_t checksum, uint8_t
     TI_Debug(value);
     TI_Debug(F(" '"));
     TI_Debug((char) cheksum);
-    TI_Debug(F("' Not added bad checksum calulated '"));
+    TI_Debug(F("' Not added bad checksum calculated '"));
     TI_Debug((char) thischeck);
     TI_Debugln(F("'"));
   } else  {
@@ -248,13 +247,22 @@ ValueList * TInfo::valueAdd(char * name, char * value, uint8_t checksum, uint8_t
       // Our linked list structure sizeof(ValueList)
       // + Name  + '\0'
       // + Value + '\0'
-      size_t size = sizeof(ValueList) + lgname + 1 + lgvalue + 1  ;
+      size_t size ;
+      #ifdef ESP8266
+        lgname = ESP8266_allocAlign(lgname+1);   // Align name buffer
+        lgvalue = ESP8266_allocAlign(lgvalue+1); // Align value buffer
+        // Align the whole structure
+        size = ESP8266_allocAlign( sizeof(ValueList) + lgname + lgvalue  )     ; 
+      #else
+        size = sizeof(ValueList) + lgname + 1 + lgvalue + 1  ;
+      #endif
+
       // Create new node with size to store strings
       if ((newNode = (ValueList  *) malloc(size) ) == NULL) 
         return ( (ValueList *) NULL );
-      else 
-        // get our buffer Safe
-        memset(newNode, 0, size);
+
+      // get our buffer Safe
+      memset(newNode, 0, size);
       
       // Put the new node on the list
       me->next = newNode;
@@ -266,8 +274,8 @@ ValueList * TInfo::valueAdd(char * name, char * value, uint8_t checksum, uint8_t
       newNode->value = (char *) newNode->name + lgname + 1;
 
       // Copy the string data
-      strncpy(newNode->name , name  , lgname );
-      strncpy(newNode->value, value , lgvalue );
+      memcpy(newNode->name , name  , lgname );
+      memcpy(newNode->value, value , lgvalue );
 
       // So we just created this node but was it new
       // or was matter of text size ?
@@ -277,29 +285,16 @@ ValueList * TInfo::valueAdd(char * name, char * value, uint8_t checksum, uint8_t
         newNode->flags = *flags;
       }
 
-      // Here we double check adding value went fine, I've got some
-      // issues on ESP8266 with corrupted linked list, I'm trying
-      // to investigate on problem checking and checking again to 
-      // see where the problem's occurs
-      thischeck = calcChecksum(newNode->name, newNode->value);
+      TI_Debug(F("Added '"));
+      TI_Debug(name);
+      TI_Debug('=');
+      TI_Debug(value);
+      TI_Debug(F("' '"));
+      TI_Debug((char) cheksum);
+      TI_Debugln(F("'"));
 
       // return pointer on the new node
-      if ( thischeck != checksum ) {
-        TI_Debug(newNode->name);
-        TI_Debug('=');
-        TI_Debug(newNode->valu);
-        TI_Debug(F(" '"));
-        TI_Debug((char) cheksum);
-        TI_Debug(F("' added with error bad checksum after add '"));
-        TI_Debug((char) thischeck);
-        TI_Debugln(F("'"));
-
-        // restore original input flags
-        *flags = thisflags;
-      } else {
-        // We're good
-        return (newNode);
-      }
+      return (newNode);
     }
 
   } // Checksum OK
