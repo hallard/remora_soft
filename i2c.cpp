@@ -62,7 +62,7 @@ uint8_t i2c_scan()
 
   unsigned long start = millis();
 
-  Serial.println(F("Scanning I2C bus ..."));
+  DEBUG_SERIAL.println(F("Scanning I2C bus ..."));
 
   // slow down i2C speed in case of slow device
   #if defined (SPARK)
@@ -82,28 +82,28 @@ uint8_t i2c_scan()
 
     if (error == 0)
     {
-      Serial.print(F("I2C device found at address 0x"));
+      DEBUG_SERIAL.print(F("I2C device found at address 0x"));
       if (address<16)
-        Serial.print("0");
-      Serial.print(address,HEX);
+        DEBUG_SERIAL.print("0");
+      DEBUG_SERIAL.print(address,HEX);
 
       if (address>=0x20 && address<=0x27)
-        Serial.println("-> MCP23017 !");
+        DEBUG_SERIAL.println("-> MCP23017 !");
       else if (address==0x3C || address==0x3D)
-        Serial.println("-> OLED !");
+        DEBUG_SERIAL.println("-> OLED !");
       else if (address==0x29 || address==0x39 || address==0x49)
-        Serial.println("-> TSL2561 !");
+        DEBUG_SERIAL.println("-> TSL2561 !");
       else
-        Serial.println("-> Unknown device !");
+        DEBUG_SERIAL.println("-> Unknown device !");
 
       nDevices++;
     }
   }
 
-  Serial.print(nDevices);
-  Serial.print(F(" I2C devices found, scan took "));
-  Serial.print(millis()-start);
-  Serial.println(" ms");
+  DEBUG_SERIAL.print(nDevices);
+  DEBUG_SERIAL.print(F(" I2C devices found, scan took "));
+  DEBUG_SERIAL.print(millis()-start);
+  DEBUG_SERIAL.println(" ms");
 
   // Get back to full speed
   // slow down i2C speed in case of slow device
