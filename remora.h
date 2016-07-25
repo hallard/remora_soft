@@ -26,7 +26,7 @@
 #define REMORA_BOARD_V13  // Version 1.3
 
 //  Définir ici les modules utilisés sur la carte Remora
-//#define MOD_RF69      /* Module RF  */
+#define MOD_RF69      /* Module RF  */
 //#define MOD_OLED      /* Afficheur  */
 #define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
@@ -108,7 +108,7 @@ extern "C" {
 
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
-  #define DEBUG_SERIAL  Serial
+  #define DEBUG_SERIAL  Serial1
 #endif
 
 #define DEBUG

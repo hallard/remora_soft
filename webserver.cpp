@@ -162,11 +162,11 @@ void formatNumberJSON( String &response, char * value)
       }
     } else {
       response += "\"Error Value too long\"" ;
-      Serial.println(F("formatNumberJSON Value too long!"));
+      DEBUG_SERIAL.println(F("formatNumberJSON Value too long!"));
     }
   } else {
     response += "\"Error Bad Value\"" ;
-    Serial.println(F("formatNumberJSON Bad Value!"));
+    DEBUG_SERIAL.println(F("formatNumberJSON Bad Value!"));
   }
 }
 
@@ -879,11 +879,11 @@ void handleNotFound(void)
   // convert uri to char * for compare
   uri = sUri.c_str();
 
-  Serial.print("URI[");
-  Serial.print(strlen(uri));
-  Serial.print("]='");
-  Serial.print(uri);
-  Serial.println("'");
+  DEBUG_SERIAL.print("URI[");
+  DEBUG_SERIAL.print(strlen(uri));
+  DEBUG_SERIAL.print("]='");
+  DEBUG_SERIAL.print(uri);
+  DEBUG_SERIAL.println("'");
 
   // Got consistent URI, skip fisrt / ?
   // Attention si ? dans l'URL çà ne fait pas partie de l'URI
@@ -905,7 +905,7 @@ void handleNotFound(void)
 
           //Debugf("compare to '%s' ", me->name);
           // Do we have this one ?
-          if (!stricmp(me->name, uri)) {
+          if (!strcasecmp(me->name, uri)) {
             // no need to continue
             found = true;
 
@@ -924,11 +924,11 @@ void handleNotFound(void)
     // ========================
 
     // http://ip_remora/relais
-    if (!stricmp("relais", uri)) {
+    if (!strcasecmp("relais", uri)) {
       relaisJSON(response);
       found = true;
     // http://ip_remora/delestage
-    } else if (!stricmp("delestage", uri)) {
+    } else if (!strcasecmp("delestage", uri)) {
       delestageJSON(response);
       found = true;
     // http://ip_remora/fp ou http://ip_remora/fpx
