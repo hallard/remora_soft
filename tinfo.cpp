@@ -33,6 +33,7 @@ float ratio_relestage = RELESTAGE_RATIO;
 float myDelestLimit = 0.0;
 float myRelestLimit = 0.0;
 int etatrelais       = 0; // Etat du relais
+int lastPtec = PTEC_HP;
 
 unsigned long tinfo_led_timer = 0; // Led blink timer
 unsigned long tinfo_last_frame = 0; // dernière fois qu'on a recu une trame valide
@@ -93,6 +94,8 @@ void DataCallback(ValueList * me, uint8_t flags)
   if ( flags & TINFO_FLAGS_UPDATED ) DebugF(" Updated");
   if ( flags & TINFO_FLAGS_EXIST )   DebugF(" Exist");
   if ( flags & TINFO_FLAGS_ALERT )   DebugF(" Alert");
+  Debugln();
+  Debugflush();
 
   // Nous venons de recevoir la puissance tarifaire en cours
   // To DO : gérer les autres types de contrat
@@ -104,6 +107,21 @@ void DataCallback(ValueList * me, uint8_t flags)
     // To DO : gérer les autres types de contrat
     if (!strcmp(me->value, "HP..")) ptec= PTEC_HP;
     if (!strcmp(me->value, "HC..")) ptec= PTEC_HC;
+
+    //=============================================================
+    //    Ajout de la gestion du relais aux heures creuses
+    //=============================================================
+    if (lastPtec != ptec) {
+      Debug("PTEC: ");
+      if (ptec == PTEC_HC) {
+        Debugln(" HC");
+        relais("1");
+      } else {
+        Debugln(" HP");
+        relais("0");
+      }
+      lastPtec = (int)ptec;
+    }
   }
 
   // Mise à jour des variables "cloud"
