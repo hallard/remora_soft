@@ -309,6 +309,19 @@ function log(con, msg) {
 	con.sendUTF(JSON.stringify({message:"log", data:msg}));
 }
 
+dispatcher.onGet('/tinfo.json', function(req, res) {
+	require('fs').readFile('./tinfo.json', function(err, file) {
+		if (err) {
+			//errorListener(req, res);
+			return;
+		}
+		res.writeHeader(200, {
+			"Content-Type": "text/json"
+		});
+		res.write(file, 'binary');
+		res.end();
+	});
+})
 
 dispatcher.onGet("/sensors", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
@@ -316,7 +329,7 @@ dispatcher.onGet("/sensors", function(req, res) {
 });    
 
 dispatcher.onGet("/system.json", function(req, res) {
-			console.log('s[0]=' + util.inspect(system[0], false, null));
+			//console.log('s[0]=' + util.inspect(system[0], false, null));
 			//system[0].va = ((Date.now()-startTime)/1000).toFixed(0);
 			//system[1].va = humanSize(os.freemem());
       res.writeHead(200, {"Content-Type": "text/json"});
