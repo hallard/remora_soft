@@ -146,8 +146,8 @@ bool rfm_setup(void)
 {
   bool ret = false;
 
-  Serial.print("Initializing RFM69...");
-  Serial.flush();
+  Debug("Initializing RFM69...");
+  Debugflush();
 
   // RF Radio initialization
   // =======================
@@ -156,9 +156,9 @@ bool rfm_setup(void)
   // modulation GFSK_Rb250Fd250, +13dbM
   // No encryption
   if (!driver.init()) {
-    Serial.println("Not found!");
+    Debugln("Not found!");
   } else {
-    Serial.println("OK!");
+    Debugln("OK!");
 
     // If you are using a high power RF69, you *must* set a Tx power in the
     // range 14 to 20 like this:
@@ -176,7 +176,7 @@ bool rfm_setup(void)
     nodes_list.lastseen = 0 ;
   }
 
-  Serial.flush();
+  Debugflush();
   return (ret);
 
 }
@@ -213,44 +213,44 @@ void rfm_loop(void)
     #define DEBUG_VERBOSE
     #ifdef DEBUG_VERBOSE
       // Dump Raw packet
-      Serial.print(F("# ("));
-      Serial.print(uptime);
-      Serial.print(F(")"));
+      DebugF("# (");
+      Debug(uptime);
+      DebugF(")");
 
       if (data.flags & RF_PAYLOAD_REQ_ACK)
-        Serial.print(F(" ACKED"));
+        DebugF(" ACKED");
 
 
-      Serial.print(F(" <- node:"));  Serial.print(data.nodeid,DEC);
-      Serial.print(F(" size:"));     Serial.print(data.size);
-      Serial.print(F(" type:"));     Serial.print(decode_frame_type(cmd));
-      Serial.print(F(" (0x"));       Serial.print(cmd,HEX);
-      Serial.print(F(") RSSI:"));    Serial.print(data.rssi,DEC);
-      Serial.print(F("dB  seen :"));
-      Serial.print(timeAgo(seen));
+      DebugF(" <- node:");  DEBUG_SERIAL.print(data.nodeid,DEC);
+      DebugF(" size:");     Debug(data.size);
+      DebugF(" type:");     DEBUG_SERIAL.print(decode_frame_type(cmd));
+      DebugF(" (0x");       DEBUG_SERIAL.print(cmd,HEX);
+      DebugF(") RSSI:");    DEBUG_SERIAL.print(data.rssi,DEC);
+      DebugF("dB  seen :");
+      Debug(timeAgo(seen));
 
       // Detail to know exactly number of seconds between node send
       if ( seen<=300 && seen>0 ) {
-        Serial.print(F(" ("));
-        Serial.print(seen);
-        Serial.print(F(")"));
+        DebugF(" (");
+        Debug(seen);
+        DebugF(")");
       }
 
-      Serial.print(F("\r\n# buffer:"));
+      DebugF("\r\n# buffer:");
 
       char buff[4];
       for (uint8_t i=0; i<data.size; i++) {
         sprintf_P(buff, PSTR(" %02X"), data.buffer[i]);
-        Serial.print(buff);
+        Debug(buff);
       }
 
-      Serial.print(F("  "));
+      DebugF("  ");
       #ifdef SPARK
-        Serial.print(System.freeMemory());
+        Debug(System.freeMemory());
       #else
-        Serial.print(ESP.getFreeHeap());
+        Debug(ESP.getFreeHeap());
       #endif
-      Serial.println(F(" Bytes free "));
+      DebuglnF(" Bytes free ");
     #endif
 
     // decode format
@@ -281,11 +281,11 @@ void rfm_loop(void)
 
      // Start line with a # (comment)
      // indicate external parser that it's just debug information
-     Serial.print(F("\r\n# -> "));
-     Serial.print(data.nodeid,DEC);
-     Serial.print(F(" PINGBACK ("));
-     Serial.print(ppl->rssi,DEC);
-     Serial.println(F("dB)"));
+     DebugF("\r\n# -> ");
+     DEBUG_SERIAL.print(data.nodeid,DEC);
+     DebugF(" PINGBACK (");
+     DEBUG_SERIAL.print(ppl->rssi,DEC);
+     DebuglnF("dB)");
    }
 
    // Start blue led
@@ -294,7 +294,7 @@ void rfm_loop(void)
 
    // known Payload ? send frame to serial
    if (cmd) {
-     Serial.println(json_str);
+     Debugln(json_str);
    }
 
 

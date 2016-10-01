@@ -112,7 +112,7 @@ Comments: -
 #ifdef SPARK
 void spark_expose_cloud(void)
 {
-  Serial.println("spark_expose_cloud()");
+  Debugln("spark_expose_cloud()");
 
   #ifdef MOD_TELEINFO
     // Déclaration des variables "cloud" pour la téléinfo (10 variables au maximum)
@@ -198,17 +198,17 @@ int WifiHandleConn(boolean setup = false)
     // Feed the dog
     _wdt_feed();
 
-    Serial.print(F("========== SDK Saved parameters Start")); 
-    WiFi.printDiag(Serial);
-    Serial.println(F("========== SDK Saved parameters End")); 
+    DebugF("========== SDK Saved parameters Start"); 
+    WiFi.printDiag(DEBUG_SERIAL);
+    DebuglnF("========== SDK Saved parameters End"); 
 
     #if defined (DEFAULT_WIFI_SSID) && defined (DEFAULT_WIFI_PASS)
-      Serial.print(F("Connection au Wifi : ")); 
-      Serial.print(DEFAULT_WIFI_SSID); 
-      Serial.print(F(" avec la clé '"));
-      Serial.print(DEFAULT_WIFI_PASS);
-      Serial.print(F("'..."));
-      Serial.flush();
+      DebugF("Connection au Wifi : "); 
+      Debug(DEFAULT_WIFI_SSID); 
+      DebugF(" avec la clé '");
+      Debug(DEFAULT_WIFI_PASS);
+      DebugF("'...");
+      Debugflush();
       WiFi.begin(DEFAULT_WIFI_SSID, DEFAULT_WIFI_PASS);
     #else
       if (*config.ssid) {
@@ -249,28 +249,28 @@ int WifiHandleConn(boolean setup = false)
     // connected ? disable AP, client mode only
     if (ret == WL_CONNECTED)
     {
-      Serial.println(F("connecte!"));
+      DebuglnF("connecte!");
       WiFi.mode(WIFI_STA);
 
-      Serial.print(F("IP address   : ")); Serial.println(WiFi.localIP());
-      Serial.print(F("MAC address  : ")); Serial.println(WiFi.macAddress());
+      DebugF("IP address   : "); Debugln(WiFi.localIP());
+      DebugF("MAC address  : "); Debugln(WiFi.macAddress());
     
     // not connected ? start AP
     } else {
       char ap_ssid[32];
-      Serial.print(F("Erreur, passage en point d'acces "));
-      Serial.println(DEFAULT_HOSTNAME);
+      DebugF("Erreur, passage en point d'acces ");
+      Debugln(DEFAULT_HOSTNAME);
 
       // protected network
-      Serial.print(F(" avec la clé '"));
-      Serial.print(DEFAULT_WIFI_AP_PASS);
-      Serial.println("'");
-      Serial.flush();
+      DebugF(" avec la clé '");
+      Debug(DEFAULT_WIFI_AP_PASS);
+      Debugln("'");
+      Debugflush();
       WiFi.softAP(DEFAULT_HOSTNAME, DEFAULT_WIFI_AP_PASS);
       WiFi.mode(WIFI_AP_STA);
 
-      Serial.print(F("IP address   : ")); Serial.println(WiFi.softAPIP());
-      Serial.print(F("MAC address  : ")); Serial.println(WiFi.softAPmacAddress());
+      DebugF("IP address   : "); Debugln(WiFi.softAPIP());
+      DebugF("MAC address  : "); Debugln(WiFi.softAPmacAddress());
     }
 
     // Feed the dog
@@ -354,12 +354,15 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
+  #ifdef DEBUG
+    DEBUG_SERIAL.begin(115200);
+  #endif
 
   // says main loop to do setup
   first_setup = true;
 
-  Serial.println("Starting main setup");
-  Serial.flush();
+  Debugln("Starting main setup");
+  Debugflush();
 }
 
 
@@ -423,12 +426,12 @@ void mysetup()
     }
 
     // Et on affiche nos paramètres
-    Serial.println("Core Network settings");
-    Serial.print("IP   : "); Serial.println(WiFi.localIP());
-    Serial.print("Mask : "); Serial.println(WiFi.subnetMask());
-    Serial.print("GW   : "); Serial.println(WiFi.gatewayIP());
-    Serial.print("SSDI : "); Serial.println(WiFi.SSID());
-    Serial.print("RSSI : "); Serial.print(WiFi.RSSI());Serial.println("dB");
+    Debugln("Core Network settings");
+    Debug("IP   : "); Debugln(WiFi.localIP());
+    Debug("Mask : "); Debugln(WiFi.subnetMask());
+    Debug("GW   : "); Debugln(WiFi.gatewayIP());
+    Debug("SSDI : "); Debugln(WiFi.SSID());
+    Debug("RSSI : "); Debug(WiFi.RSSI());Debugln("dB");
 
     //  WebServer / Command
     //server.setDefaultCommand(&handleRoot);
@@ -498,13 +501,13 @@ void mysetup()
     // OTA callbacks
     ArduinoOTA.onStart([]() { 
       LedRGBON(COLOR_MAGENTA);
-      Serial.print(F("\r\nUpdate Started.."));
+      DebugF("\r\nUpdate Started..");
       ota_blink = true;
     });
 
     ArduinoOTA.onEnd([]() { 
       LedRGBOFF();
-      Serial.println(F("Update finished restarting"));
+      DebuglnF("Update finished restarting");
     });
 
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -514,17 +517,17 @@ void mysetup()
         LedRGBOFF();
       }
       ota_blink = !ota_blink;
-      //Serial.printf("Progress: %u%%\n", (progress / (total / 100)));
+      //Debugf("Progress: %u%%\n", (progress / (total / 100)));
     });
 
     ArduinoOTA.onError([](ota_error_t error) {
       LedRGBON(COLOR_RED);
-      Serial.printf("Update Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
-      else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
-      else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
-      else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
-      else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
+      DEBUG_SERIAL.printf("Update Error[%u]: ", error);
+      if (error == OTA_AUTH_ERROR) DebuglnF("Auth Failed");
+      else if (error == OTA_BEGIN_ERROR) DebuglnF("Begin Failed");
+      else if (error == OTA_CONNECT_ERROR) DebuglnF("Connect Failed");
+      else if (error == OTA_RECEIVE_ERROR) DebuglnF("Receive Failed");
+      else if (error == OTA_END_ERROR) DebuglnF("End Failed");
       ESP.restart(); 
     });
 
@@ -578,7 +581,7 @@ void mysetup()
 
           //start with max available size
           if(!Update.begin(maxSketchSpace)) 
-            Update.printError(Serial1);
+            Update.printError(DEBUG_SERIAL);
 
         } else if(upload.status == UPLOAD_FILE_WRITE) {
           if (ota_blink) {
@@ -589,14 +592,14 @@ void mysetup()
           ota_blink = !ota_blink;
           Debug(".");
           if(Update.write(upload.buf, upload.currentSize) != upload.currentSize) 
-            Update.printError(Serial1);
+            Update.printError(DEBUG_SERIAL);
 
         } else if(upload.status == UPLOAD_FILE_END) {
           //true to set the size to the current progress
           if(Update.end(true)) {
             Debugf("Update Success: %u\nRebooting...\n", upload.totalSize);
           } else {
-            Update.printError(Serial1);
+            Update.printError(DEBUG_SERIAL);
           }
 
           LedRGBOFF();
@@ -618,7 +621,7 @@ void mysetup()
     server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400"); 
     server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400"); 
     server.begin();
-    Serial.println(F("HTTP server started"));
+    DebuglnF("HTTP server started");
 
     #ifdef BLYNK_AUTH
       Blynk.config(BLYNK_AUTH);
@@ -629,36 +632,36 @@ void mysetup()
   // Init bus I2C
   i2c_init();
 
-  Serial.print("Remora Version ");
-  Serial.println(REMORA_VERSION);
-  Serial.print("Compile avec les fonctions : ");
+  Debug("Remora Version ");
+  Debugln(REMORA_VERSION);
+  Debug("Compile avec les fonctions : ");
 
   #if defined (REMORA_BOARD_V10)
-    Serial.print("BOARD V1.0 ");
+    Debug("BOARD V1.0 ");
   #elif defined (REMORA_BOARD_V11)
-    Serial.print("BOARD V1.1 ");
+    Debug("BOARD V1.1 ");
   #elif defined (REMORA_BOARD_V12)
-    Serial.print("BOARD V1.2 MCP23017 ");
+    Debug("BOARD V1.2 MCP23017 ");
   #elif defined (REMORA_BOARD_V13)
-    Serial.print("BOARD V1.3 MCP23017 ");
+    Debug("BOARD V1.3 MCP23017 ");
   #else
-    Serial.print("BOARD Inconnue");
+    Debug("BOARD Inconnue");
   #endif
 
   #ifdef MOD_OLED
-    Serial.print("OLED ");
+    Debug("OLED ");
   #endif
   #ifdef MOD_TELEINFO
-    Serial.print("TELEINFO ");
+    Debug("TELEINFO ");
   #endif
   #ifdef MOD_RF69
-    Serial.print("RFM69 ");
+    Debug("RFM69 ");
   #endif
   #ifdef BLYNK_AUTH
-    Serial.print("BLYNK ");
+    Debug("BLYNK ");
   #endif
 
-  Serial.println();
+  Debugln();
 
   // Init des fils pilotes
   if (pilotes_setup())
@@ -695,8 +698,8 @@ void mysetup()
   // Enclencher le relais 1 seconde
   // si dispo sur la carte
   #ifndef REMORA_BOARD_V10
-    Serial.print("Relais=ON   ");
-    Serial.flush();
+    Debug("Relais=ON   ");
+    Debugflush();
     relais("1");
     for (uint8_t i=0; i<20; i++)
     {
@@ -710,8 +713,8 @@ void mysetup()
         tinfo_loop();
       #endif
     }
-    Serial.println("Relais=OFF");
-    Serial.flush();
+    Debugln("Relais=OFF");
+    Debugflush();
     relais("0");
   #endif
 
@@ -724,8 +727,8 @@ void mysetup()
   // On etteint la LED embarqué du core
   LedRGBOFF();
 
-  Serial.println("Starting main loop");
-  Serial.flush();
+  Debugln("Starting main loop");
+  Debugflush();
 }
 
 
@@ -828,8 +831,8 @@ void loop()
     {
       // on compte la deconnexion led rouge
       my_cloud_disconnect++;
-      Serial.print("Perte de conexion au cloud #");
-      Serial.println(my_cloud_disconnect);
+      Debug("Perte de conexion au cloud #");
+      Debugln(my_cloud_disconnect);
       LedRGBON(COLOR_RED);
     }
   }
