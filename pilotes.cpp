@@ -369,6 +369,39 @@ int relais(String command)
 }
 
 /* ======================================================================
+Function: relais
+Purpose : selectionne l'état du relais
+Input   : état du relais (0 ouvert, 1 fermé)
+Output  : etat du relais (0 ou 1)
+Comments: exposée par l'API spark donc attaquable par requête HTTP(S)
+====================================================================== */
+int fnct_relais(String command)
+{
+  command.trim();
+  uint8_t cmd = command[0];
+
+  Debug("fnct_relais=");
+  Debugln(command);
+  Debugflush();
+
+  // Vérifier que l'on a la commande d'un seul caractère
+  if (command.length()!=1 || (cmd!='2' && cmd!='1' && cmd!='0'))
+    return (-1);
+
+  // On si il y a modification du fonctionnement du relais
+  if (fnctRelais != (cmd - '0')) {
+    // Conversion en 0,1,2 numerique
+    fnctRelais = cmd - '0';
+    // Si le mode est différent du mode auto, on applique la commande
+    if (fnctRelais < FNCT_RELAIS_AUTO) {
+      relais(command);
+    }
+  }
+
+  return (fnctRelais);
+}
+
+/* ======================================================================
 Function: pilotes_Setup
 Purpose : prepare and init stuff, configuration, ..
 Input   : -
