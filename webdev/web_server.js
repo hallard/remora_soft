@@ -90,6 +90,11 @@ var fp ={
 	"fp7": "C"
 }
 
+var relais = {
+	"relais": 1,
+	"fnct_relais": 2
+}
+
 var spiffs = { 
 	"files":[
 	{"na":"/css/nrjmeter.css.gz","va":"24325"}
@@ -138,6 +143,8 @@ return[
 	{"na":"Wifi AP ID","va":"0"},
 	{"na":"Wifi Status","va":"5"},
 	{"na":"Wifi Autoconnect","va":"1"},
+	{"na":"Etat Relais", "va":"Fermé"},
+	{"na":"Fnct Relais", "va":"Auto"},
 	{"na":"SPIFFS Total","va":"934.88 KB"},
 	{"na":"SPIFFS Used","va":"159.82 KB"},
 	{"na":"SPIFFS Occupation","va":"17%"},
@@ -190,7 +197,7 @@ dispatcher.onError(function(req, res) {
 	var query = url_parts.query;
 	var contentType ;
 
- 	//console.log(util.inspect({query: query}));
+ 	console.log(util.inspect({query: query}));
 
 		// Check first Query posted http://ip/?toto=titi
 		if (!isEmptyObject(query)) {
@@ -219,6 +226,21 @@ dispatcher.onError(function(req, res) {
 				  res.end('{"response":1}');
 				}
 
+			} else if (query.frelais != undefined && query.frelais.length == 1) {
+				console.log("frelais: ", query.frelais);
+				if (query.frelais >= 0 && query.frelais <= 2) {
+			  	res.writeHead(200, {"Content-Type": "text/json"});
+			  	relais.fnct_relais = query.frelais;
+			  	if (query.frelais >= 0 && query.frelais <= 1) {
+			  		relais.relais = query.frelais;
+			  	} else {
+			  		relais.relais = Math.floor(Math.random() * 2);
+			  	}
+			  	res.end('{"response":0}');
+				} else {
+					res.writeHead(412, {"Content-Type": "text/json"});
+					res.end('{"response":1}');
+				}
 		 	} else {
         res.writeHead(500);
         res.end('Sorry, unknown or bad query received: '+query+' ..\n');
@@ -293,8 +315,8 @@ dispatcher.onGet("/sensors", function(req, res) {
       res.end(JSON.stringify(sensors()));
 });    
 
-dispatcher.onGet("/system", function(req, res) {
-			//console.log('s[0]=' + util.inspect(system[0], false, null));
+dispatcher.onGet("/system.json", function(req, res) {
+			console.log('s[0]=' + util.inspect(system[0], false, null));
 			//system[0].va = ((Date.now()-startTime)/1000).toFixed(0);
 			//system[1].va = humanSize(os.freemem());
       res.writeHead(200, {"Content-Type": "text/json"});
@@ -314,7 +336,13 @@ dispatcher.onGet("/config", function(req, res) {
 dispatcher.onGet("/fp", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(fp));
-});  
+});
+
+dispatcher.onGet("/relais", function(req, res) {
+	console.log('relaisJSON: ', JSON.stringify(relais));
+      res.writeHead(200, {"Content-Type": "text/json"});
+      res.end(JSON.stringify(relais));
+});
 
 dispatcher.onGet("/?", function(req, res) {
 			//Store the data from the fields in your data store.

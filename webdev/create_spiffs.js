@@ -96,7 +96,7 @@ inp.pipe(gzip).pipe(out);
 // =================
 // fonts
 // =================
-var fonts = ["glyphicons.woff", "glyphicons.woff2", "jeedom.woff"];
+var fonts = ["glyphicons.woff", "glyphicons.woff2", "jeedom2.woff"];
 for (var i = 0; i < fonts.length; i++) {
   console.log('Copy font: ' + fonts[i]);
   fs.createReadStream('fonts/' + fonts[i]).pipe(fs.createWriteStream('../data/fonts/' + fonts[i]));
