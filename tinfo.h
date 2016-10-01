@@ -24,6 +24,10 @@
 #define IMAX 35 // sera mis à jour à la reception de trame teleinfo
 #define TINFO_LED_BLINK_MS  150 // Time of RGB LED blink
 
+#define FNCT_RELAIS_ARRET 0 // Mode arrêt du relais
+#define FNCT_RELAIS_FORCE 1 // Mode marche forcée du relais
+#define FNCT_RELAIS_AUTO 2  // Mode auto du relais
+
 // Tarif en cours au format numérique
 enum ptec_e { PTEC_HP = 1, PTEC_HC = 2 };
 
@@ -41,6 +45,7 @@ extern char mytinfo[];
 extern char myAction[];
 
 extern int      etatrelais;
+extern int      fnctRelais;   // Mode de fonctionnement du relais (0: arrêt, 1: marche forcée, 2: auto)
 extern float    myDelestLimit;
 extern float    myRelestLimit;
 
