@@ -365,6 +365,10 @@ void getSysJSONData(String & response)
   response += etatrelais ? "Fermé":"Ouvert";
   response += "\"},\r\n";
 
+  response += "{\"na\":\"Fnct Relais\",\"va\":\"";
+  response += (fnctRelais == FNCT_RELAIS_AUTO) ? "Auto" : (fnctRelais == FNCT_RELAIS_FORCE) ? "Force" : "Stop";
+  response += "\"},\r\n";
+
   response += "{\"na\":\"Delestage\",\"va\":\"";
   response += String(myDelestLimit);
   response += "A";
@@ -716,6 +720,8 @@ void relaisJSON(String & response)
   response = FPSTR(FP_JSON_START);
   response+= "\"relais\": ";
   response+= String(etatrelais);
+  response+= "\"fnct_relais\": ";
+  response+= String(fnctRelais);
   response+= FPSTR(FP_JSON_END);
 }
 
@@ -969,7 +975,8 @@ void handleNotFound(void)
   // ================================
   if (  server.hasArg("fp") ||
         server.hasArg("setfp") ||
-        server.hasArg("relais")) {
+        server.hasArg("relais") ||
+        server.hasArg("frelais")) {
 
     int error = 0;
     response = FPSTR(FP_JSON_START);
@@ -990,6 +997,14 @@ void handleNotFound(void)
       String value = server.arg("relais");
       // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
       if ( relais(value) != server.arg("relais").toInt() )
+        error--;
+    }
+
+    // http://ip_remora/?frelais=n (n: 0 | 1 | 2)
+    if ( server.hasArg("frelais") ) {
+      String value = server.arg("frelais");
+      // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
+      if ( fnct_relais(value) != server.arg("frelais").toInt() )
         error--;
     }
 
