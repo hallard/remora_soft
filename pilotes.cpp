@@ -52,8 +52,8 @@ int setfp(String command)
   command.trim();
   command.toUpperCase();
 
-  DEBUG_SERIAL.print("setfp=");
-  DEBUG_SERIAL.println(command);
+  Debug("setfp=");
+  Debugln(command);
 
   int returnValue = -1;
 
@@ -77,7 +77,7 @@ int setfp(String command)
         (cOrdre!='C' && cOrdre!='E' && cOrdre!='H' && cOrdre!='A') )
     {
         // erreur
-        DEBUG_SERIAL.println("Argument incorrect");
+        Debugln("Argument incorrect");
     }
     else
     {
@@ -116,10 +116,10 @@ int setfp_interne(uint8_t fp, char cOrdre)
   // Pour le moment les ordres Eco-1 et Eco-2 ne sont pas traités
   // 'D' correspond à délestage
 
-  DEBUG_SERIAL.print("setfp_interne : fp=");
-  DEBUG_SERIAL.print(fp);
-  DEBUG_SERIAL.print(" ; cOrdre=");
-  DEBUG_SERIAL.println(cOrdre);
+  Debug("setfp_interne : fp=");
+  Debug(fp);
+  Debug(" ; cOrdre=");
+  Debugln(cOrdre);
 
   if ( (fp < 1 || fp > NB_FILS_PILOTES) ||
       (cOrdre!='C' && cOrdre!='E' && cOrdre!='H' && cOrdre!='A' && cOrdre!='D') )
@@ -136,8 +136,8 @@ int setfp_interne(uint8_t fp, char cOrdre)
     // tableau d'index de 0 à 6 pas de 1 à 7
     // on en profite pour Sauver l'état
     etatFP[fp-1]=cOrdre;
-    DEBUG_SERIAL.print("etatFP=");
-    DEBUG_SERIAL.println(etatFP);
+    Debug("etatFP=");
+    Debugln(etatFP);
 
     switch (cOrdre)
     {
@@ -198,10 +198,10 @@ void delester1zone(void)
 {
   uint8_t numFp; // numéro du fil pilote à délester
 
-  DEBUG_SERIAL.print("delester1zone() : avant : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("delester1zone() : avant : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 
   if (nivDelest < NB_FILS_PILOTES) // On s'assure que l'on n'est pas au niveau max
   {
@@ -210,10 +210,10 @@ void delester1zone(void)
     setfp_interne(numFp, 'D');
   }
 
-  DEBUG_SERIAL.print("delester1zone() : apres : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("delester1zone() : apres : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 }
 
 /* ======================================================================
@@ -227,10 +227,10 @@ void relester1zone(void)
 {
   uint8_t numFp; // numéro du fil pilote à passer HORS-GEL
 
-  DEBUG_SERIAL.print("relester1zone() : avant : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("relester1zone() : avant : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 
   if (nivDelest > 0) // On s'assure qu'un délestage est en cours
   {
@@ -241,10 +241,10 @@ void relester1zone(void)
     plusAncienneZoneDelestee = (plusAncienneZoneDelestee % NB_FILS_PILOTES) + 1;
   }
 
-  DEBUG_SERIAL.print("relester1zone() : apres : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("relester1zone() : apres : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 }
 
 /* ======================================================================
@@ -256,10 +256,10 @@ Comments: -
 ====================================================================== */
 void decalerDelestage(void)
 {
-  DEBUG_SERIAL.print("decalerDelestage() : avant : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("decalerDelestage() : avant : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 
   if (nivDelest > 0 && nivDelest < NB_FILS_PILOTES)
   // On ne peut pas faire tourner les zones délestées s'il n'y en a aucune en cours
@@ -269,10 +269,10 @@ void decalerDelestage(void)
     delester1zone();
   }
 
-  DEBUG_SERIAL.print("decalerDelestage() : apres : nivDelest=");
-  DEBUG_SERIAL.print(nivDelest);
-  DEBUG_SERIAL.print(" ; plusAncienneZoneDelestee=");
-  DEBUG_SERIAL.println(plusAncienneZoneDelestee);
+  Debug("decalerDelestage() : apres : nivDelest=");
+  Debug(nivDelest);
+  Debug(" ; plusAncienneZoneDelestee=");
+  Debugln(plusAncienneZoneDelestee);
 }
 
 /* ======================================================================
@@ -296,8 +296,8 @@ int fp(String command)
   command.trim();
   command.toUpperCase();
 
-  DEBUG_SERIAL.print("fp=");
-  DEBUG_SERIAL.println(command);
+  Debug("fp=");
+  Debugln(command);
 
 
   // Vérifier que l'on a la commande de tous les fils pilotes
@@ -346,9 +346,9 @@ int relais(String command)
   command.trim();
   uint8_t cmd = command[0];
 
-  DEBUG_SERIAL.print("relais=");
-  DEBUG_SERIAL.println(command);
-  DEBUG_SERIAL.flush();
+  Debug("relais=");
+  Debugln(command);
+  Debugflush();
 
   // Vérifier que l'on a la commande d'un seul caractère
   if (command.length()!=1 || (cmd!='1' && cmd!='0'))
@@ -386,20 +386,20 @@ bool pilotes_setup(void)
 
   // Cartes Version 1.2+ pilotage part I/O Expander
   #else
-    DEBUG_SERIAL.print("Initializing MCP23017...Searching...");
-    DEBUG_SERIAL.flush();
+    Debug("Initializing MCP23017...Searching...");
+    Debugflush();
 
     // Détection du MCP23017
     if (!i2c_detect(MCP23017_ADDRESS))
     {
-      DEBUG_SERIAL.println("Not found!");
-      DEBUG_SERIAL.flush();
+      Debugln("Not found!");
+      Debugflush();
       return (false);
     }
     else
     {
-      DEBUG_SERIAL.print("Setup...");
-      DEBUG_SERIAL.flush();
+      Debug("Setup...");
+      Debugflush();
 
       // et l'initialiser
       mcp.begin();
@@ -407,8 +407,8 @@ bool pilotes_setup(void)
       // Mettre les 16 I/O PIN en sortie
       mcp.writeRegister(MCP23017_IODIRA,0x00);
       mcp.writeRegister(MCP23017_IODIRB,0x00);
-      DEBUG_SERIAL.println("OK!");
-      DEBUG_SERIAL.flush();
+      Debugln("OK!");
+      Debugflush();
     }
   #endif
 
