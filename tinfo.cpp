@@ -223,7 +223,9 @@ bool tinfo_setup(bool wait_data)
   tinfo.init();
 
   // Attacher les callback donc nous avons besoin
-  tinfo.attachADPS(ADPSCallback);
+  #ifdef MOD_ADPS
+    tinfo.attachADPS(ADPSCallback);
+  #endif
   tinfo.attachData(DataCallback);
   tinfo.attachNewFrame(NewFrame);
   tinfo.attachUpdatedFrame(UpdatedFrame);
@@ -318,6 +320,7 @@ void tinfo_loop(void)
   #endif
 
   // Faut-il enclencher le delestage ?
+  #ifdef MOD_ADPS
   //On dépasse le courant max?
   if (fiInst > myDelestLimit) {
     if ((millis() - timerDelestRelest) > 5000L)  {
@@ -344,6 +347,7 @@ void tinfo_loop(void)
       }
     }
   }
+  #endif //ADPS active
 
   // Do we have RGB led timer expiration ?
   if (tinfo_led_timer && (millis()-tinfo_led_timer >= TINFO_LED_BLINK_MS)) {
