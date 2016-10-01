@@ -657,6 +657,9 @@ void mysetup()
   #ifdef BLYNK_AUTH
     Serial.print("BLYNK ");
   #endif
+  #ifdef MOD_ADPS
+    Debug("ADPS ");
+  #endif
 
   Serial.println();
 

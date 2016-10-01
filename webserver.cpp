@@ -292,6 +292,9 @@ void getSysJSONData(String & response)
   #ifdef MOD_RF69
     response += F("RFM69 ");
   #endif
+  #ifdef MOD_ADPS
+    response += F("ADPS");
+  #endif
   response += "\"},\r\n";
 
   response += "{\"na\":\"SDK Version\",\"va\":\"";
@@ -373,10 +376,14 @@ void getSysJSONData(String & response)
   response += "\"},\r\n";
 
   response += "{\"na\":\"Etat Delestage\",\"va\":\"";
-  response += "Niveau ";
-  response += String(nivDelest);
-  response += " Zone ";
-  response += String(plusAncienneZoneDelestee);
+  #ifdef MOD_ADPS
+    response += "Niveau ";
+    response += String(nivDelest);
+    response += " Zone ";
+    response += String(plusAncienneZoneDelestee);
+  #else
+    response += "désactivé";
+  #endif
   response += "\"},\r\n";
 
   // Free mem should be last one
@@ -722,10 +729,14 @@ Comments: -
 void delestageJSON(String & response)
 {
     response = FPSTR(FP_JSON_START);
-    response += FPSTR("\"niveau\": ");
-    response += String(nivDelest);
-    response += FPSTR(", \"zone\": ");
-    response += String(plusAncienneZoneDelestee);
+    #ifdef MOD_ADPS
+      response += FPSTR("\"niveau\": ");
+      response += String(nivDelest);
+      response += FPSTR(", \"zone\": ");
+      response += String(plusAncienneZoneDelestee);
+    #else
+      response += FPSTR("\"etat\": \"désactivé\"");
+    #endif
     response += FPSTR(FP_JSON_END);
 }
 
