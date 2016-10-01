@@ -30,6 +30,7 @@
 //#define MOD_OLED      /* Afficheur  */
 #define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
+#define MOD_ADPS          /* Délestage */
 
 // Version logicielle remora
 #define REMORA_VERSION "1.3.2"

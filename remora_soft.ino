@@ -660,6 +660,9 @@ void mysetup()
   #ifdef BLYNK_AUTH
     Debug("BLYNK ");
   #endif
+  #ifdef MOD_ADPS
+    Debug("ADPS ");
+  #endif
 
   Debugln();
 
