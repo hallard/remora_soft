@@ -93,7 +93,15 @@ void displayTeleinfo(void)
   #endif
 
   display.setCursor(0,48);
-  display.printf("%s  %c", etatFP, etatrelais+'0' );
+  // On transcrit l'état de fonctionnement du relais en une lettre
+  // S: arrêt, F: marche forcée, A: auto
+  char dFnctRelais = 'A';
+  if (fnctRelais == FNCT_RELAIS_ARRET) {
+    dFnctRelais = 'S';
+  } else if (fnctRelais == FNCT_RELAIS_FORCE) {
+    dFnctRelais = 'F';
+  }
+  display.printf("%s  %c%c", etatFP, dFnctRelais, etatrelais+'0' );
 
   // Bargraphe de puissance
   display.drawVerticalBargraph(114,0,12,40,1, percent);
