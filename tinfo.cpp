@@ -59,10 +59,10 @@ void ADPSCallback(uint8_t phase)
 
   // Monophasé
   if (phase == 0 ) {
-    DEBUG_SERIAL.println(F("ADPS"));
+    DebuglnF("ADPS");
   } else {
-    DEBUG_SERIAL.print(F("ADPS Phase "));
-    DEBUG_SERIAL.println('0' + phase);
+    DebugF("ADPS Phase ");
+    Debugln('0' + phase);
   }
 
   // nous avons une téléinfo fonctionelle
@@ -81,18 +81,18 @@ Comments: -
 void DataCallback(ValueList * me, uint8_t flags)
 {
   // Do whatever you want there
-  DEBUG_SERIAL.print(me->name);
-  DEBUG_SERIAL.print('=');
-  DEBUG_SERIAL.print(me->value);
+  Debug(me->name);
+  Debug('=');
+  Debug(me->value);
 
-  //DEBUG_SERIAL.print(" Flags=0x");
+  //Debug(" Flags=0x");
   //DEBUG_SERIAL.print(flags, HEX);
 
-  if ( flags & TINFO_FLAGS_NOTHING ) DEBUG_SERIAL.print(F(" Nothing"));
-  if ( flags & TINFO_FLAGS_ADDED )   DEBUG_SERIAL.print(F(" Added"));
-  if ( flags & TINFO_FLAGS_UPDATED ) DEBUG_SERIAL.print(F(" Updated"));
-  if ( flags & TINFO_FLAGS_EXIST )   DEBUG_SERIAL.print(F(" Exist"));
-  if ( flags & TINFO_FLAGS_ALERT )   DEBUG_SERIAL.print(F(" Alert"));
+  if ( flags & TINFO_FLAGS_NOTHING ) DebugF(" Nothing");
+  if ( flags & TINFO_FLAGS_ADDED )   DebugF(" Added");
+  if ( flags & TINFO_FLAGS_UPDATED ) DebugF(" Updated");
+  if ( flags & TINFO_FLAGS_EXIST )   DebugF(" Exist");
+  if ( flags & TINFO_FLAGS_ALERT )   DebugF(" Alert");
 
   // Nous venons de recevoir la puissance tarifaire en cours
   // To DO : gérer les autres types de contrat
@@ -127,7 +127,7 @@ void DataCallback(ValueList * me, uint8_t flags)
       timerDelestRelest = millis();
   }
 
-  DEBUG_SERIAL.println();
+  Debugln();
 
   // nous avons une téléinfo fonctionelle
   status |= STATUS_TINFO;
@@ -155,7 +155,7 @@ void NewFrame(ValueList * me)
   #else
     //sprintf( buff, "New Frame");
   #endif
-  //DEBUG_SERIAL.println(buff);
+  //Debugln(buff);
 
   // Ok nous avons une téléinfo fonctionelle
   status |= STATUS_TINFO;
@@ -185,7 +185,7 @@ void UpdatedFrame(ValueList * me)
   #else
     //sprintf( buff, "Updated Frame");
   #endif
-  //DEBUG_SERIAL.println(buff);
+  //Debugln(buff);
 
   //On publie toutes les infos teleinfos dans un seul appel :
   sprintf(mytinfo,"{\"papp\":%u,\"iinst\":%u,\"isousc\":%u,\"ptec\":%u,\"indexHP\":%u,\"indexHC\":%u,\"imax\":%u,\"ADCO\":%u}",
@@ -209,8 +209,8 @@ bool tinfo_setup(bool wait_data)
 {
   bool ret = false;
 
-  DEBUG_SERIAL.print("Initializing Teleinfo...");
-  DEBUG_SERIAL.flush();
+  Debug("Initializing Teleinfo...");
+  Debugflush();
 
   #ifdef SPARK
     Serial1.begin(1200);  // Port série RX/TX on serial1 for Spark
@@ -238,15 +238,15 @@ bool tinfo_setup(bool wait_data)
       #ifdef SPARK
         if ( Serial1.available()) {
           c = Serial1.read();
-          //Serial.print(c);
-          //Serial.flush();
+          //Debug(c);
+          //Debugflush();
           tinfo.process(c);
         }
       #else
         if (Serial.available()) {
           c = Serial.read();
-          //Serial.print(c);
-          //Serial.flush();
+          //Debug(c);
+          //Debugflush();
           tinfo.process(c);
         }
       #endif
@@ -256,8 +256,8 @@ bool tinfo_setup(bool wait_data)
   }
 
   ret = (status & STATUS_TINFO)?true:false;
-  DEBUG_SERIAL.print("Init Teleinfo ");
-  DEBUG_SERIAL.println(ret?"OK!":"Erreur!");
+  Debug("Init Teleinfo ");
+  Debugln(ret?"OK!":"Erreur!");
 
   return ret;
 }
@@ -283,7 +283,7 @@ void tinfo_loop(void)
     if ( millis()-tinfo_last_frame>TINFO_FRAME_TIMEOUT*1000) {
       // Indiquer qu'elle n'est pas présente
       status &= ~STATUS_TINFO;
-      DEBUG_SERIAL.println("Teleinfo absente/perdue!");
+      Debugln("Teleinfo absente/perdue!");
     }
 
   // Nous n'avions plus de téléinfo
@@ -295,7 +295,7 @@ void tinfo_loop(void)
       LedRGBON(COLOR_RED);
       tinfo_last_frame = millis();
       tinfo_led_timer = millis();
-      DEBUG_SERIAL.println("Teleinfo toujours absente!");
+      Debugln("Teleinfo toujours absente!");
     }
   }
 

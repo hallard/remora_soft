@@ -162,11 +162,11 @@ void formatNumberJSON( String &response, char * value)
       }
     } else {
       response += "\"Error Value too long\"" ;
-      DEBUG_SERIAL.println(F("formatNumberJSON Value too long!"));
+      DebuglnF("formatNumberJSON Value too long!");
     }
   } else {
     response += "\"Error Bad Value\"" ;
-    DEBUG_SERIAL.println(F("formatNumberJSON Bad Value!"));
+    DebuglnF("formatNumberJSON Bad Value!");
   }
 }
 
@@ -182,7 +182,7 @@ void tinfoJSONTable(void)
 {
 
   // Just to debug where we are
-  Debug(F("Serving /tinfo page...\r\n"));
+  DebugF("Serving /tinfo page...\r\n");
 
   #ifdef MOD_TELEINFO
 
@@ -229,15 +229,15 @@ void tinfoJSONTable(void)
    response += F("\r\n]");
 
   } else {
-    Debugln(F("sending 404..."));
+    DebuglnF("sending 404...");
     server.send ( 404, "text/plain", "No data" );
   }
-  Debug(F("sending..."));
+  DebugF("sending...");
   server.send ( 200, "text/json", response );
-  Debugln(F("OK!"));
+  DebuglnF("OK!");
 
   #else
-    Debugln(F("sending 404..."));
+    DebuglnF("sending 404...");
     server.send ( 404, "text/plain", "Teleinfo non activée" );
   #endif // MOD_TELEINFO
 
@@ -402,9 +402,9 @@ void sysJSONTable()
   getSysJSONData(response);
 
   // Just to debug where we are
-  Debug(F("Serving /system page..."));
+  DebugF("Serving /system page...");
   server.send ( 200, "text/json", response );
-  Debugln(F("Ok!"));
+  DebuglnF("Ok!");
 }
 
 /* ======================================================================
@@ -458,9 +458,9 @@ void confJSONTable()
   String response = "";
   getConfJSONData(response);
   // Just to debug where we are
-  Debug(F("Serving /config page..."));
+  DebugF("Serving /config page...");
   server.send ( 200, "text/json", response );
-  Debugln(F("Ok!"));
+  DebuglnF("Ok!");
 }
 
 /* ======================================================================
@@ -545,7 +545,7 @@ void wifiScanJSON(void)
   bool first = true;
 
   // Just to debug where we are
-  Debug(F("Serving /wifiscan page..."));
+  DebugF("Serving /wifiscan page...");
 
   int n = WiFi.scanNetworks();
 
@@ -578,9 +578,9 @@ void wifiScanJSON(void)
   // Json end
   response += FPSTR("]\r\n");
 
-  Debug(F("sending..."));
+  DebugF("sending...");
   server.send ( 200, "text/json", response );
-  Debugln(F("Ok!"));
+  DebuglnF("Ok!");
 }
 
 
@@ -879,11 +879,11 @@ void handleNotFound(void)
   // convert uri to char * for compare
   uri = sUri.c_str();
 
-  DEBUG_SERIAL.print("URI[");
-  DEBUG_SERIAL.print(strlen(uri));
-  DEBUG_SERIAL.print("]='");
-  DEBUG_SERIAL.print(uri);
-  DEBUG_SERIAL.println("'");
+  Debug("URI[");
+  Debug(strlen(uri));
+  Debug("]='");
+  Debug(uri);
+  Debugln("'");
 
   // Got consistent URI, skip fisrt / ?
   // Attention si ? dans l'URL çà ne fait pas partie de l'URI
