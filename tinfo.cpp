@@ -19,21 +19,22 @@
 TInfo tinfo;
 #endif
 
-uint mypApp   = 0;
-uint myiInst  = 0;
-uint myindexHC= 0;
-uint myindexHP= 0;
-uint myimax= 0;
-uint myisousc = ISOUSCRITE; // pour calculer la limite de délestage
-char myPeriode[8]= "";
-char mytinfo[250] ="";
-char mycompteur[64] ="";
+uint mypApp           = 0;
+uint myiInst          = 0;
+uint myindexHC        = 0;
+uint myindexHP        = 0;
+uint myimax           = 0;
+uint myisousc         = ISOUSCRITE; // pour calculer la limite de délestage
+char myPeriode[8]     = "";
+char mytinfo[250]     = "";
+char mycompteur[64]   = "";
 float ratio_delestage = DELESTAGE_RATIO;
 float ratio_relestage = RELESTAGE_RATIO;
-float myDelestLimit = 0.0;
-float myRelestLimit = 0.0;
-int etatrelais       = 0; // Etat du relais
-int lastPtec = PTEC_HP;
+float myDelestLimit   = 0.0;
+float myRelestLimit   = 0.0;
+int etatrelais        = 0; // Etat du relais
+int fnctRelais        = 2; // Mode de fonctionnement du relais
+int lastPtec          = PTEC_HP;
 
 unsigned long tinfo_led_timer = 0; // Led blink timer
 unsigned long tinfo_last_frame = 0; // dernière fois qu'on a recu une trame valide
@@ -111,7 +112,7 @@ void DataCallback(ValueList * me, uint8_t flags)
     //=============================================================
     //    Ajout de la gestion du relais aux heures creuses
     //=============================================================
-    if (lastPtec != ptec) {
+    if (fnctRelais == FNCT_RELAIS_AUTO && lastPtec != ptec) {
       Debug("PTEC: ");
       if (ptec == PTEC_HC) {
         Debugln(" HC");
