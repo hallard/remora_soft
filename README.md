@@ -279,6 +279,8 @@ A faire
 
 Historiques des Modifications
 -----------------------------
+01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
+
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
