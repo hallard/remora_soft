@@ -81,6 +81,15 @@ H = Hors gel
 2 = Eco-2 (non géré pour le moment)
 ```
 
+**Les Etats du mode de fonctionnement du relais**
+
+Voici les différents modes de fonctionnement du relais que vous pourrez trouver dans l'API:
+```
+0: arrêt
+1: marche forcée
+2: automatique
+```
+
 **Les API d'intérrogation**
 
 Les API d'intérrogation se presentent sous la forme 
@@ -91,15 +100,20 @@ Les API d'intérrogation se presentent sous la forme
     ~ # curl http://192.168.1.201/uptime
     { "uptime": 120 }
 ````
-- Etat du relais `http://ip_du_remora/relais`
+- Etat du relais et du mode de fonctionnement `http://ip_du_remora/relais`
 ````shell
     ~ # curl http://192.168.1.201/relais
-    { "relais": 0 }
+    { "relais": 0, "fnct_relais": 2 }
 ````
 - Etat du délestage `http://ip_du_remora/delestage`
 ````shell
 		~ # curl http://192.168.1.201/delestage
 		{ "niveau": 0, "zone": 1 }
+````
+Si le délestage est désactivé `http://ip_du_remora/delestage`
+````shell
+		~ # curl http://192.168.1.201/delestage
+		{ "etat": "désactivé" }
 ````
 - Etat d'un fil pilote `http://ip_du_remora/fpn` avec n = numéro du fil pilote (1 à 7)
 ````shell
@@ -185,6 +199,26 @@ Note, il est possible d'enchainer les actions en une requête mais un seul code 
 		# curl http://192.168.1.201/?relais=3
 		{ "response": -1 }
 ````
+- Utiliser le mode automatique du relais basé sur les changements de périodes tarifaires
+````shell
+		# curl http://192.168.1.201/?frelais=2
+		{ "response": 0 }
+````
+- Arrêter la gestion du relais et ouvrir le contact
+````shell
+		# curl http://192.168.1.201/?frelais=0
+		{ "response": 0 }
+````
+- Mettre le relais en marche forcée
+````shell
+		# curl http://192.168.1.201/?frelais=1
+		{ "response": 0 }
+````
+Il est aussi possible de forcer le relais jusqu'au prochain changement de période tarifaire, si le mode est en automatique. Pour cela, il vous suffit d'activer le relais directement.
+````shell
+		# curl http://192.168.1.201/?relais=1
+		{ "response": 0 }
+````
 - selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)    
   Fil pilote 1 en arret
 ````shell
@@ -245,6 +279,8 @@ A faire
 
 Historiques des Modifications
 -----------------------------
+01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
+
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.

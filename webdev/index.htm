@@ -21,7 +21,7 @@
 			<div class="tab-content">
 
 				<!-- tab teleinfo -->
-			<div class="tab-pane fade in active" id="tab_tinfo">
+				<div class="tab-pane fade in active" id="tab_tinfo">
 					<h4>Données de Téléinformation</h4>
 					<div>
 						<span style="float:left;width:18ex;text-align:center;">Charge courante : </span>
@@ -54,7 +54,7 @@
 					</table>
 				</div> <!-- tab pane teleinfo -->
 
-			<!-- tab Systeme -->
+				<!-- tab Systeme -->
 				<div class="tab-pane fade" id="tab_sys">
 					<h4>Données du système</h4>
 					<table 	data-toggle="table"
@@ -161,8 +161,8 @@
 					</div>
 				</div> <!-- tab pane SPIFFS-->
 
-			<!-- tab Configuration -->
-			<div class="tab-pane fade" id="tab_cfg">
+				<!-- tab Configuration -->
+				<div class="tab-pane fade" id="tab_cfg">
 					<h4>Configuration du système</h4>
 					<div>
 						<form class="form-horizontal row-border" method="post" data-toggle="validator" id="frm_config" action="">
@@ -461,29 +461,44 @@
 							</div> <!-- advanced -->
 						</form> <!-- config form -->
 					</div>
-			</div> <!-- tab config-->
+				</div> <!-- tab config-->
 
-			<!-- tab fil pilote -->
-			<div class="tab-pane fade" id="tab_fp">
-				<h4>Gestion des zones</h4>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Fils pilotes</h3>
-					</div>
-					<div class="panel-body">
-						<div class="all">
-							<h5>Toutes les zones</h5>
-							<div>
-								<a href="#" class="actions btn btn-default conf" role="button">Confort</a>
-								<a href="#" class="actions btn btn-default eco" role="button">ECO</a>
-								<a href="#" class="actions btn btn-default hg" role="button">hors gel</a>
-								<a href="#" class="actions btn btn-default off" role="button">arrêt</a>
-							</div>
+				<!-- tab fil pilote -->
+				<div class="tab-pane fade" id="tab_fp">
+					<h4>Gestion des zones</h4>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Fils pilotes</h3>
 						</div>
-						<div class="zones"></div>
+						<div class="panel-body">
+							<div class="all">
+								<h5>Toutes les zones</h5>
+								<div>
+									<a href="#" class="actions btn btn-default conf" role="button">Confort</a>
+									<a href="#" class="actions btn btn-default eco" role="button">ECO</a>
+									<a href="#" class="actions btn btn-default hg" role="button">hors gel</a>
+									<a href="#" class="actions btn btn-default off" role="button">arrêt</a>
+								</div>
+							</div>
+							<div class="relais">
+								<div class="col-sm-6 col-md-4 zone">
+							 		<div style="min-height:80px;" class="thumbnail" title="Gestion du mode de fonctionnement du relais">
+							 			<div class="caption">
+							 				<h5>Relais</h5>
+							 				<span class="icon iconCmd" style="font-size: 3.5em;"></span>
+							 				<div>
+							 					<a href="#" class="actions btn btn-default off" role="button">Stop</a>
+							 					<a href="#" class="actions btn btn-default auto" role="button">Auto</a>
+							 					<a href="#" class="actions btn btn-default force" role="button">Marche forcée</a>
+							 				</div>
+							 			</div>
+							 		</div>
+								</div>
+							</div>
+							<div class="zones"></div>
+						</div>
 					</div>
-				</div>
-			</div>
+				</div> <!-- tab fp -->
 
 		</div> <!-- tab content-->
 
@@ -685,7 +700,7 @@
 			}
 
 			function waitReboot() {
-			var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + '/#tab_sys' ;
+				var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '') + '/#tab_sys' ;
 				$('#txt_srv').text('Tentative de connexion à '+url);
 				$('#mdl_wait').modal();
 
@@ -816,6 +831,63 @@
 				$icon.append('<i class="icon ' + img + '"></i>');
 			}
 
+			function sendRelais(ordre) {
+				$('body').removeClass('loaded');
+				// console.log('sendRelais ', ordre);
+				var request = {frelais: ordre};
+				// console.log('request', request);
+				$.getJSON('/', request)
+					.done(function(data, textStatus, jqXHR) {
+						// console.log('response ', request, data, textStatus, jqXHR);
+						if (data.hasOwnProperty('response') && data.response == 0) {
+							$.getJSON('/relais', function(data) {
+								if (data.hasOwnProperty('relais') && data.hasOwnProperty('fnct_relais')) {
+									activeRelais(data.fnct_relais, data.relais);
+								}
+							});
+						} else {
+							//console.error('Error lors de l\'envoi d\'ordre(%s) pour fil pilote(%s):', ordre, id, data);
+							Notify(4, 'remove', 'danger', 'Error ordre '+ordre+' pour relais', jqXHR.status+' '+data);
+						}
+						$('body').addClass('loaded');
+					}).fail(function( jqXHR, textStatus, error ) {
+						var err = textStatus + ", " + error;
+						//console.error("Request Failed: " + err);
+						Notify(4, 'remove', 'danger', 'Error ordre '+ordre+' pour relais', jqXHR.status+' '+err);
+						// console.log(jqxhr);
+					});
+			}
+
+			function activeRelais(fnct, state) {
+				// console.log('activeZone', id, state);
+				var $icon = $('#tab_fp .relais span.icon'),
+						active = '#tab_fp .relais',
+						img = 'jeedom-relais-on';
+
+				if (parseInt(state, 10) == 0) {
+					img = 'jeedom-relais-off';
+				}
+				// console.log('div.zone: ', $div);
+				// console.log('fnct: ', fnct, state);
+				switch (parseInt(fnct)) {
+					case 0:
+						active += ' a.off';
+						break;
+					case 1:
+						active += ' a.force';
+						break;
+					case 2:
+					default:
+						active += ' a.auto';
+						break;
+				}
+				// console.log('active: %s - img: %s', active, img);
+				$icon.empty();
+				$('#tab_fp .relais a.actions').removeClass('active btn-success');
+				$(active).addClass('active btn-success');
+				$icon.append('<i class="icon ' + img + '"></i>');
+			}
+
 			$('a[data-toggle=\"tab\"]').on('shown.bs.tab', function (e) {
 				clearTimeout(Timer_sys);
 				clearTimeout(Timer_tinfo);
@@ -889,6 +961,23 @@
 								sendOrdre(false, 'H');
 							} else if ($this.hasClass('off')) {
 								sendOrdre(false, 'A');
+							}
+						});
+					});
+					$.getJSON('/relais', function(data) {
+						if (data.hasOwnProperty('fnct_relais')) {
+							activeRelais(data.fnct_relais, data.relais);
+						}
+						$('#tab_fp .relais .actions').unbind('click').click(function(e) {
+							e.stopPropagation();
+							e.preventDefault();
+							var $this = $(this);
+							if ($this.hasClass('force')) {
+								sendRelais(1);
+							} else if ($this.hasClass('auto')) {
+								sendRelais(2);
+							} else if ($this.hasClass('off')) {
+								sendRelais(0);
 							}
 						});
 					});
