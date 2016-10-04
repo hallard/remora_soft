@@ -1,4 +1,4 @@
-  // **********************************************************************************
+// **********************************************************************************
 // Programmateur Fil Pilote et Suivi Conso
 // **********************************************************************************
 // Copyright (C) 2014 Thibault Ducret
@@ -354,7 +354,7 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
-  #ifdef DEBUG
+  #ifdef DEBUG_INIT
     DEBUG_SERIAL.begin(115200);
   #endif
 
