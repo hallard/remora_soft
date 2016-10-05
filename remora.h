@@ -109,7 +109,8 @@ extern "C" {
 
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
-  #define DEBUG_SERIAL  Serial1
+  #define DEBUG_SERIAL  Serial
+  //#define DEBUG_INIT          // Décommenter cette ligne si DEBUG_SERIAL est Serial1
 #endif
 
 #define DEBUG
