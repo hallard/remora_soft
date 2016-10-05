@@ -113,12 +113,12 @@ void DataCallback(ValueList * me, uint8_t flags)
     //    Ajout de la gestion du relais aux heures creuses
     //=============================================================
     if (fnctRelais == FNCT_RELAIS_AUTO && lastPtec != ptec) {
-      Debug("PTEC: ");
+      //Debug("PTEC: ");
       if (ptec == PTEC_HC) {
-        Debugln(" HC");
+        //Debugln(" HC");
         relais("1");
       } else {
-        Debugln(" HP");
+        //Debugln(" HP");
         relais("0");
       }
       lastPtec = (int)ptec;

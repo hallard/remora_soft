@@ -378,24 +378,59 @@ Comments: exposée par l'API spark donc attaquable par requête HTTP(S)
 int fnct_relais(String command)
 {
   command.trim();
-  uint8_t cmd = command[0];
+  uint8_t cmd = command.toInt();
 
-  Debug("fnct_relais=");
-  Debugln(command);
-  Debugflush();
+  Debug("fnct_relais="); Debugln(command);
+  Debug("command length="); Debugln(command.length());
+  Debugf("cmd: %d\n", cmd);
+  //Debugflush();
 
   // Vérifier que l'on a la commande d'un seul caractère
-  if (command.length()!=1 || (cmd!='2' && cmd!='1' && cmd!='0'))
+  if (command.length() != 1 || cmd < 0 || cmd > 2)
     return (-1);
 
   // On si il y a modification du fonctionnement du relais
-  if (fnctRelais != (cmd - '0')) {
+  if (fnctRelais != cmd) {
     // Conversion en 0,1,2 numerique
-    fnctRelais = cmd - '0';
+    fnctRelais = cmd;
     // Si le mode est différent du mode auto, on applique la commande
     if (fnctRelais < FNCT_RELAIS_AUTO) {
       relais(command);
     }
+    #ifdef MOD_TELEINFO
+      else {
+        ValueList * me = tinfo.getList();
+        bool found = false;   // flag for PTEC found
+        // Got at least one ?
+        if (me) {
+          // Loop thru the node
+          while (me->next) {
+            // go to next node
+            me = me->next;
+            // we're there
+            ESP.wdtFeed();
+            //DebugF("me->name: "); Debug(me->name); DebugF(" - value: "); Debugln(me->value);
+            // Check PTEC label
+            if (me->name && !strcmp(me->name, "PTEC")) {
+              //DebuglnF("PTEC found");
+              // If "heures creuses", close relay
+              if (me->value && !strcmp(me->value, "HC..")) {
+                //DebuglnF("PTEC == HC..");
+                relais("1");
+              } else {
+                relais("0");
+              }
+              found = true;
+              break;
+            }
+          }
+          // If PTEC not found, close relay
+          if (!found) {
+            relais("0");
+          }
+        }
+      }
+    #endif
   }
 
   return (fnctRelais);
