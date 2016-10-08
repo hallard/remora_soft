@@ -175,7 +175,7 @@
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Générale<span class="pull-right glyphicon glyphicon-chevron-up"></span>
 										</h3>
 									</div>
-						<div class="panel-collapse collapse in" id="col_cfg">
+									<div class="panel-collapse collapse in" id="col_cfg">
 									  <div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Réseau Wifi</label>
@@ -220,7 +220,7 @@
 											<span class="glyphicon glyphicon-leaf pull-left"></span>&nbsp;Emoncms<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-						<div class="panel-collapse collapse out" id="col_emon">
+									<div class="panel-collapse collapse out" id="col_emon">
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Protocole</label>
@@ -296,7 +296,7 @@
 											<span class="glyphicon glyphicon-home"></span>&nbsp;Jeedom<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-						<div class="panel-collapse collapse out" id="col_jdom">
+									<div class="panel-collapse collapse out" id="col_jdom">
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Protocole</label>
@@ -1001,7 +1001,13 @@
 				console.log('Event: load-error.bs.table');
 					// myTimer=setInterval(function(){myRefresh()},5000);
 			});
-
+			$('#tab_scan_data').on('load-success.bs.table', function (e, data) {
+				console.log('#tab_scan_data data loaded', data);
+				//$(this).hide();
+				if (data.status == 'OK') {
+					$('#tab_scan_data').bootstrapTable('load', data.result);
+				}
+			});
 			$('#tab_scan').on('click-row.bs.table', function (e, name, args) {
 				var $form = $('#tab_cfg');
 				$('#ssid').val(name.ssid);

@@ -46,8 +46,10 @@
   #include <FS.h>
   #include <ESP8266WiFi.h>
   #include <ESP8266HTTPClient.h>
-  #include <ESP8266WebServer.h>
-  #include <ESP8266mDNS.h>
+  // #include <ESP8266WebServer.h>
+  // #include <ESP8266mDNS.h>
+  #include <ESPAsyncTCP.h>
+  #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
   #include <ArduinoOTA.h>
   #include <Wire.h>
@@ -82,9 +84,7 @@ int my_cloud_disconnect = 0;
 
 #ifdef ESP8266
   // ESP8266 WebServer
-  ESP8266WebServer server(80);
-  // Udp listener for OTA
-  WiFiUDP OTA;
+  AsyncWebServer server(80);
   // Use WiFiClient class to create a connection to WEB server
   WiFiClient client;
   // RGB LED (1 LED)
@@ -263,10 +263,19 @@ int WifiHandleConn(boolean setup = false)
 
       // protected network
       DebugF(" avec la clé '");
-      Debug(DEFAULT_WIFI_AP_PASS);
+      if (*config.ap_psk) {
+        Debug(config.ap_psk);
+      } else {
+        Debug(DEFAULT_WIFI_AP_PASS);
+      }
       Debugln("'");
       Debugflush();
-      WiFi.softAP(DEFAULT_HOSTNAME, DEFAULT_WIFI_AP_PASS);
+      
+      if (*config.ap_psk) {
+        WiFi.softAP(DEFAULT_HOSTNAME, config.ap_psk);
+      } else {
+        WiFi.softAP(DEFAULT_HOSTNAME, DEFAULT_WIFI_AP_PASS);
+      }
       WiFi.mode(WIFI_AP_STA);
 
       DebugF("IP address   : "); Debugln(WiFi.softAPIP());
@@ -276,11 +285,14 @@ int WifiHandleConn(boolean setup = false)
     // Feed the dog
     _wdt_feed();
 
+    /* Handle OTA update from asynchronous callbacks */
+    Update.runAsync(true);
+
     // Set OTA parameters
-    ArduinoOTA.setPort(DEFAULT_OTA_PORT);
-    ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
-    ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
-    ArduinoOTA.begin();
+    // ArduinoOTA.setPort(DEFAULT_OTA_PORT);
+    // ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
+    // ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
+    // ArduinoOTA.begin();
 
     // just in case your sketch sucks, keep update OTA Available
     // Trust me, when coding and testing it happens, this could save
@@ -292,7 +304,7 @@ int WifiHandleConn(boolean setup = false)
       delay(100);
       LedRGBOFF();
       delay(200);
-      ArduinoOTA.handle();
+      // ArduinoOTA.handle();
     }
 
   } // if setup
@@ -354,7 +366,7 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
-  #ifdef DEBUG
+  #ifdef DEBUG_INIT
     DEBUG_SERIAL.begin(115200);
   #endif
 
@@ -444,8 +456,10 @@ void mysetup()
 
   #elif defined (ESP8266)
 
-    // Init de la téléinformation
-    Serial.begin(1200, SERIAL_7E1);
+    #ifdef MOD_TELEINFO
+      // Init de la téléinformation
+      Serial.begin(1200, SERIAL_7E1);
+    #endif
 
     // Clear our global flags
     config.config = 0;
@@ -499,7 +513,7 @@ void mysetup()
     WifiHandleConn(true);
 
     // OTA callbacks
-    ArduinoOTA.onStart([]() { 
+    /*ArduinoOTA.onStart([]() { 
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
       ota_blink = true;
@@ -529,16 +543,16 @@ void mysetup()
       else if (error == OTA_RECEIVE_ERROR) DebuglnF("Receive Failed");
       else if (error == OTA_END_ERROR) DebuglnF("End Failed");
       ESP.restart(); 
-    });
+    });*/
 
     // handler for uptime
-    server.on("/uptime", [&](){
+    server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request) {
       String response = "";
       response += FPSTR("{\r\n");
       response += F("\"uptime\":");
       response += uptime;
       response += FPSTR("\r\n}\r\n") ;
-      server.send ( 200, "text/json", response );
+      request->send(200, "text/json", response);
     });
 
     server.on("/config_form.json", handleFormConfig);
@@ -552,14 +566,18 @@ void mysetup()
     server.on("/wifiscan.json", wifiScanJSON);
 
     // handler for the hearbeat
-    server.on("/hb.htm", HTTP_GET, [&](){
-        server.sendHeader("Connection", "close");
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/html", R"(OK)");
+    server.on("/hb.htm", HTTP_GET, [](AsyncWebServerRequest *request) {
+      AsyncWebServerResponse *response = request->beginResponse(200, "text/html", R"(OK)");
+      response->addHeader("Connection", "close");
+      response->addHeader("Access-Control-Allow-Origin", "*");
+      request->send(response);
     });
 
     // handler for the /update form POST (once file upload finishes)
-    server.on("/update", HTTP_POST, 
+//    server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request) {
+//        
+//    }, handle_fw_upload);
+    /*, 
       // handler once file upload finishes
       [&]() {
         server.sendHeader("Connection", "close");
@@ -611,7 +629,7 @@ void mysetup()
         }
         delay(0);
       }
-    );
+    );*/
 
     server.onNotFound(handleNotFound);
 
@@ -852,8 +870,8 @@ void loop()
   // Connection au Wifi ou Vérification
   #ifdef ESP8266
     // Webserver 
-    server.handleClient();
-    ArduinoOTA.handle();
+    //server.handleClient();
+    //ArduinoOTA.handle();
 
     if (task_emoncms) { 
       emoncmsPost(); 
