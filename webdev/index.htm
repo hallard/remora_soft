@@ -1105,23 +1105,23 @@
 			});
 
 			$('#btn_upload_fw').click(function() {
-			var formData = new FormData($('#frm_fw')[0]);
-			$.ajax({
-			url: '/update',
-			type: 'POST',
-			data: formData,
-			cache: false,
-			contentType: false,
-			processData: false,
-			xhr: function() {
-			var myXhr = $.ajaxSettings.xhr();
-			if(myXhr.upload)
-			  myXhr.upload.addEventListener('progress',progressUpload, false);
-			return myXhr;
-			},
-			beforeSend: function () {
+				var formData = new FormData($('#frm_fw')[0]);
+				$.ajax({
+					url: '/update',
+					type: 'POST',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					xhr: function() {
+						var myXhr = $.ajaxSettings.xhr();
+						if(myXhr.upload)
+						  myXhr.upload.addEventListener('progress',progressUpload, false);
+						return myXhr;
+					},
+					beforeSend: function () {
 						$('#pgfw').removeClass('hide');
-			},
+					},
 					success: function(msg, textStatus, xhr) {
 						Notify(2, 'floppy-saved', 'success','Envoi de la mise à jour terminé', '<strong>'+xhr.status+'</strong> '+msg);
 						waitReboot();
@@ -1130,7 +1130,7 @@
 						$('#pfw').removeClass('progress-bar-success').addClass('progress-bar-danger');
 						Notify(4, 'floppy-remove', 'danger', 'Erreur lors de la mise à jour du fichier '+name,'<strong>'+xhr.status+'</strong> '+errorThrown);
 					}
-			});
+				});
 			});
 
 			window.onload = function() {

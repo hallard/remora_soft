@@ -821,28 +821,31 @@ void handleFormConfig(AsyncWebServerRequest *request)
   boolean showconfig = false;
 
   // We validated config ?
-  if (request->hasParam("save")) {
+  if (request->hasParam("save", true)) {
     int itemp;
     DebuglnF("===== Posted configuration");
 
     // WifInfo
-    strncpy(config.ssid ,   request->getParam("ssid")->value().c_str(),     CFG_SSID_SIZE );
-    strncpy(config.psk ,    request->getParam("psk")->value().c_str(),      CFG_PSK_SIZE );
-    strncpy(config.host ,   request->getParam("host")->value().c_str(),     CFG_HOSTNAME_SIZE );
-    strncpy(config.ap_psk , request->getParam("ap_psk")->value().c_str(),   CFG_PSK_SIZE );
-    strncpy(config.ota_auth,request->getParam("ota_auth")->value().c_str(), CFG_PSK_SIZE );
-    itemp = request->getParam("ota_port")->value().toInt();
+    strncpy(config.ssid ,   request->getParam("ssid", true)->value().c_str(),     CFG_SSID_SIZE );
+    strncpy(config.psk ,    request->getParam("psk", true)->value().c_str(),      CFG_PSK_SIZE );
+    strncpy(config.host ,   request->getParam("host", true)->value().c_str(),     CFG_HOSTNAME_SIZE );
+    strncpy(config.ap_psk , request->getParam("ap_psk", true)->value().c_str(),   CFG_PSK_SIZE );
+    if (config.ota_auth != request->getParam("ota_auth", true)->value().c_str()) {
+      strncpy(config.ota_auth, request->getParam("ota_auth", true)->value().c_str(), CFG_PSK_SIZE );
+      reboot = true;
+    }
+    itemp = request->getParam("ota_port", true)->value().toInt();
     config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT ;
 
     // Emoncms
-    strncpy(config.emoncms.host,   request->getParam("emon_host")->value().c_str(),  CFG_EMON_HOST_SIZE );
-    strncpy(config.emoncms.url,    request->getParam("emon_url")->value().c_str(),   CFG_EMON_URL_SIZE );
-    strncpy(config.emoncms.apikey, request->getParam("emon_apikey")->value().c_str(),CFG_EMON_APIKEY_SIZE );
-    itemp = request->getParam("emon_node")->value().toInt();
+    strncpy(config.emoncms.host,   request->getParam("emon_host", true)->value().c_str(),  CFG_EMON_HOST_SIZE );
+    strncpy(config.emoncms.url,    request->getParam("emon_url", true)->value().c_str(),   CFG_EMON_URL_SIZE );
+    strncpy(config.emoncms.apikey, request->getParam("emon_apikey", true)->value().c_str(),CFG_EMON_APIKEY_SIZE );
+    itemp = request->getParam("emon_node", true)->value().toInt();
     config.emoncms.node = (itemp>=0 && itemp<=255) ? itemp : 0 ;
-    itemp = request->getParam("emon_port")->value().toInt();
+    itemp = request->getParam("emon_port", true)->value().toInt();
     config.emoncms.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_EMON_DEFAULT_PORT ;
-    itemp = request->getParam("emon_freq")->value().toInt();
+    itemp = request->getParam("emon_freq", true)->value().toInt();
     if (itemp>0 && itemp<=86400){
       // Emoncms Update if needed
       Tick_emoncms.detach();
@@ -853,13 +856,13 @@ void handleFormConfig(AsyncWebServerRequest *request)
     config.emoncms.freq = itemp;
 
     // jeedom
-    strncpy(config.jeedom.host,   request->getParam("jdom_host")->value().c_str(),  CFG_JDOM_HOST_SIZE );
-    strncpy(config.jeedom.url,    request->getParam("jdom_url")->value().c_str(),   CFG_JDOM_URL_SIZE );
-    strncpy(config.jeedom.apikey, request->getParam("jdom_apikey")->value().c_str(),CFG_JDOM_APIKEY_SIZE );
-    strncpy(config.jeedom.adco,   request->getParam("jdom_adco")->value().c_str(),CFG_JDOM_ADCO_SIZE );
-    itemp = request->getParam("jdom_port")->value().toInt();
+    strncpy(config.jeedom.host,   request->getParam("jdom_host", true)->value().c_str(),  CFG_JDOM_HOST_SIZE );
+    strncpy(config.jeedom.url,    request->getParam("jdom_url", true)->value().c_str(),   CFG_JDOM_URL_SIZE );
+    strncpy(config.jeedom.apikey, request->getParam("jdom_apikey", true)->value().c_str(),CFG_JDOM_APIKEY_SIZE );
+    strncpy(config.jeedom.adco,   request->getParam("jdom_adco", true)->value().c_str(),CFG_JDOM_ADCO_SIZE );
+    itemp = request->getParam("jdom_port", true)->value().toInt();
     config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT ;
-    itemp = request->getParam("jdom_freq")->value().toInt();
+    itemp = request->getParam("jdom_freq", true)->value().toInt();
     if (itemp>0 && itemp<=86400){
       // Emoncms Update if needed
       Tick_jeedom.detach();
@@ -898,6 +901,7 @@ void handleFormConfig(AsyncWebServerRequest *request)
 
 void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
   if (!index) {
+    Update.runAsync(true);
     WiFiUDP::stopAll();
     DebugF("* Upload Started: "); Debugln(filename.c_str());
     LedRGBON(COLOR_MAGENTA);
