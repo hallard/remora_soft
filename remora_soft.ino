@@ -100,6 +100,8 @@ int my_cloud_disconnect = 0;
   volatile boolean task_jeedom = false;
 
   bool ota_blink;
+
+  bool reboot = false;
 #endif
 
 /* ======================================================================
@@ -574,9 +576,12 @@ void mysetup()
     });
 
     // handler for the /update form POST (once file upload finishes)
-//    server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request) {
-//        
-//    }, handle_fw_upload);
+    server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request) {
+      reboot = !Update.hasError();
+      AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", reboot ? "OK" : "FAIL");
+      response->addHeader("Connection", "close");
+      request->send(response);
+    }, handle_fw_upload);
     /*, 
       // handler once file upload finishes
       [&]() {
@@ -773,6 +778,12 @@ void loop()
   if (first_setup) {
     mysetup();
     first_setup = false;
+  }
+
+  /* Reboot handler */
+  if (reboot) {
+    delay(REBOOT_DELAY);
+    ESP.restart();
   }
 
   // Gérer notre compteur de secondes

@@ -24,7 +24,6 @@
 
 // Include main project include file
 #include "remora.h"
-//#include "EFUpdate.h"
 
 // Exported variables/object instanciated in main sketch
 // =====================================================
@@ -43,6 +42,6 @@ void confJSONTable(AsyncWebServerRequest *request);
 void spiffsJSONTable(AsyncWebServerRequest *request);
 void wifiScanJSON(AsyncWebServerRequest *request);
 void handleNotFound(AsyncWebServerRequest *request);
-//void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
+void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
 
 #endif

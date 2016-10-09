@@ -11,8 +11,8 @@
 //           04/01/2016 Charles-Henri Hallard : Ajout Interface WEB GUIT
 //
 // **********************************************************************************
-#ifndef REMORA_h
-#define REMORA_h
+#ifndef REMORA_H_
+#define REMORA_H_
 
 // Spark Core main firmware include file
 #ifdef SPARK
@@ -114,6 +114,7 @@ extern "C" {
   #define _wdt_feed ESP.wdtFeed
   #define DEBUG_SERIAL  Serial
   #define DEBUG_INIT
+  #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 #endif
 
 #define DEBUG
@@ -263,6 +264,8 @@ extern unsigned long uptime ;
 
   extern Ticker Tick_emoncms;
   extern Ticker Tick_jeedom;
+  extern bool   reboot; /* Flag to reboot the ESP */
+  extern bool   ota_blink;
 #endif
 
 

@@ -22,8 +22,6 @@
 // Include header
 #include "webserver.h"
 
-//EFUpdate efupdate;
-
 // Optimize string space in flash, avoid duplication
 const char FP_JSON_START[] PROGMEM = "{\r\n";
 const char FP_JSON_END[] PROGMEM = "\r\n}\r\n";
@@ -743,7 +741,7 @@ void relaisJSON(String & response)
   response = FPSTR(FP_JSON_START);
   response+= "\"relais\": ";
   response+= String(etatrelais);
-  response+= "\"fnct_relais\": ";
+  response+= ", \"fnct_relais\": ";
   response+= String(fnctRelais);
   response+= FPSTR(FP_JSON_END);
 }
@@ -898,31 +896,55 @@ void handleFormConfig(AsyncWebServerRequest *request)
     showConfig();
 }
 
-/*void handle_fw_upload(AsyncWebServerRequest *request, String filename,
-        size_t index, uint8_t *data, size_t len, bool final) {
+void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
   if (!index) {
     WiFiUDP::stopAll();
-    DebugF("* Upload Started: ");
-    Debugln(filename.c_str());
-    efupdate.begin();
+    DebugF("* Upload Started: "); Debugln(filename.c_str());
+    LedRGBON(COLOR_MAGENTA);
+    ota_blink = true;
+    int command = U_FLASH;
+    //Debugf("Magic Byte: %02X\n", data[0]);
+    if (data[0] != 0xE9) {
+      command = U_SPIFFS;
+      SPIFFS.end();
+      //DebuglnF("Command U_SPIFFS");
+    }
+    if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000, command)) {
+      Update.printError(DEBUG_SERIAL);
+    }
   }
 
-  if (!efupdate.process(data, len)) {
-    DebugF("*** UPDATE ERROR: ");
-    Debugln(String(efupdate.getError()));
+  if (!Update.hasError()) {
+    if (Update.write(data, len) != len) {
+      DebugF("*** UPDATE ERROR: ");
+      Update.printError(DEBUG_SERIAL);
+      if (ota_blink) {
+        LedRGBON(COLOR_RED);
+      } else {
+        LedRGBOFF();
+      }
+      ota_blink = !ota_blink;
+    } else {
+      if (ota_blink) {
+        LedRGBON(COLOR_MAGENTA);
+      } else {
+        LedRGBOFF();
+      }
+      ota_blink = !ota_blink;
+      Debug(".");
+    }
   }
-
+  
   if (final) {
     DebuglnF("* Upload Finished.");
-    efupdate.end();
-    SPIFFS.begin();
-    ESP.restart();
-    // This will fire watchdog
-    while (true)
-      delay(1);
-    //saveConfig();
+    if (Update.end(true)) {
+      Debugf("Update Success: %uB\n", index+len);
+    } else {
+      Update.printError(DEBUG_SERIAL);
+    }
+    LedRGBOFF();
   }
-}*/
+}
 
 /* ======================================================================
 Function: handleNotFound
