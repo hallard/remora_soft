@@ -287,14 +287,15 @@ int WifiHandleConn(boolean setup = false)
     // Feed the dog
     _wdt_feed();
 
-    /* Handle OTA update from asynchronous callbacks */
-    Update.runAsync(true);
-
     // Set OTA parameters
-    // ArduinoOTA.setPort(DEFAULT_OTA_PORT);
-    // ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
-    // ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
-    // ArduinoOTA.begin();
+     ArduinoOTA.setPort(DEFAULT_OTA_PORT);
+     ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
+     if (*config.ota_auth) {
+       ArduinoOTA.setPassword(config.ota_auth);
+     }/* else {
+       ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
+     }*/
+     ArduinoOTA.begin();
 
     // just in case your sketch sucks, keep update OTA Available
     // Trust me, when coding and testing it happens, this could save
@@ -306,7 +307,7 @@ int WifiHandleConn(boolean setup = false)
       delay(100);
       LedRGBOFF();
       delay(200);
-      // ArduinoOTA.handle();
+      ArduinoOTA.handle();
     }
 
   } // if setup
@@ -515,7 +516,7 @@ void mysetup()
     WifiHandleConn(true);
 
     // OTA callbacks
-    /*ArduinoOTA.onStart([]() { 
+    ArduinoOTA.onStart([]() { 
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
       ota_blink = true;
@@ -533,7 +534,7 @@ void mysetup()
         LedRGBOFF();
       }
       ota_blink = !ota_blink;
-      //Debugf("Progress: %u%%\n", (progress / (total / 100)));
+      Debugf("Progress: %u%%\n", (progress / (total / 100)));
     });
 
     ArduinoOTA.onError([](ota_error_t error) {
@@ -544,8 +545,8 @@ void mysetup()
       else if (error == OTA_CONNECT_ERROR) DebuglnF("Connect Failed");
       else if (error == OTA_RECEIVE_ERROR) DebuglnF("Receive Failed");
       else if (error == OTA_END_ERROR) DebuglnF("End Failed");
-      ESP.restart(); 
-    });*/
+      //reboot = true;
+    });
 
     // handler for uptime
     server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -557,7 +558,7 @@ void mysetup()
       request->send(200, "text/json", response);
     });
 
-    server.on("/config_form.json", handleFormConfig);
+    server.on("/config_form.json", HTTP_POST, handleFormConfig);
     server.on("/factory_reset",handleFactoryReset );
     server.on("/reset", handleReset);
     server.on("/tinfo", tinfoJSON);
@@ -582,59 +583,6 @@ void mysetup()
       response->addHeader("Connection", "close");
       request->send(response);
     }, handle_fw_upload);
-    /*, 
-      // handler once file upload finishes
-      [&]() {
-        server.sendHeader("Connection", "close");
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
-        ESP.restart();
-      },
-      // handler for upload, get's the sketch bytes, 
-      // and writes them through the Update object
-      [&]() {
-        HTTPUpload& upload = server.upload();
-
-        if(upload.status == UPLOAD_FILE_START) {
-          uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-          WiFiUDP::stopAll();
-          Debugf("Update: %s\n", upload.filename.c_str());
-          LedRGBON(COLOR_MAGENTA);
-          ota_blink = true;
-
-          //start with max available size
-          if(!Update.begin(maxSketchSpace)) 
-            Update.printError(DEBUG_SERIAL);
-
-        } else if(upload.status == UPLOAD_FILE_WRITE) {
-          if (ota_blink) {
-            LedRGBON(COLOR_MAGENTA);
-          } else {
-            LedRGBOFF();
-          }
-          ota_blink = !ota_blink;
-          Debug(".");
-          if(Update.write(upload.buf, upload.currentSize) != upload.currentSize) 
-            Update.printError(DEBUG_SERIAL);
-
-        } else if(upload.status == UPLOAD_FILE_END) {
-          //true to set the size to the current progress
-          if(Update.end(true)) {
-            Debugf("Update Success: %u\nRebooting...\n", upload.totalSize);
-          } else {
-            Update.printError(DEBUG_SERIAL);
-          }
-
-          LedRGBOFF();
-
-        } else if(upload.status == UPLOAD_FILE_ABORTED) {
-          Update.end();
-          LedRGBOFF();
-          DebuglnF("Update was aborted");
-        }
-        delay(0);
-      }
-    );*/
 
     server.onNotFound(handleNotFound);
 
@@ -780,11 +728,13 @@ void loop()
     first_setup = false;
   }
 
+  #ifdef ESP8266
   /* Reboot handler */
   if (reboot) {
     delay(REBOOT_DELAY);
     ESP.restart();
   }
+  #endif
 
   // Gérer notre compteur de secondes
   if ( millis()-previousMillis > 1000) {
@@ -882,7 +832,7 @@ void loop()
   #ifdef ESP8266
     // Webserver 
     //server.handleClient();
-    //ArduinoOTA.handle();
+    ArduinoOTA.handle();
 
     if (task_emoncms) { 
       emoncmsPost(); 
