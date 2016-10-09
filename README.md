@@ -26,6 +26,8 @@ Installation (Arduino ESP8266 NodeMCU)
 - Lancer l'IDE Arduino
 - Installer la librairie [NeoPixelBus](https://github.com/Makuna/NeoPixelBus) depuis l'IDE Menu Sketch / Include Library / Manage Library => NeoPixelBus by Makuna
 - Installer la librairie [Blynk](https://github.com/blynkkk/blynk-library) depuis l'IDE Menu Sketch / Include Library / Manage Library / Blynk by Volodymyr Shymanskyy
+- Installer la bibliothèque [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
+- Installer la bibliothèque [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
 - Lancer ensuite l'IDE Arduino et ouvrir depuis celui-ci le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L22-L26) (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L28-L32) (les defines MOD_xxxx)
