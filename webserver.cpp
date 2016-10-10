@@ -44,7 +44,7 @@ String getContentType(String filename) {
   if(filename.endsWith(".htm")) return F("text/html");
   else if(filename.endsWith(".html")) return F("text/html");
   else if(filename.endsWith(".css")) return F("text/css");
-  else if(filename.endsWith(".json")) return F("text/json");
+  else if(filename.endsWith(".json")) return F("application/json");
   else if(filename.endsWith(".js")) return F("application/javascript");
   else if(filename.endsWith(".png")) return F("image/png");
   else if(filename.endsWith(".gif")) return F("image/gif");
@@ -109,20 +109,14 @@ bool handleFileRead(String path, AsyncWebServerRequest *request) {
     }
 
     DebuglnF(" found on FS");
-
-//    File file = SPIFFS.open(path, "r");
-//    size_t len = file.size();
-//    file.close();
+    DebugF("ContentType: "); Debugln(contentType);
 
     AsyncWebServerResponse *response = request->beginResponse(SPIFFS, path, contentType);
     if (gzip) {
+      DebuglnF("Add header content-encoding: gzip");
       response->addHeader("Content-Encoding", "gzip");
     }
     request->send(response);
-    //request->send(SPIFFS, path, contentType);
-    // File file = SPIFFS.open(path, "r");
-    // size_t sent = server.streamFile(file, contentType);
-    // file.close();
     return true;
   }
 
@@ -245,7 +239,7 @@ void tinfoJSONTable(AsyncWebServerRequest *request)
     request->send(404, "text/plain", "No data");
   }
   DebugF("sending...");
-  request->send(200, "text/json", response);
+  request->send(200, "application/json", response);
   DebuglnF("OK!");
 
   #else
@@ -426,7 +420,7 @@ void sysJSONTable(AsyncWebServerRequest *request)
 
   // Just to debug where we are
   DebugF("Serving /system page...");
-  request->send(200, "text/json", response);
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -482,7 +476,7 @@ void confJSONTable(AsyncWebServerRequest *request)
   getConfJSONData(response);
   // Just to debug where we are
   DebugF("Serving /config page...");
-  request->send(200, "text/json", response);
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -552,7 +546,7 @@ void spiffsJSONTable(AsyncWebServerRequest *request)
 {
   String response = "";
   getSpiffsJSONData(response);
-  request->send(200, "text/json", response);
+  request->send(200, "application/json", response);
 }
 
 /* ======================================================================
@@ -611,7 +605,7 @@ void wifiScanJSON(AsyncWebServerRequest *request)
   Debugln(response);
 
   DebugF("sending...");
-  request->send(200, "text/json", response);
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -684,7 +678,7 @@ void tinfoJSON(AsyncWebServerRequest *request)
     } else {
       request->send(404, "text/plain", "No data");
     }
-    request->send(200, "text/json", response);
+    request->send(200, "application/json", response);
   #else
     request->send(404, "text/plain", "teleinfo not enabled");
   #endif
@@ -1091,7 +1085,7 @@ void handleNotFound(AsyncWebServerRequest *request)
 
   // Got it, send json
   if (found) {
-    request->send(200, "text/json", response);
+    request->send(200, "application/json", response);
   } else {
     // le fichier demandé existe sur le système SPIFFS ?
     found = handleFileRead(request->url(), request);
