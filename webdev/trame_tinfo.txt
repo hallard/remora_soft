@@ -1,0 +1,12 @@
+Exemple de trame téléinformation
+
+
+ADCO 04983 _
+OPTARIF BASE 0
+ISOUSC 30 9
+BASE 039229704 /
+PTEC HC.. S
+IINST 0003 J
+IMAX 023 D
+MOTDETAT 000000 B
+

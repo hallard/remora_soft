@@ -1,4 +1,4 @@
-  // **********************************************************************************
+// **********************************************************************************
 // Programmateur Fil Pilote et Suivi Conso
 // **********************************************************************************
 // Copyright (C) 2014 Thibault Ducret
@@ -354,7 +354,7 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
-  #ifdef DEBUG
+  #if defined DEBUG_INIT || !defined MOD_TELEINFO
     DEBUG_SERIAL.begin(115200);
   #endif
 
@@ -444,8 +444,10 @@ void mysetup()
 
   #elif defined (ESP8266)
 
-    // Init de la téléinformation
-    Serial.begin(1200, SERIAL_7E1);
+    #ifdef MOD_TELEINFO
+      // Init de la téléinformation
+      Serial.begin(1200, SERIAL_7E1);
+    #endif
 
     // Clear our global flags
     config.config = 0;
