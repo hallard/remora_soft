@@ -26,6 +26,7 @@ var startTime = Date.now();
 var ws = require('websocket').server;
 var temperature=20;
 var humidity=50;
+var teleinfo = false;
 
 
 var config = {
@@ -241,6 +242,16 @@ dispatcher.onError(function(req, res) {
 					res.writeHead(412, {"Content-Type": "text/json"});
 					res.end('{"response":1}');
 				}
+			} else if (query.relais != undefined && query.relais.length == 1) {
+				console.log('relais: ', query.relais);
+				if (query.relais >= 0 && query.relais <= 1) {
+					res.writeHead(200, {"Content-Type": "text/json"});
+					relais.relais = query.relais;
+			  	res.end('{"response":0}');
+				} else {
+					res.writeHead(412, {"Content-Type": "text/json"});
+					res.end('{"response":1}');
+				}
 		 	} else {
         res.writeHead(500);
         res.end('Sorry, unknown or bad query received: '+query+' ..\n');
@@ -309,6 +320,24 @@ function log(con, msg) {
 	con.sendUTF(JSON.stringify({message:"log", data:msg}));
 }
 
+dispatcher.onGet('/tinfo.json', function(req, res) {
+	if (teleinfo) {
+		require('fs').readFile('./tinfo.json', function(err, file) {
+			if (err) {
+				//errorListener(req, res);
+				return;
+			}
+			res.writeHeader(200, {
+				"Content-Type": "text/json"
+			});
+			res.write(file, 'binary');
+			res.end();
+		});
+	} else {
+		res.writeHeader(404, {"Content-Type": "text/json"});
+		res.end(JSON.stringify({result: "Teleinfo non activée"}));
+	}
+});
 
 dispatcher.onGet("/sensors", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});

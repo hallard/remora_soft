@@ -38,8 +38,9 @@ stream.once('open', function(fd) {
   uglified = uglify.minify([
     "js/ajaxq.js",
     "js/autofill.js",
-    "js/validator.js"
-  ]   );
+    "js/validator.js",
+    'js/main.js'
+  ]);
 
   stream.write(uglified.code);
   stream.end();
