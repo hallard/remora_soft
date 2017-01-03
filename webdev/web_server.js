@@ -1,8 +1,8 @@
 // ======================================================================
 //                      ESP8266 WEB Server Simulator
 // ======================================================================
-// This file is not part of web server, it's just used as ESP8266 
-// Simulator to check HTLM / JQuery and all web stuff without needing 
+// This file is not part of web server, it's just used as ESP8266
+// Simulator to check HTLM / JQuery and all web stuff without needing
 // to flash ESP8266 target, you'll need nodejs to run it
 // Please install dependencies with
 // npm install mime httpdispatcher websocket mime formidable
@@ -20,12 +20,14 @@ var mime = require('mime');
 var formidable = require("formidable");
 var util = require('util');
 var os = require('os');
-var dispatcher = require('httpdispatcher');
+var HttpDispatcher = require('httpdispatcher');
+var dispatcher = new HttpDispatcher();
 var interval;
 var startTime = Date.now();
 var ws = require('websocket').server;
 var temperature=20;
 var humidity=50;
+
 
 
 var config = {
@@ -95,7 +97,7 @@ var relais = {
 	"fnct_relais": 2
 }
 
-var spiffs = { 
+var spiffs = {
 	"files":[
 	{"na":"/css/nrjmeter.css.gz","va":"24325"}
 	,{"na":"/favicon.ico","va":"1150"}
@@ -156,14 +158,14 @@ return[
 function humanSize(bytes) {
 	var units =  ['kB','MB','GB','TB','PB','EB','ZB','YB']
 	var thresh = 1024;
-	if(Math.abs(bytes) < thresh) 
+	if(Math.abs(bytes) < thresh)
 		return bytes + ' B';
 
 	var u = -1;
 	do {
 		bytes /= thresh;
 		++u;
-	} 
+	}
 	while(Math.abs(bytes) >= thresh && u < units.length - 1);
 	return bytes.toFixed(1)+' '+units[u];
 }
@@ -173,7 +175,7 @@ function handleRequest(req, res) {
   try {
     console.log(req.url);
     dispatcher.dispatch(req, res);
-  } 
+  }
   catch(err) {
     console.log(err);
   }
@@ -252,7 +254,7 @@ dispatcher.onError(function(req, res) {
 			if (filePath == './') {
   			filePath = './index.htm';
 			}
-			
+
 			contentType = mime.lookup(filePath);
 
 			// Stream out he file
@@ -268,7 +270,7 @@ dispatcher.onError(function(req, res) {
 		      else {
 		        res.writeHead(500);
 		        res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
-		        res.end(); 
+		        res.end();
 						console.log("Error "+filePath+ ' => '+contentType);
 		      }
 		    }
@@ -288,17 +290,17 @@ function rnd(low, high) {
 	return Math.floor((Math.random() * 100 ) * (high - low) + low) ;
 }
 
-function rTemp() { 
-	temperature = (rnd(-20,20) + 20) / 100.0; 
+function rTemp() {
+	temperature = (rnd(-20,20) + 20) / 100.0;
 	return temperature;
 }
 
-function rHum() { 
-	humidity = (rnd(-20,20) + 50)/100.0; 
+function rHum() {
+	humidity = (rnd(-20,20) + 50)/100.0;
  return humidity;
 }
 
-function sensors() {  
+function sensors() {
 	var sensors =	{	"si7021":[ {"temperature":rTemp(),	"humidity":rHum(),	"seen":1}	],
 									 "sht10":[ {"temperature":rTemp(),	 "humidity":rHum(),	"seen":1}	]	}
 	return sensors;
@@ -326,7 +328,7 @@ dispatcher.onGet('/tinfo.json', function(req, res) {
 dispatcher.onGet("/sensors", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(sensors()));
-});    
+});
 
 dispatcher.onGet("/system.json", function(req, res) {
 			//console.log('s[0]=' + util.inspect(system[0], false, null));
@@ -334,17 +336,17 @@ dispatcher.onGet("/system.json", function(req, res) {
 			//system[1].va = humanSize(os.freemem());
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(system()));
-});    
+});
 
 dispatcher.onGet("/spiffs", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(spiffs));
-});    
+});
 
 dispatcher.onGet("/config", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(config));
-});  
+});
 
 dispatcher.onGet("/fp", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
@@ -375,19 +377,19 @@ dispatcher.onGet("/?", function(req, res) {
 			});
 			form.parse(req);
 
-}); 
+});
 
 dispatcher.onGet("/wifiscan.json", function(req, res) {
 			setTimeout(function() {
 	      						res.writeHead(200, {"Content-Type": "text/json"});
   	    						res.end(JSON.stringify(wifiscan));
 									}, 1000, req, res);
-}); 
+});
 
 dispatcher.onGet("/hb", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/html"});
       res.end("OK");
-});    
+});
 
 var server = http.createServer(handleRequest);
 var wsSrv = new ws({ httpServer: server });
@@ -406,7 +408,7 @@ wsSrv.on('request', function(request) {
 			msg = msg[0]
 			console.log('WS  msg="' + msg + '" value="'+value+'"');
 			// Command message
-			if ( msg.charAt(0)=='$' ) 
+			if ( msg.charAt(0)=='$' )
 			{
 				clearInterval(interval);
 
