@@ -43,7 +43,7 @@
 #define CFG_JDOM_DEFAULT_PORT 80
 #define CFG_JDOM_DEFAULT_HOST "jeedom.local"
 #define CFG_JDOM_DEFAULT_URL  "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php"
-#define CFG_JDOM_DEFAULT_ADCO "0000111122223333"
+#define CFG_JDOM_DEFAULT_ADCO "111122223333"
 
 // Port pour l'OTA
 #define DEFAULT_OTA_PORT     8266
@@ -87,9 +87,9 @@
 
 // Config for emoncms
 // 128 Bytes
-typedef struct 
+typedef struct
 {
-  char  host[CFG_EMON_HOST_SIZE+1]; 		// FQDN 
+  char  host[CFG_EMON_HOST_SIZE+1]; 		// FQDN
   char  apikey[CFG_EMON_APIKEY_SIZE+1]; // Secret
   char  url[CFG_EMON_URL_SIZE+1];  			// Post URL
   uint16_t port;    								    // Protocol port (HTTP/HTTPS)
@@ -100,9 +100,9 @@ typedef struct
 
 // Config for jeedom
 // 160 Bytes
-typedef struct 
+typedef struct
 {
-  char  host[CFG_JDOM_HOST_SIZE+1];     // FQDN 
+  char  host[CFG_JDOM_HOST_SIZE+1];     // FQDN
   char  apikey[CFG_JDOM_APIKEY_SIZE+1]; // Secret
   char  url[CFG_JDOM_URL_SIZE+1];       // Post URL
   char  adco[CFG_JDOM_ADCO_SIZE+1];     // Identifiant compteur
@@ -113,15 +113,15 @@ typedef struct
 
 // Config saved into eeprom
 // 1024 bytes total including CRC
-typedef struct 
+typedef struct
 {
-  char  ssid[CFG_SSID_SIZE+1]; 		 // SSID     
+  char  ssid[CFG_SSID_SIZE+1]; 		 // SSID
   char  psk[CFG_PSK_SIZE+1]; 		   // Pre shared key
-  char  host[CFG_HOSTNAME_SIZE+1]; // Hostname 
+  char  host[CFG_HOSTNAME_SIZE+1]; // Hostname
   char  ap_psk[CFG_PSK_SIZE+1];    // Access Point Pre shared key
   char  ota_auth[CFG_PSK_SIZE+1];  // OTA Authentication password
-  uint32_t config;           		   // Bit field register 
-  uint16_t ota_port;         		   // OTA port 
+  uint32_t config;           		   // Bit field register
+  uint16_t ota_port;         		   // OTA port
   uint8_t  filler[131];      		   // in case adding data in config avoiding loosing current conf by bad crc
   _emoncms emoncms;                // Emoncms configuration
   _jeedom  jeedom;                 // jeedom configuration
@@ -135,7 +135,7 @@ typedef struct
 extern _Config config;
 
 #pragma pack(pop)
- 
+
 // Declared exported function from route.cpp
 // ===================================================
 bool readConfig(bool clear_on_error=true);
@@ -143,6 +143,5 @@ bool saveConfig(void);
 void showConfig(void);
 void resetConfig(void);
 
-#endif // ESP8266 
+#endif // ESP8266
 #endif // CONFIG_h
-
