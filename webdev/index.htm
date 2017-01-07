@@ -224,15 +224,8 @@
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Port</label>
-												<div class="col-sm-4">
-													<select id="emon_port" name="emon_port" data-other="emon_port_other" class="form-control col-sm-2">
-														<option value="80">80 (HTTP)</option>
-														<option value="443">443 (HTTPS)</option>
-														<option value="other">Autre</option>
-													</select>
-												</div>
-												<div class="col-sm-5">
-													<input type="number" id="emon_port_other" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
+												<div class="col-sm-9">
+													<input type="number" id="emon_port" name="emon_port" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
 												</div>
 											</div>
 											<div class="form-group">
@@ -304,15 +297,8 @@
 										<div class="panel-body">
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Port</label>
-												<div class="col-sm-4">
-													<select id="jdom_port" name="jdom_port" data-other="jdom_port_other" class="form-control col-sm-2">
-														<option value="80">80 (HTTP)</option>
-														<option value="443">443 (HTTPS)</option>
-														<option value="other">Autre</option>
-													</select>
-												</div>
-												<div class="col-sm-5">
-													<input type="number" id="jdom_port_other" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
+												<div class="col-sm-9">
+													<input type="number" id="jdom_port" name="jdom_port" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
 												</div>
 											</div>
 											<div class="form-group">
@@ -330,7 +316,7 @@
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Clé API</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="jdom_apikey" name="jdom_apikey" maxlength="48" placeholder="API Key">
+													<input type="text" class="form-control" id="jdom_apikey" name="jdom_apikey" maxlength="50" placeholder="API Key">
 												</div>
 											</div>
 											<div class="form-group">
@@ -1159,27 +1145,6 @@
 			}
 
 			$('#btn_test').click(function(){ waitReboot(); });
-
-			// Handle port (emon & jeedom)
-			$('#emon_port, #jdom_port').change(function(e, data) {
-				var $this = $(e.target);
-				var $other = $('#' + $this.data('other'));
-
-				// Custom port? show the custom port field
-				if ($this.val() !== '80' && $this.val() !== '443') {
-					var name = $this.attr('name');
-					var otherVal = data ? data[name]: '';
-					$this.data('name-init', name).attr('name', name + '-disabled').val('other');
-					$other.attr('name', name).removeAttr('disabled').val(otherVal).show().focus();
-
-				// Standard port? hide the custom port field
-				} else {
-					var name = $other.attr('name');
-					$this.data('name-init', '').attr('name', name);
-					$other.attr('disabled', 'disabled').hide();
-				}
-			});
-
 		</script>
 		<div id="loader-wrapper">
 			<div id="loader"></div>
