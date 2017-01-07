@@ -6,7 +6,7 @@
 // Please install dependencies with
 // npm install
 // after all is installed just start by typing on command line
-// npm run create_spiffs.js
+// npm run create_spiffs
 // once all is fine, you can upload data tiles with Arduino IDE
 //
 // Written by Charles-Henri Hallard (http://hallard.me)
