@@ -279,6 +279,8 @@ A faire
 
 Historiques des Modifications
 -----------------------------
+07/01/2017 : Modification de la taille de la clé API pour Jeedom (32 => 48)
+
 01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
 
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
