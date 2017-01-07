@@ -37,7 +37,7 @@
 #define CFG_EMON_DEFAULT_URL  "/input/post.json"
 
 #define CFG_JDOM_HOST_SIZE    32
-#define CFG_JDOM_APIKEY_SIZE  48
+#define CFG_JDOM_APIKEY_SIZE  50
 #define CFG_JDOM_URL_SIZE     64
 #define CFG_JDOM_ADCO_SIZE    12
 #define CFG_JDOM_DEFAULT_PORT 80
@@ -108,7 +108,7 @@ typedef struct
   char  adco[CFG_JDOM_ADCO_SIZE+1];     // Identifiant compteur
   uint16_t port;                        // Protocol port (80, 443...)
   uint32_t freq;                        // refresh rate
-  uint8_t filler[26];                   // in case adding data in config avoiding loosing current conf by bad crc*/
+  uint8_t filler[24];                   // in case adding data in config avoiding loosing current conf by bad crc*/
 } _jeedom;
 
 // Config saved into eeprom
