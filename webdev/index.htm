@@ -220,27 +220,24 @@
 											<span class="glyphicon glyphicon-leaf pull-left"></span>&nbsp;Emoncms<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-						<div class="panel-collapse collapse out" id="col_emon">
+									<div class="panel-collapse collapse out" id="col_emon">
 										<div class="panel-body">
 											<div class="form-group">
-												<label class="col-sm-3 control-label">Protocole</label>
+												<label class="col-sm-3 control-label">Port</label>
 												<div class="col-sm-9">
-													<select id="emon_port" name="emon_port" class="form-control col-sm-2">
-														<option value="80">http (80)</option>
-														<option value="443">https (443)</option>
-													</select>
+													<input type="number" id="emon_port" name="emon_port" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Nom du serveur</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="emon_host" name="emon_host" maxlength="32" placeholder="Serveur">
+													<input type="text" class="form-control" id="emon_host" name="emon_host" maxlength="32" placeholder="Nom du serveur (ex : emoncms.org)">
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-3 control-label">URL</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="emon_url" name="emon_url" maxlength="32" placeholder="Url">
+													<input type="text" class="form-control" id="emon_url" name="emon_url" maxlength="32" placeholder="URL du serveur (ex : /input.json...)">
 												</div>
 											</div>
 											<div class="form-group">
@@ -253,7 +250,7 @@
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Mise à jour</label>
 												<div class="col-sm-9">
-													<select id="emon_port" name="emon_freq" class="form-control col-sm-2">
+													<select id="emon_freq" name="emon_freq" class="form-control col-sm-2">
 														<option value="0">désactivée</option>
 														<option value="15">toutes les 15 secondes</option>
 														<option value="30">toutes les 30 secondes</option>
@@ -296,27 +293,24 @@
 											<span class="glyphicon glyphicon-home"></span>&nbsp;Jeedom<span class="pull-right glyphicon glyphicon-chevron-down"></span>
 										</h3>
 									</div>
-						<div class="panel-collapse collapse out" id="col_jdom">
+									<div class="panel-collapse collapse out" id="col_jdom">
 										<div class="panel-body">
 											<div class="form-group">
-												<label class="col-sm-3 control-label">Protocole</label>
+												<label class="col-sm-3 control-label">Port</label>
 												<div class="col-sm-9">
-													<select id="jdom_port" name="jdom_port" class="form-control col-sm-2">
-														<option value="80">http (80)</option>
-														<option value="443">https (443)</option>
-													</select>
+													<input type="number" id="jdom_port" name="jdom_port" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Serveur Jeedom</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="jdom_host" name="jdom_host" maxlength="32" placeholder="Serveur">
+													<input type="text" class="form-control" id="jdom_host" name="jdom_host" maxlength="32" placeholder="Nom du serveur (ex : jeedom.local...)">
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-3 control-label">URL</label>
 												<div class="col-sm-9">
-													<input type="text" class="form-control" id="jdom_url" name="jdom_url" maxlength="64" placeholder="Url">
+													<input type="text" class="form-control" id="jdom_url" name="jdom_url" maxlength="64" placeholder="URL du serveur (ex : /jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php...)">
 												</div>
 											</div>
 											<div class="form-group">
@@ -328,7 +322,7 @@
 											<div class="form-group">
 												<label class="col-sm-3 control-label">Mise à jour</label>
 												<div class="col-sm-9">
-													<select id="emon_port" name="jdom_freq" class="form-control col-sm-2">
+													<select id="jdom_freq" name="jdom_freq" class="form-control col-sm-2">
 														<option value="0">désactivée</option>
 														<option value="15">toutes les 15 secondes</option>
 														<option value="30">toutes les 30 secondes</option>
@@ -932,9 +926,13 @@
 					.fail(function() { console.log( "error while requestiong spiffs data" );	})
 				} else if (target=='#tab_cfg') {
 					$.getJSON( "/config.json", function(form_data) {
+
+						// Autofill form
 						$("#frm_config").autofill(form_data);
-						})
-						.fail(function() { console.log( "error while requestiong configuration data" );	})
+
+						// Trigger change on all form inputs
+						$("#frm_config input, textarea, select").trigger('change', [form_data]);
+					}).fail(function() { console.log( "error while requestiong configuration data" );	})
 
 					$('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});
 				}
@@ -1147,7 +1145,6 @@
 			}
 
 			$('#btn_test').click(function(){ waitReboot(); });
-
 		</script>
 		<div id="loader-wrapper">
 			<div id="loader"></div>
@@ -1156,4 +1153,3 @@
 		</div>
 	</body>
 </html>
-
