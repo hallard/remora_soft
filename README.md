@@ -56,7 +56,7 @@ Pour les mêmes raisons, et afin d'afficher les informations de debug dans une c
 API Exposée (Particle)
 ----------------------
 
-Toutes les API se font via des requêtes HTTP sur le cloud Particle.
+Toutes les API se font via des requêtes HTTP sur le cloud Particle. 
 
 A documenter!
 
@@ -92,7 +92,7 @@ Voici les différents modes de fonctionnement du relais que vous pourrez trouver
 
 **Les API d'intérrogation**
 
-Les API d'intérrogation se presentent sous la forme
+Les API d'intérrogation se presentent sous la forme 
 `http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
 
 - Durée de fonctionnement en secondes depuis le dernier reboot/reset/allumage `http://ip_du_remora/uptime`
@@ -156,7 +156,7 @@ Si le délestage est désactivé `http://ip_du_remora/delestage`
 			"IMAX":1,
 			"PAPP":170,
 			"HHPHC":3,
-			"MOTDETAT":0
+			"MOTDETAT":0 
 		}
 ````
 A noter la présence de certaines étiquettes virtuelles commencant par un `_`
@@ -164,7 +164,7 @@ A noter la présence de certaines étiquettes virtuelles commencant par un `_`
 
 **Les API d'action**
 
-Les API d'action se presentent sous la forme
+Les API d'action se presentent sous la forme 
 `http://adresse_ip_du_remora/?action=ma_donnee`, notez la différence avec les intérrogations, le `?`. Le résultat est retourné au format JSON avec un code réponse, il est :     
 - négatif en cas d'erreur
 - à 0 si tout est OK
@@ -279,10 +279,6 @@ A faire
 
 Historiques des Modifications
 -----------------------------
-07/01/2017 : Clé API Jeedom de 48 chars au lieu de 32 chars.
-
-01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
-
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
@@ -292,6 +288,10 @@ Historiques des Modifications
 02/12/2015 : Ajout [Version 1.3][7] Remora NodeMCU
 
 04/01/2016 : Integration Interface WEB
+
+01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
+
+07/01/2017 : Modification de la taille de la clé API pour Jeedom (32 => 48)
 
 Exemple
 -------
