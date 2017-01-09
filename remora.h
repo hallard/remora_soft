@@ -92,7 +92,7 @@
   #include <ESP8266WebServer.h>
   #include <Ticker.h>
   #include <NeoPixelBus.h>
-  
+
 extern "C" {
 #include "user_interface.h"
 }
@@ -113,10 +113,10 @@ extern "C" {
   //#define DEBUG_INIT          // Décommenter cette ligne si DEBUG_SERIAL est Serial1
 #endif
 
-#define DEBUG
+//#define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
 
 // I prefix debug macro to be sure to use specific for THIS library
-// debugging, this should not interfere with main sketch or other 
+// debugging, this should not interfere with main sketch or other
 // libraries
 #ifdef DEBUG
 #define Debug(x)    DEBUG_SERIAL.print(x)
@@ -126,12 +126,12 @@ extern "C" {
 #define Debugf(...) DEBUG_SERIAL.printf(__VA_ARGS__)
 #define Debugflush  DEBUG_SERIAL.flush
 #else
-#define Debug(x)    {}
-#define Debugln(x)  {}
-#define DebugF(x)   {}
-#define DebuglnF(x) {}
-#define Debugf(...) {}
-#define Debugflush(){}
+#define Debug(x)
+#define Debugln(x)
+#define DebugF(x)
+#define DebuglnF(x)
+#define Debugf(...)
+#define Debugflush()
 #endif
 
 // Includes du projets remora
