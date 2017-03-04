@@ -218,6 +218,7 @@ extern "C" {
 #elif defined (REMORA_BOARD_V13)
   #define LED_PIN    8
   #define RELAIS_PIN 9
+  #define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
 
   // Creation macro unique et indépendante du type de
   // carte pour le controle des I/O
