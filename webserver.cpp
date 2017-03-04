@@ -735,7 +735,7 @@ void relaisJSON(String & response)
   response = FPSTR(FP_JSON_START);
   response+= "\"relais\": ";
   response+= String(etatrelais);
-  response+= ", \"fnct_relais\": ";
+  response+= ",\r\n\"fnct_relais\": ";
   response+= String(fnctRelais);
   response+= FPSTR(FP_JSON_END);
 }

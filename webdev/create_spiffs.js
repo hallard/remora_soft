@@ -4,9 +4,9 @@
 // This file is not part of web server, it's just used as ESP8266 SPIFFS
 // WEB server files preparation tool
 // Please install dependencies with
-// npm install zlib
+// npm install
 // after all is installed just start by typing on command line
-// node create_spiffs.js
+// npm run create_spiffs
 // once all is fine, you can upload data tiles with Arduino IDE
 //
 // Written by Charles-Henri Hallard (http://hallard.me)

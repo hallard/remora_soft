@@ -1,4 +1,4 @@
-  // **********************************************************************************
+// **********************************************************************************
 // Programmateur Fil Pilote et Suivi Conso
 // **********************************************************************************
 // Copyright (C) 2014 Thibault Ducret
@@ -163,7 +163,7 @@ void spark_expose_cloud(void)
 /* ======================================================================
 Function: Task_emoncms
 Purpose : callback of emoncms ticker
-Input   : 
+Input   :
 Output  : -
 Comments: Like an Interrupt, need to be short, we set flag for main loop
 ====================================================================== */
@@ -175,7 +175,7 @@ void Task_emoncms()
 /* ======================================================================
 Function: Task_jeedom
 Purpose : callback of jeedom ticker
-Input   : 
+Input   :
 Output  : -
 Comments: Like an Interrupt, need to be short, we set flag for main loop
 ====================================================================== */
@@ -191,7 +191,7 @@ Input   : setup true if we're called 1st Time from setup
 Output  : state of the wifi status
 Comments: -
 ====================================================================== */
-int WifiHandleConn(boolean setup = false) 
+int WifiHandleConn(boolean setup = false)
 {
   int ret = WiFi.status();
   uint8_t timeout ;
@@ -200,13 +200,13 @@ int WifiHandleConn(boolean setup = false)
     // Feed the dog
     _wdt_feed();
 
-    DebugF("========== SDK Saved parameters Start"); 
+    DebugF("========== SDK Saved parameters Start");
     WiFi.printDiag(DEBUG_SERIAL);
-    DebuglnF("========== SDK Saved parameters End"); 
+    DebuglnF("========== SDK Saved parameters End");
 
     #if defined (DEFAULT_WIFI_SSID) && defined (DEFAULT_WIFI_PASS)
-      DebugF("Connection au Wifi : "); 
-      Debug(DEFAULT_WIFI_SSID); 
+      DebugF("Connection au Wifi : ");
+      Debug(DEFAULT_WIFI_SSID);
       DebugF(" avec la clé '");
       Debug(DEFAULT_WIFI_PASS);
       DebugF("'...");
@@ -214,7 +214,7 @@ int WifiHandleConn(boolean setup = false)
       WiFi.begin(DEFAULT_WIFI_SSID, DEFAULT_WIFI_PASS);
     #else
       if (*config.ssid) {
-        DebugF("Connection à: "); 
+        DebugF("Connection à: ");
         Debug(config.ssid);
         Debugflush();
 
@@ -256,7 +256,7 @@ int WifiHandleConn(boolean setup = false)
 
       DebugF("IP address   : "); Debugln(WiFi.localIP());
       DebugF("MAC address  : "); Debugln(WiFi.macAddress());
-    
+
     // not connected ? start AP
     } else {
       char ap_ssid[32];
@@ -272,7 +272,7 @@ int WifiHandleConn(boolean setup = false)
       }
       Debugln("'");
       Debugflush();
-      
+
       if (*config.ap_psk) {
         WiFi.softAP(DEFAULT_HOSTNAME, config.ap_psk);
       } else {
@@ -369,7 +369,7 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
-  #ifdef DEBUG_INIT
+  #if defined DEBUG_INIT || !defined MOD_TELEINFO
     DEBUG_SERIAL.begin(115200);
   #endif
 
@@ -477,17 +477,17 @@ void mysetup()
     Debugln(')');
     Debugflush();
 
-    // Check File system init 
+    // Check File system init
     if (!SPIFFS.begin())
     {
       // Serious problem
       DebuglnF("SPIFFS Mount failed");
     } else {
-     
+
       DebuglnF("SPIFFS Mount succesfull");
 
       Dir dir = SPIFFS.openDir("/");
-      while (dir.next()) {    
+      while (dir.next()) {
         String fileName = dir.fileName();
         size_t fileSize = dir.fileSize();
         Debugf("FS File: %s, size: %d\n", fileName.c_str(), fileSize);
@@ -516,13 +516,16 @@ void mysetup()
     WifiHandleConn(true);
 
     // OTA callbacks
-    ArduinoOTA.onStart([]() { 
+    ArduinoOTA.onStart([]() {
+      if (ArduinoOTA.getCommand() == U_SPIFFS) {
+        SPIFFS.end();
+      }
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
       ota_blink = true;
     });
 
-    ArduinoOTA.onEnd([]() { 
+    ArduinoOTA.onEnd([]() {
       LedRGBOFF();
       DebuglnF("Update finished restarting");
     });
@@ -534,7 +537,7 @@ void mysetup()
         LedRGBOFF();
       }
       ota_blink = !ota_blink;
-      Debugf("Progress: %u%%\n", (progress / (total / 100)));
+      //Debugf("Progress: %u%%\n", (progress / (total / 100)));
     });
 
     ArduinoOTA.onError([](ota_error_t error) {
@@ -588,9 +591,9 @@ void mysetup()
 
     // serves all SPIFFS Web file with 24hr max-age control
     // to avoid multiple requests to ESP
-    server.serveStatic("/font", SPIFFS, "/font","max-age=86400"); 
-    server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400"); 
-    server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400"); 
+    server.serveStatic("/font", SPIFFS, "/font","max-age=86400");
+    server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400");
+    server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400");
     server.begin();
     DebuglnF("HTTP server started");
 
@@ -659,7 +662,7 @@ void mysetup()
 
   // Feed the dog
   _wdt_feed();
-    
+
   #ifdef MOD_TELEINFO
     // Initialiser la téléinfo et attente d'une trame valide
     // Le status est mis à jour dans les callback de la teleinfo
@@ -830,15 +833,15 @@ void loop()
 
   // Connection au Wifi ou Vérification
   #ifdef ESP8266
-    // Webserver 
+    // Webserver
     //server.handleClient();
     ArduinoOTA.handle();
 
-    if (task_emoncms) { 
-      emoncmsPost(); 
-      task_emoncms=false; 
-    } else if (task_jeedom) { 
-      jeedomPost();  
+    if (task_emoncms) {
+      emoncmsPost();
+      task_emoncms=false;
+    } else if (task_jeedom) {
+      jeedomPost();
       task_jeedom=false;
     }
   #endif

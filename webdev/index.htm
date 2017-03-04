@@ -223,13 +223,9 @@
                   <div class="panel-collapse collapse out" id="col_emon">
                     <div class="panel-body">
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Protocole</label>
+                        <label class="col-sm-3 control-label">Port</label>
                         <div class="col-sm-9">
-                          <select id="emon_port" name="emon_port" class="form-control col-sm-2">
-                            <option value="80">http (80)</option>
-                            <option value="443">https (443)</option>
-                          </select>
-                        </div>
+                            <input type="number" id="emon_port" name="emon_port" class="form-control" min="0" max="65535" placeholder="Port du serveur (ex : 80, 443, 8080...)">
                       </div>
                       <div class="form-group">
                         <label class="col-sm-3 control-label">Nom du serveur</label>
@@ -504,7 +500,7 @@
 
       <!-- Modal Confirm -->
       <div class="modal fade" id="confirm-raz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-header">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -527,7 +523,7 @@
 
       <!-- Modal Wifi Scan -->
       <div class="modal fade" id="tab_scan" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-header">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -562,7 +558,7 @@
 
       <!-- Modal Reboot -->
       <div class="modal fade" id="mdl_wait" data-keyboard="false">
-        <div class="modal-dialog">
+        <div class="modal-header">
         <div class="modal-content">
             <div class="modal-header">
               <h4 class="modal-title">Redémarrage Remora en cours</h4>
@@ -664,6 +660,6 @@
       <div class="loader-section section-left"></div>
       <div class="loader-section section-right"></div>
     </div>
-  </body>
+
 </html>
 
