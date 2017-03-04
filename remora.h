@@ -34,7 +34,7 @@
 #define MOD_ADPS          /* Délestage */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.3"
+#define REMORA_VERSION "1.3.4"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
