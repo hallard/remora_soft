@@ -114,11 +114,11 @@ extern "C" {
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
   #define DEBUG_SERIAL  Serial
-  #define DEBUG_INIT
+  //#define DEBUG_INIT
   #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 #endif
 
-//#define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
+#define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
 
 // I prefix debug macro to be sure to use specific for THIS library
 // debugging, this should not interfere with main sketch or other
