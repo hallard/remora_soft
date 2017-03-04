@@ -344,22 +344,28 @@ Comments: exposée par l'API spark donc attaquable par requête HTTP(S)
 int relais(String command)
 {
   command.trim();
-  uint8_t cmd = command[0];
+  uint8_t cmd = command.toInt();
 
-  Debug("relais=");
+  DebugF("relais=");
   Debugln(command);
   Debugflush();
 
   // Vérifier que l'on a la commande d'un seul caractère
-  if (command.length()!=1 || (cmd!='1' && cmd!='0'))
+  if (command.length()!=1 || cmd < 0 || cmd > 1)
     return (-1);
 
   // Conversion en 0,1 numerique
-  etatrelais= cmd - '0';
+  etatrelais = cmd;
+  int etatRelaisPin = cmd;
+
+  // Inverse etat pin relais si definit dans remora.h
+  #ifdef RELAIS_REVERSE
+    etatRelaisPin = !etatRelaisPin;
+  #endif
 
     // Allumer/Etteindre le relais et la LED
   #ifdef RELAIS_PIN
-    _digitalWrite(RELAIS_PIN, etatrelais);
+    _digitalWrite(RELAIS_PIN, etatRelaisPin);
   #endif
   #ifdef LED_PIN
     _digitalWrite(LED_PIN, etatrelais);
@@ -408,7 +414,7 @@ int fnct_relais(String command)
             // go to next node
             me = me->next;
             // we're there
-            ESP.wdtFeed();
+            _wdt_feed();
             //DebugF("me->name: "); Debug(me->name); DebugF(" - value: "); Debugln(me->value);
             // Check PTEC label
             if (me->name && !strcmp(me->name, "PTEC")) {
