@@ -12,6 +12,7 @@
 //           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
 //           02/12/2015 Charles-Henri Hallard : Ajout API WEB ESP8266 et Remora V1.3
 //           04/01/2016 Charles-Henri Hallard : Ajout Interface WEB GUIT
+//           04/03/2017 Manuel Hervo          : Ajout des connexions TCP Asynchrones
 //
 // **********************************************************************************
 
@@ -46,8 +47,10 @@
   #include <FS.h>
   #include <ESP8266WiFi.h>
   #include <ESP8266HTTPClient.h>
-  #include <ESP8266WebServer.h>
-  #include <ESP8266mDNS.h>
+  // #include <ESP8266WebServer.h>
+  // #include <ESP8266mDNS.h>
+  #include <ESPAsyncTCP.h>
+  #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
   #include <ArduinoOTA.h>
   #include <Wire.h>
@@ -82,9 +85,7 @@ int my_cloud_disconnect = 0;
 
 #ifdef ESP8266
   // ESP8266 WebServer
-  ESP8266WebServer server(80);
-  // Udp listener for OTA
-  WiFiUDP OTA;
+  AsyncWebServer server(80);
   // Use WiFiClient class to create a connection to WEB server
   WiFiClient client;
   // RGB LED (1 LED)
@@ -100,6 +101,8 @@ int my_cloud_disconnect = 0;
   volatile boolean task_jeedom = false;
 
   bool ota_blink;
+
+  bool reboot = false;
 #endif
 
 /* ======================================================================
@@ -161,7 +164,7 @@ void spark_expose_cloud(void)
 /* ======================================================================
 Function: Task_emoncms
 Purpose : callback of emoncms ticker
-Input   : 
+Input   :
 Output  : -
 Comments: Like an Interrupt, need to be short, we set flag for main loop
 ====================================================================== */
@@ -173,7 +176,7 @@ void Task_emoncms()
 /* ======================================================================
 Function: Task_jeedom
 Purpose : callback of jeedom ticker
-Input   : 
+Input   :
 Output  : -
 Comments: Like an Interrupt, need to be short, we set flag for main loop
 ====================================================================== */
@@ -189,7 +192,7 @@ Input   : setup true if we're called 1st Time from setup
 Output  : state of the wifi status
 Comments: -
 ====================================================================== */
-int WifiHandleConn(boolean setup = false) 
+int WifiHandleConn(boolean setup = false)
 {
   int ret = WiFi.status();
   uint8_t timeout ;
@@ -198,13 +201,13 @@ int WifiHandleConn(boolean setup = false)
     // Feed the dog
     _wdt_feed();
 
-    DebugF("========== SDK Saved parameters Start"); 
+    DebugF("========== SDK Saved parameters Start");
     WiFi.printDiag(DEBUG_SERIAL);
-    DebuglnF("========== SDK Saved parameters End"); 
+    DebuglnF("========== SDK Saved parameters End");
 
     #if defined (DEFAULT_WIFI_SSID) && defined (DEFAULT_WIFI_PASS)
-      DebugF("Connection au Wifi : "); 
-      Debug(DEFAULT_WIFI_SSID); 
+      DebugF("Connection au Wifi : ");
+      Debug(DEFAULT_WIFI_SSID);
       DebugF(" avec la clé '");
       Debug(DEFAULT_WIFI_PASS);
       DebugF("'...");
@@ -212,7 +215,7 @@ int WifiHandleConn(boolean setup = false)
       WiFi.begin(DEFAULT_WIFI_SSID, DEFAULT_WIFI_PASS);
     #else
       if (*config.ssid) {
-        DebugF("Connection à: "); 
+        DebugF("Connection à: ");
         Debug(config.ssid);
         Debugflush();
 
@@ -254,7 +257,7 @@ int WifiHandleConn(boolean setup = false)
 
       DebugF("IP address   : "); Debugln(WiFi.localIP());
       DebugF("MAC address  : "); Debugln(WiFi.macAddress());
-    
+
     // not connected ? start AP
     } else {
       char ap_ssid[32];
@@ -263,10 +266,19 @@ int WifiHandleConn(boolean setup = false)
 
       // protected network
       DebugF(" avec la clé '");
-      Debug(DEFAULT_WIFI_AP_PASS);
+      if (*config.ap_psk) {
+        Debug(config.ap_psk);
+      } else {
+        Debug(DEFAULT_WIFI_AP_PASS);
+      }
       Debugln("'");
       Debugflush();
-      WiFi.softAP(DEFAULT_HOSTNAME, DEFAULT_WIFI_AP_PASS);
+
+      if (*config.ap_psk) {
+        WiFi.softAP(DEFAULT_HOSTNAME, config.ap_psk);
+      } else {
+        WiFi.softAP(DEFAULT_HOSTNAME, DEFAULT_WIFI_AP_PASS);
+      }
       WiFi.mode(WIFI_AP_STA);
 
       DebugF("IP address   : "); Debugln(WiFi.softAPIP());
@@ -277,10 +289,14 @@ int WifiHandleConn(boolean setup = false)
     _wdt_feed();
 
     // Set OTA parameters
-    ArduinoOTA.setPort(DEFAULT_OTA_PORT);
-    ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
-    ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
-    ArduinoOTA.begin();
+     ArduinoOTA.setPort(DEFAULT_OTA_PORT);
+     ArduinoOTA.setHostname(DEFAULT_HOSTNAME);
+     if (*config.ota_auth) {
+       ArduinoOTA.setPassword(config.ota_auth);
+     }/* else {
+       ArduinoOTA.setPassword(DEFAULT_OTA_PASS);
+     }*/
+     ArduinoOTA.begin();
 
     // just in case your sketch sucks, keep update OTA Available
     // Trust me, when coding and testing it happens, this could save
@@ -462,17 +478,17 @@ void mysetup()
     Debugln(')');
     Debugflush();
 
-    // Check File system init 
+    // Check File system init
     if (!SPIFFS.begin())
     {
       // Serious problem
       DebuglnF("SPIFFS Mount failed");
     } else {
-     
+
       DebuglnF("SPIFFS Mount succesfull");
 
       Dir dir = SPIFFS.openDir("/");
-      while (dir.next()) {    
+      while (dir.next()) {
         String fileName = dir.fileName();
         size_t fileSize = dir.fileSize();
         Debugf("FS File: %s, size: %d\n", fileName.c_str(), fileSize);
@@ -501,13 +517,16 @@ void mysetup()
     WifiHandleConn(true);
 
     // OTA callbacks
-    ArduinoOTA.onStart([]() { 
+    ArduinoOTA.onStart([]() {
+      if (ArduinoOTA.getCommand() == U_SPIFFS) {
+        SPIFFS.end();
+      }
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
       ota_blink = true;
     });
 
-    ArduinoOTA.onEnd([]() { 
+    ArduinoOTA.onEnd([]() {
       LedRGBOFF();
       DebuglnF("Update finished restarting");
     });
@@ -530,20 +549,20 @@ void mysetup()
       else if (error == OTA_CONNECT_ERROR) DebuglnF("Connect Failed");
       else if (error == OTA_RECEIVE_ERROR) DebuglnF("Receive Failed");
       else if (error == OTA_END_ERROR) DebuglnF("End Failed");
-      ESP.restart(); 
+      //reboot = true;
     });
 
     // handler for uptime
-    server.on("/uptime", [&](){
+    server.on("/uptime", HTTP_GET, [](AsyncWebServerRequest *request) {
       String response = "";
       response += FPSTR("{\r\n");
       response += F("\"uptime\":");
       response += uptime;
       response += FPSTR("\r\n}\r\n") ;
-      server.send ( 200, "text/json", response );
+      request->send(200, "text/json", response);
     });
 
-    server.on("/config_form.json", handleFormConfig);
+    server.on("/config_form.json", HTTP_POST, handleFormConfig);
     server.on("/factory_reset",handleFactoryReset );
     server.on("/reset", handleReset);
     server.on("/tinfo", tinfoJSON);
@@ -554,74 +573,28 @@ void mysetup()
     server.on("/wifiscan.json", wifiScanJSON);
 
     // handler for the hearbeat
-    server.on("/hb.htm", HTTP_GET, [&](){
-        server.sendHeader("Connection", "close");
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/html", R"(OK)");
+    server.on("/hb.htm", HTTP_GET, [](AsyncWebServerRequest *request) {
+      AsyncWebServerResponse *response = request->beginResponse(200, "text/html", R"(OK)");
+      response->addHeader("Connection", "close");
+      response->addHeader("Access-Control-Allow-Origin", "*");
+      request->send(response);
     });
 
     // handler for the /update form POST (once file upload finishes)
-    server.on("/update", HTTP_POST, 
-      // handler once file upload finishes
-      [&]() {
-        server.sendHeader("Connection", "close");
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
-        ESP.restart();
-      },
-      // handler for upload, get's the sketch bytes, 
-      // and writes them through the Update object
-      [&]() {
-        HTTPUpload& upload = server.upload();
-
-        if(upload.status == UPLOAD_FILE_START) {
-          uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-          WiFiUDP::stopAll();
-          Debugf("Update: %s\n", upload.filename.c_str());
-          LedRGBON(COLOR_MAGENTA);
-          ota_blink = true;
-
-          //start with max available size
-          if(!Update.begin(maxSketchSpace)) 
-            Update.printError(DEBUG_SERIAL);
-
-        } else if(upload.status == UPLOAD_FILE_WRITE) {
-          if (ota_blink) {
-            LedRGBON(COLOR_MAGENTA);
-          } else {
-            LedRGBOFF();
-          }
-          ota_blink = !ota_blink;
-          Debug(".");
-          if(Update.write(upload.buf, upload.currentSize) != upload.currentSize) 
-            Update.printError(DEBUG_SERIAL);
-
-        } else if(upload.status == UPLOAD_FILE_END) {
-          //true to set the size to the current progress
-          if(Update.end(true)) {
-            Debugf("Update Success: %u\nRebooting...\n", upload.totalSize);
-          } else {
-            Update.printError(DEBUG_SERIAL);
-          }
-
-          LedRGBOFF();
-
-        } else if(upload.status == UPLOAD_FILE_ABORTED) {
-          Update.end();
-          LedRGBOFF();
-          DebuglnF("Update was aborted");
-        }
-        delay(0);
-      }
-    );
+    server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request) {
+      reboot = !Update.hasError();
+      AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", reboot ? "OK" : "FAIL");
+      response->addHeader("Connection", "close");
+      request->send(response);
+    }, handle_fw_upload);
 
     server.onNotFound(handleNotFound);
 
     // serves all SPIFFS Web file with 24hr max-age control
     // to avoid multiple requests to ESP
-    server.serveStatic("/font", SPIFFS, "/font","max-age=86400"); 
-    server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400"); 
-    server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400"); 
+    server.serveStatic("/font", SPIFFS, "/font","max-age=86400");
+    server.serveStatic("/js",   SPIFFS, "/js"  ,"max-age=86400");
+    server.serveStatic("/css",  SPIFFS, "/css" ,"max-age=86400");
     server.begin();
     DebuglnF("HTTP server started");
 
@@ -690,7 +663,7 @@ void mysetup()
 
   // Feed the dog
   _wdt_feed();
-    
+
   #ifdef MOD_TELEINFO
     // Initialiser la téléinfo et attente d'une trame valide
     // Le status est mis à jour dans les callback de la teleinfo
@@ -758,6 +731,14 @@ void loop()
     mysetup();
     first_setup = false;
   }
+
+  #ifdef ESP8266
+  /* Reboot handler */
+  if (reboot) {
+    delay(REBOOT_DELAY);
+    ESP.restart();
+  }
+  #endif
 
   // Gérer notre compteur de secondes
   if ( millis()-previousMillis > 1000) {
@@ -853,15 +834,15 @@ void loop()
 
   // Connection au Wifi ou Vérification
   #ifdef ESP8266
-    // Webserver 
-    server.handleClient();
+    // Webserver
+    //server.handleClient();
     ArduinoOTA.handle();
 
-    if (task_emoncms) { 
-      emoncmsPost(); 
-      task_emoncms=false; 
-    } else if (task_jeedom) { 
-      jeedomPost();  
+    if (task_emoncms) {
+      emoncmsPost();
+      task_emoncms=false;
+    } else if (task_jeedom) {
+      jeedomPost();
       task_jeedom=false;
     }
   #endif

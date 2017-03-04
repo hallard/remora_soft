@@ -26,13 +26,15 @@ Installation (Arduino ESP8266 NodeMCU)
 - Lancer l'IDE Arduino
 - Installer la librairie [NeoPixelBus](https://github.com/Makuna/NeoPixelBus) depuis l'IDE Menu Sketch / Include Library / Manage Library => NeoPixelBus by Makuna
 - Installer la librairie [Blynk](https://github.com/blynkkk/blynk-library) depuis l'IDE Menu Sketch / Include Library / Manage Library / Blynk by Volodymyr Shymanskyy
+- Installer la bibliothèque [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
+- Installer la bibliothèque [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
 - Lancer ensuite l'IDE Arduino et ouvrir depuis celui-ci le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L22-L26) (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L28-L32) (les defines MOD_xxxx)
 - choisir dans l'IDE Arduino Menu Tools / Board => **NodeMCU 1.0 (ESP12E-Module)** ainsi que le bon serial port
 - choisir dans l'IDE Arduino Menu Tools / CPU Frequency => **160MHz**
 - choisir dans l'IDE Arduino Menu Tools / Flash Size => **4M (1M SPIFFS)**
-- mettre votre SSID et mot de passe Wifi dans le fichier remora.h.    
+- mettre votre SSID et mot de passe Wifi dans le fichier remora.h.
 `DEFAULT_WIFI_AP_PASS` est le mot de passe de connection Wifi au remora quand celui ci se positionne en point d'accès (lorsqu'il n'arrive pas à se connecter à vôtre Wifi par exemple) son IP est alors 192.168.4.1
 ````arduino
 		// Définir ici les identifiants de
@@ -41,14 +43,14 @@ Installation (Arduino ESP8266 NodeMCU)
 		#define DEFAULT_WIFI_SSID "VotreSSID"
 		#define DEFAULT_WIFI_PASS "VotreClé"
 		#define DEFAULT_WIFI_AP_PASS "Remora_WiFi"
-		// =====================================		
+		// =====================================
 ````
 - Lancer l'upload SPIFFS (les fichiers WEB) Menu Tools / ESP8266 Sketch Data Upload (c'est assez long)
 - Lancer la compilation + upload (CTRL-U)
 
 **Attention**, pour pouvoir uploader via le cable USB, la téléinfo ne doit pas être connectée (en OTA pas de soucis avec ça) car le port série est partagé. Donc soit il faut la débrancher soit il faut sortir le module NodeMCU du support.
 
-Pour les mêmes raisons, et afin d'afficher les informations de debug dans une console, celle-ci doit être configurée à la même vitesse que la téléinfo (car c'est le même port série) donc 1200 bps, parité paire et 7 bits de data, or **cette configuration n'est pas possible dans le moniteur série de l'Arduino**. Il faut alors prendre un autre terminal comme putty, coolterm, ...    
+Pour les mêmes raisons, et afin d'afficher les informations de debug dans une console, celle-ci doit être configurée à la même vitesse que la téléinfo (car c'est le même port série) donc 1200 bps, parité paire et 7 bits de data, or **cette configuration n'est pas possible dans le moniteur série de l'Arduino**. Il faut alors prendre un autre terminal comme putty, coolterm, ...
 
 - La procédure OTA (télédéversement sans fil) est disponible [ici][8]
 
@@ -56,7 +58,7 @@ Pour les mêmes raisons, et afin d'afficher les informations de debug dans une c
 API Exposée (Particle)
 ----------------------
 
-Toutes les API se font via des requêtes HTTP sur le cloud Particle. 
+Toutes les API se font via des requêtes HTTP sur le cloud Particle.
 
 A documenter!
 
@@ -66,7 +68,7 @@ API Exposée (ESP8266 NodeMCU)
 
 Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles si l'on veut récupérer des données ou exécuter des action avec le Remora. Chaque requête se verra retourner des données (ou un code de bonne éxécution) au format JSON.
 
-Toute requête sera donc adressée sous la forme     
+Toute requête sera donc adressée sous la forme
 `http://adresse_ip_du_remora/requete_plus_ou_moins_longue` dans les exemples ci dessous l'adresse IP de mon Remora est la 192.168.1.201, veillez à bien la changer pour mettre la vôtre. Les exemples ont été exécutés depuis la ligne de commande avec curl mais ils pourraient l'être depuis la barre d'addresse de votre navigateur.
 
 **Les Etats de fil pilote**
@@ -92,7 +94,7 @@ Voici les différents modes de fonctionnement du relais que vous pourrez trouver
 
 **Les API d'intérrogation**
 
-Les API d'intérrogation se presentent sous la forme 
+Les API d'intérrogation se presentent sous la forme
 `http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
 
 - Durée de fonctionnement en secondes depuis le dernier reboot/reset/allumage `http://ip_du_remora/uptime`
@@ -156,7 +158,7 @@ Si le délestage est désactivé `http://ip_du_remora/delestage`
 			"IMAX":1,
 			"PAPP":170,
 			"HHPHC":3,
-			"MOTDETAT":0 
+			"MOTDETAT":0
 		}
 ````
 A noter la présence de certaines étiquettes virtuelles commencant par un `_`
@@ -164,8 +166,8 @@ A noter la présence de certaines étiquettes virtuelles commencant par un `_`
 
 **Les API d'action**
 
-Les API d'action se presentent sous la forme 
-`http://adresse_ip_du_remora/?action=ma_donnee`, notez la différence avec les intérrogations, le `?`. Le résultat est retourné au format JSON avec un code réponse, il est :     
+Les API d'action se presentent sous la forme
+`http://adresse_ip_du_remora/?action=ma_donnee`, notez la différence avec les intérrogations, le `?`. Le résultat est retourné au format JSON avec un code réponse, il est :
 - négatif en cas d'erreur
 - à 0 si tout est OK
 - positif pour indiquer un code retour OK différent si besoin.
@@ -219,7 +221,7 @@ Il est aussi possible de forcer le relais jusqu'au prochain changement de pério
 		# curl http://192.168.1.201/?relais=1
 		{ "response": 0 }
 ````
-- selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)    
+- selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)
   Fil pilote 1 en arret
 ````shell
 		# curl http://192.168.1.201?setfp=1a
@@ -283,7 +285,7 @@ Historiques des Modifications
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
 
-30/09/2015 : voir le post [dédié][6].   
+30/09/2015 : voir le post [dédié][6].
 
 02/12/2015 : Ajout [Version 1.3][7] Remora NodeMCU
 
@@ -292,6 +294,10 @@ Historiques des Modifications
 01/10/2016 : Ajout de la (dés)activation du délestage. Ajout de la gestion automatisée du mode du relais.
 
 07/01/2017 : Modification de la taille de la clé API pour Jeedom (32 => 48)
+
+08/02/2017 : Ajout de la variable RELAIS_REVERSE à décommenter dans remora.h pour inverser l'état du relais en cas de problème
+
+04/03/2017 : Ajout des connexions TCP Asynchrones
 
 Exemple
 -------

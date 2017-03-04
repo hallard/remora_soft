@@ -9,10 +9,11 @@
 //           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
 //           02/12/2015 Charles-Henri Hallard : Ajout API WEB ESP8266 et Remora V1.3
 //           04/01/2016 Charles-Henri Hallard : Ajout Interface WEB GUIT
+//           04/03/2017 Manuel Hervo          : Ajout des connexions TCP Asynchrones
 //
 // **********************************************************************************
-#ifndef REMORA_h
-#define REMORA_h
+#ifndef REMORA_H_
+#define REMORA_H_
 
 // Spark Core main firmware include file
 #ifdef SPARK
@@ -33,7 +34,7 @@
 #define MOD_ADPS          /* Délestage */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.3"
+#define REMORA_VERSION "1.3.4"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
@@ -89,7 +90,10 @@
   #include <FS.h>
   #include <ESP8266WiFi.h>
   #include <ESP8266HTTPClient.h>
-  #include <ESP8266WebServer.h>
+  // #include <ESP8266WebServer.h>
+  #include <ESPAsyncTCP.h>
+  #include <ESPAsyncWebServer.h>
+  #include <WiFiUdp.h>
   #include <Ticker.h>
   #include <NeoPixelBus.h>
 
@@ -110,10 +114,11 @@ extern "C" {
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
   #define DEBUG_SERIAL  Serial
-  //#define DEBUG_INIT          // Décommenter cette ligne si DEBUG_SERIAL est Serial1
+  //#define DEBUG_INIT
+  #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 #endif
 
-//#define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
+#define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
 
 // I prefix debug macro to be sure to use specific for THIS library
 // debugging, this should not interfere with main sketch or other
@@ -213,6 +218,7 @@ extern "C" {
 #elif defined (REMORA_BOARD_V13)
   #define LED_PIN    8
   #define RELAIS_PIN 9
+  #define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
 
   // Creation macro unique et indépendante du type de
   // carte pour le controle des I/O
@@ -246,7 +252,7 @@ extern unsigned long uptime ;
   typedef NeoPixelBus<NeoRgbFeature, NeoEsp8266BitBang800KbpsMethod> MyPixelBus;
 
   // ESP8266 WebServer
-  extern ESP8266WebServer server;
+  extern AsyncWebServer server;
     // RGB LED
   //extern NeoPixelBus rgb_led;
   //extern NeoPixelBus rgb_led(1, RGB_LED_PIN);
@@ -260,6 +266,8 @@ extern unsigned long uptime ;
 
   extern Ticker Tick_emoncms;
   extern Ticker Tick_jeedom;
+  extern bool   reboot; /* Flag to reboot the ESP */
+  extern bool   ota_blink;
 #endif
 
 

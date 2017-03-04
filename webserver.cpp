@@ -44,7 +44,7 @@ String getContentType(String filename) {
   if(filename.endsWith(".htm")) return F("text/html");
   else if(filename.endsWith(".html")) return F("text/html");
   else if(filename.endsWith(".css")) return F("text/css");
-  else if(filename.endsWith(".json")) return F("text/json");
+  else if(filename.endsWith(".json")) return F("application/json");
   else if(filename.endsWith(".js")) return F("application/javascript");
   else if(filename.endsWith(".png")) return F("image/png");
   else if(filename.endsWith(".gif")) return F("image/gif");
@@ -90,33 +90,39 @@ Input   : file path
 Output  : true if file found and sent
 Comments: -
 ====================================================================== */
-bool handleFileRead(String path) {
+bool handleFileRead(String path, AsyncWebServerRequest *request) {
   if ( path.endsWith("/") )
     path += "index.htm";
 
   String contentType = getContentType(path);
   String pathWithGz = path + ".gz";
+  bool gzip = false;
 
   DebugF("handleFileRead ");
   Debug(path);
 
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
-    if( SPIFFS.exists(pathWithGz) ){
+  if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)) {
+    if (SPIFFS.exists(pathWithGz)){
       path += ".gz";
       DebugF(".gz");
+      gzip = true;
     }
 
     DebuglnF(" found on FS");
+    DebugF("ContentType: "); Debugln(contentType);
 
-    File file = SPIFFS.open(path, "r");
-    size_t sent = server.streamFile(file, contentType);
-    file.close();
+    AsyncWebServerResponse *response = request->beginResponse(SPIFFS, path, contentType);
+    if (gzip) {
+      DebuglnF("Add header content-encoding: gzip");
+      response->addHeader("Content-Encoding", "gzip");
+    }
+    request->send(response);
     return true;
   }
 
   Debugln("");
 
-  server.send(404, "text/plain", "File Not Found");
+  request->send(404, "text/plain", "File Not Found");
   return false;
 }
 
@@ -178,7 +184,7 @@ Input   : linked list pointer on the concerned data
 Output  : -
 Comments: -
 ====================================================================== */
-void tinfoJSONTable(void)
+void tinfoJSONTable(AsyncWebServerRequest *request)
 {
 
   // Just to debug where we are
@@ -230,15 +236,15 @@ void tinfoJSONTable(void)
 
   } else {
     DebuglnF("sending 404...");
-    server.send ( 404, "text/plain", "No data" );
+    request->send(404, "text/plain", "No data");
   }
   DebugF("sending...");
-  server.send ( 200, "text/json", response );
+  request->send(200, "application/json", response);
   DebuglnF("OK!");
 
   #else
     DebuglnF("sending 404...");
-    server.send ( 404, "text/plain", "Teleinfo non activée" );
+    request->send(404, "text/plain", "Teleinfo non activée");
   #endif // MOD_TELEINFO
 
 }
@@ -406,7 +412,7 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void sysJSONTable()
+void sysJSONTable(AsyncWebServerRequest *request)
 {
   String response = "";
 
@@ -414,7 +420,7 @@ void sysJSONTable()
 
   // Just to debug where we are
   DebugF("Serving /system page...");
-  server.send ( 200, "text/json", response );
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -464,13 +470,13 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void confJSONTable()
+void confJSONTable(AsyncWebServerRequest *request)
 {
   String response = "";
   getConfJSONData(response);
   // Just to debug where we are
   DebugF("Serving /config page...");
-  server.send ( 200, "text/json", response );
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -536,11 +542,11 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void spiffsJSONTable()
+void spiffsJSONTable(AsyncWebServerRequest *request)
 {
   String response = "";
   getSpiffsJSONData(response);
-  server.send ( 200, "text/json", response );
+  request->send(200, "application/json", response);
 }
 
 /* ======================================================================
@@ -550,47 +556,56 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void wifiScanJSON(void)
+void wifiScanJSON(AsyncWebServerRequest *request)
 {
   String response = "";
   bool first = true;
+  int scanStatus = WiFi.scanComplete();
 
   // Just to debug where we are
   DebugF("Serving /wifiscan page...");
 
-  int n = WiFi.scanNetworks();
-
   // Json start
-  response += F("[\r\n");
+  response += F("{\r\n");
 
-  for (uint8_t i = 0; i < n; ++i)
-  {
-    int8_t rssi = WiFi.RSSI(i);
-
-    uint8_t percent;
-
-    // dBm to Quality
-    if(rssi<=-100)      percent = 0;
-    else if (rssi>=-50) percent = 100;
-    else                percent = 2 * (rssi + 100);
-
-    if (first)
-      first = false;
-    else
-      response += F(",");
-
-    response += F("{\"ssid\":\"");
-    response += WiFi.SSID(i);
-    response += F("\",\"rssi\":") ;
-    response += rssi;
-    response += FPSTR(FP_JSON_END);
+  //int n = WiFi.scanNetworks();
+  if (scanStatus == WIFI_SCAN_FAILED) {
+    WiFi.scanNetworks(true);
+    response += F("\"status\": \"Scan in progess\"");
+  } else if (scanStatus >= 0) {
+    response += F("\"result\": [");
+    for (uint8_t i = 0; i < scanStatus; ++i) {
+      int8_t rssi = WiFi.RSSI(i);
+  
+      uint8_t percent;
+  
+      // dBm to Quality
+      if(rssi<=-100)      percent = 0;
+      else if (rssi>=-50) percent = 100;
+      else                percent = 2 * (rssi + 100);
+  
+      if (first)
+        first = false;
+      else
+        response += F(",");
+  
+      response += F("{\"ssid\":\"");
+      response += WiFi.SSID(i);
+      response += F("\",\"rssi\":") ;
+      response += rssi;
+      response += FPSTR(FP_JSON_END);
+    }
+    response += F("],\"status\": \"OK\"");
+    WiFi.scanDelete();
   }
 
   // Json end
-  response += FPSTR("]\r\n");
+  response += FPSTR("}\r\n");
+
+  Debugln(response);
 
   DebugF("sending...");
-  server.send ( 200, "text/json", response );
+  request->send(200, "application/json", response);
   DebuglnF("Ok!");
 }
 
@@ -603,7 +618,7 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void tinfoJSON(void)
+void tinfoJSON(AsyncWebServerRequest *request)
 {
   #ifdef MOD_TELEINFO
     ValueList * me = tinfo.getList();
@@ -661,11 +676,11 @@ void tinfoJSON(void)
       // Json end
       response += FPSTR(FP_JSON_END) ;
     } else {
-      server.send ( 404, "text/plain", "No data" );
+      request->send(404, "text/plain", "No data");
     }
-    server.send ( 200, "text/json", response );
+    request->send(200, "application/json", response);
   #else
-    server.send ( 404, "text/plain", "teleinfo not enabled" );
+    request->send(404, "text/plain", "teleinfo not enabled");
   #endif
 }
 
@@ -754,13 +769,13 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void handleFactoryReset(void)
+void handleFactoryReset(AsyncWebServerRequest *request)
 {
   // Just to debug where we are
   DebugF("Serving /factory_reset page...");
   resetConfig();
   ESP.eraseConfig();
-  server.send ( 200, "text/plain", FPSTR(FP_RESTART) );
+  request->send(200, "text/plain", FPSTR(FP_RESTART));
   delay(1000);
   ESP.restart();
   while (true)
@@ -774,11 +789,11 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void handleReset(void)
+void handleReset(AsyncWebServerRequest *request)
 {
   // Just to debug where we are
   DebugF("Serving /reset page...");
-  server.send ( 200, "text/plain", FPSTR(FP_RESTART) );
+  request->send(200, "text/plain", FPSTR(FP_RESTART));
   delay(1000);
   ESP.restart();
   // This will fire watchdog
@@ -793,36 +808,38 @@ Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void handleFormConfig(void)
+void handleFormConfig(AsyncWebServerRequest *request)
 {
   String response="";
   int ret ;
   boolean showconfig = false;
 
   // We validated config ?
-  if (server.hasArg("save"))
-  {
+  if (request->hasParam("save", true)) {
     int itemp;
     DebuglnF("===== Posted configuration");
 
     // WifInfo
-    strncpy(config.ssid ,   server.arg("ssid").c_str(),     CFG_SSID_SIZE );
-    strncpy(config.psk ,    server.arg("psk").c_str(),      CFG_PSK_SIZE );
-    strncpy(config.host ,   server.arg("host").c_str(),     CFG_HOSTNAME_SIZE );
-    strncpy(config.ap_psk , server.arg("ap_psk").c_str(),   CFG_PSK_SIZE );
-    strncpy(config.ota_auth,server.arg("ota_auth").c_str(), CFG_PSK_SIZE );
-    itemp = server.arg("ota_port").toInt();
+    strncpy(config.ssid ,   request->getParam("ssid", true)->value().c_str(),     CFG_SSID_SIZE );
+    strncpy(config.psk ,    request->getParam("psk", true)->value().c_str(),      CFG_PSK_SIZE );
+    strncpy(config.host ,   request->getParam("host", true)->value().c_str(),     CFG_HOSTNAME_SIZE );
+    strncpy(config.ap_psk , request->getParam("ap_psk", true)->value().c_str(),   CFG_PSK_SIZE );
+    if (config.ota_auth != request->getParam("ota_auth", true)->value().c_str()) {
+      strncpy(config.ota_auth, request->getParam("ota_auth", true)->value().c_str(), CFG_PSK_SIZE );
+      reboot = true;
+    }
+    itemp = request->getParam("ota_port", true)->value().toInt();
     config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT ;
 
     // Emoncms
-    strncpy(config.emoncms.host,   server.arg("emon_host").c_str(),  CFG_EMON_HOST_SIZE );
-    strncpy(config.emoncms.url,    server.arg("emon_url").c_str(),   CFG_EMON_URL_SIZE );
-    strncpy(config.emoncms.apikey, server.arg("emon_apikey").c_str(),CFG_EMON_APIKEY_SIZE );
-    itemp = server.arg("emon_node").toInt();
+    strncpy(config.emoncms.host,   request->getParam("emon_host", true)->value().c_str(),  CFG_EMON_HOST_SIZE );
+    strncpy(config.emoncms.url,    request->getParam("emon_url", true)->value().c_str(),   CFG_EMON_URL_SIZE );
+    strncpy(config.emoncms.apikey, request->getParam("emon_apikey", true)->value().c_str(),CFG_EMON_APIKEY_SIZE );
+    itemp = request->getParam("emon_node", true)->value().toInt();
     config.emoncms.node = (itemp>=0 && itemp<=255) ? itemp : 0 ;
-    itemp = server.arg("emon_port").toInt();
+    itemp = request->getParam("emon_port", true)->value().toInt();
     config.emoncms.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_EMON_DEFAULT_PORT ;
-    itemp = server.arg("emon_freq").toInt();
+    itemp = request->getParam("emon_freq", true)->value().toInt();
     if (itemp>0 && itemp<=86400){
       // Emoncms Update if needed
       Tick_emoncms.detach();
@@ -833,13 +850,13 @@ void handleFormConfig(void)
     config.emoncms.freq = itemp;
 
     // jeedom
-    strncpy(config.jeedom.host,   server.arg("jdom_host").c_str(),  CFG_JDOM_HOST_SIZE );
-    strncpy(config.jeedom.url,    server.arg("jdom_url").c_str(),   CFG_JDOM_URL_SIZE );
-    strncpy(config.jeedom.apikey, server.arg("jdom_apikey").c_str(),CFG_JDOM_APIKEY_SIZE );
-    strncpy(config.jeedom.adco,   server.arg("jdom_adco").c_str(),CFG_JDOM_ADCO_SIZE );
-    itemp = server.arg("jdom_port").toInt();
+    strncpy(config.jeedom.host,   request->getParam("jdom_host", true)->value().c_str(),  CFG_JDOM_HOST_SIZE );
+    strncpy(config.jeedom.url,    request->getParam("jdom_url", true)->value().c_str(),   CFG_JDOM_URL_SIZE );
+    strncpy(config.jeedom.apikey, request->getParam("jdom_apikey", true)->value().c_str(),CFG_JDOM_APIKEY_SIZE );
+    strncpy(config.jeedom.adco,   request->getParam("jdom_adco", true)->value().c_str(),CFG_JDOM_ADCO_SIZE );
+    itemp = request->getParam("jdom_port", true)->value().toInt();
     config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT ;
-    itemp = server.arg("jdom_freq").toInt();
+    itemp = request->getParam("jdom_freq", true)->value().toInt();
     if (itemp>0 && itemp<=86400){
       // Emoncms Update if needed
       Tick_jeedom.detach();
@@ -869,11 +886,62 @@ void handleFormConfig(void)
   Debug(ret);
   Debug(":");
   Debugln(response);
-  server.send ( ret, "text/plain", response);
+  request->send (ret, "text/plain", response);
 
   // This is slow, do it after response sent
   if (showconfig)
     showConfig();
+}
+
+void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+  if (!index) {
+    Update.runAsync(true);
+    WiFiUDP::stopAll();
+    DebugF("* Upload Started: "); Debugln(filename.c_str());
+    LedRGBON(COLOR_MAGENTA);
+    ota_blink = true;
+    int command = U_FLASH;
+    //Debugf("Magic Byte: %02X\n", data[0]);
+    if (data[0] != 0xE9) {
+      command = U_SPIFFS;
+      SPIFFS.end();
+      //DebuglnF("Command U_SPIFFS");
+    }
+    if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000, command)) {
+      Update.printError(DEBUG_SERIAL);
+    }
+  }
+
+  if (!Update.hasError()) {
+    if (Update.write(data, len) != len) {
+      DebugF("*** UPDATE ERROR: ");
+      Update.printError(DEBUG_SERIAL);
+      if (ota_blink) {
+        LedRGBON(COLOR_RED);
+      } else {
+        LedRGBOFF();
+      }
+      ota_blink = !ota_blink;
+    } else {
+      if (ota_blink) {
+        LedRGBON(COLOR_MAGENTA);
+      } else {
+        LedRGBOFF();
+      }
+      ota_blink = !ota_blink;
+      Debug(".");
+    }
+  }
+  
+  if (final) {
+    DebuglnF("* Upload Finished.");
+    if (Update.end(true)) {
+      Debugf("Update Success: %uB\n", index+len);
+    } else {
+      Update.printError(DEBUG_SERIAL);
+    }
+    LedRGBOFF();
+  }
 }
 
 /* ======================================================================
@@ -884,11 +952,11 @@ Output  : -
 Comments: We search is we have a name that match to this URI, if one we
           return it's pair name/value in json
 ====================================================================== */
-void handleNotFound(void)
+void handleNotFound(AsyncWebServerRequest *request)
 {
   String response = "";
 
-  String sUri = server.uri();
+  String sUri = request->url();
   const char * uri;
   bool found = false;
   bool first_elem = true;
@@ -973,38 +1041,38 @@ void handleNotFound(void)
 
   // Requêtes modifiantes (cumulable)
   // ================================
-  if (  server.hasArg("fp") ||
-        server.hasArg("setfp") ||
-        server.hasArg("relais") ||
-        server.hasArg("frelais")) {
+  if (  request->hasParam("fp") ||
+        request->hasParam("setfp") ||
+        request->hasParam("relais") ||
+        request->hasParam("frelais")) {
 
     int error = 0;
     response = FPSTR(FP_JSON_START);
 
     // http://ip_remora/?setfp=CMD
-    if ( server.hasArg("setfp") ) {
-      String value = server.arg("setfp");
+    if ( request->hasParam("setfp") ) {
+      String value = request->getParam("setfp")->value();
       error += setfp(value);
     }
     // http://ip_remora/?fp=CMD
-    if ( server.hasArg("fp") ) {
-      String value = server.arg("fp");
+    if ( request->hasParam("fp") ) {
+      String value = request->getParam("fp")->value();
       error += fp(value);
     }
 
     // http://ip_remora/?relais=n
-    if ( server.hasArg("relais") ) {
-      String value = server.arg("relais");
+    if ( request->hasParam("relais") ) {
+      String value = request->getParam("relais")->value();
       // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
-      if ( relais(value) != server.arg("relais").toInt() )
+      if ( relais(value) != request->getParam("relais")->value().toInt() )
         error--;
     }
 
     // http://ip_remora/?frelais=n (n: 0 | 1 | 2)
-    if ( server.hasArg("frelais") ) {
-      String value = server.arg("frelais");
+    if ( request->hasParam("frelais") ) {
+      String value = request->getParam("frelais")->value();
       // La nouvelle valeur n'est pas celle qu'on vient de positionner ?
-      if ( fnct_relais(value) != server.arg("frelais").toInt() )
+      if ( fnct_relais(value) != request->getParam("frelais")->value().toInt() )
         error--;
     }
 
@@ -1017,30 +1085,32 @@ void handleNotFound(void)
 
   // Got it, send json
   if (found) {
-    server.send ( 200, "text/json", response );
+    request->send(200, "application/json", response);
   } else {
     // le fichier demandé existe sur le système SPIFFS ?
-    found = handleFileRead(server.uri());
+    found = handleFileRead(request->url(), request);
   }
 
   // send error message in plain text
   if (!found) {
     String message = F("File Not Found\n\n");
     message += "URI: ";
-    message += server.uri();
+    message += request->url();
     message += "\nMethod: ";
-    message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
+    message += ( request->method() == HTTP_GET ) ? "GET" : "POST";
     message += "\nArguments: ";
-    message += server.args();
+    message += request->params();
     message += "\n";
 
-    for ( uint8_t i = 0; i < server.args(); i++ ) {
-      message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
+    uint8_t params = request->params();
+
+    for ( uint8_t i = 0; i < params; i++ ) {
+      AsyncWebParameter* p = request->getParam(i);
+      message += " " + p->name() + ": " + p->value() + "\n";
     }
-    server.send ( 404, "text/plain", message );
+    request->send(404, "text/plain", message);
   }
 
 }
+
 #endif
-
-
