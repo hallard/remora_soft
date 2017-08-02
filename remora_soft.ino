@@ -668,6 +668,13 @@ void mysetup()
     // Initialiser la téléinfo et attente d'une trame valide
     // Le status est mis à jour dans les callback de la teleinfo
     tinfo_setup(true);
+    // Initialise la mise à jour de Jeedom si la config est définie
+    if (strlen(config.jeedom.host) > 0 && strlen(config.jeedom.url) > 0
+      && strlen(config.jeedom.apikey) > 0 && (config.jeedom.freq > 0 && config.jeedom.freq < 86400)) {
+      // Jeedom Update if needed
+      Tick_jeedom.detach();
+      Tick_jeedom.attach(config.jeedom.freq, Task_jeedom);
+    }
   #endif
 
   // Led verte durant le test
