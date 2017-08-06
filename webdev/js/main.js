@@ -1,5 +1,5 @@
 /*
-* Project: Remora = v1.3.3
+* Project: Remora = v1.3.4
 * Description: IHM Web for Remora
 * Author: Charles Henri Hallard, Thibaud, Manuel Hervo
 * License: MIT License
@@ -12,7 +12,7 @@
   var Timer_sys,
       Timer_tinfo,
       elapsed = 0,
-      debug = true;
+      debug = false;
 
   function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
     $('body').addClass('loaded');
