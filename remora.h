@@ -34,7 +34,7 @@
 #define MOD_ADPS          /* Délestage */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.4"
+#define REMORA_VERSION "1.3.6-BETA"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
@@ -43,8 +43,6 @@
 // Librairies du projet remora Pour Particle
 #ifdef SPARK
   #include "LibMCP23017.h"
-  #include "LibSSD1306.h"
-  #include "LibGFX.h"
   #include "LibULPNode_RF_Protocol.h"
   #include "LibLibTeleinfo.h"
   //#include "WebServer.h"
@@ -90,12 +88,17 @@
   #include <FS.h>
   #include <ESP8266WiFi.h>
   #include <ESP8266HTTPClient.h>
-  // #include <ESP8266WebServer.h>
+  #include <ESP8266mDNS.h>
   #include <ESPAsyncTCP.h>
   #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
   #include <Ticker.h>
   #include <NeoPixelBus.h>
+  #include <ArduinoOTA.h>
+  #include <Wire.h>
+  #include <SPI.h>
+  #include <SSD1306Wire.h>
+  #include <OLEDDisplayUi.h>
 
 extern "C" {
 #include "user_interface.h"
@@ -104,8 +107,6 @@ extern "C" {
   #include "./LibMCP23017.h"
   //#include "./RFM69registers.h"
   //#include "./RFM69.h"
-  #include "./LibSSD1306.h"
-  #include "./LibGFX.h"
   #include "./LibULPNode_RF_Protocol.h"
   #include "./LibLibTeleinfo.h"
   #include "./LibRadioHead.h"
@@ -144,6 +145,8 @@ extern "C" {
 #include "linked_list.h"
 #include "i2c.h"
 #include "rfm.h"
+#include "./icons.h"
+#include "./fonts.h"
 #include "display.h"
 #include "pilotes.h"
 #include "tinfo.h"
@@ -239,7 +242,7 @@ extern "C" {
 
 // status global de l'application
 extern uint16_t status;
-extern unsigned long uptime ;
+extern unsigned long uptime;
 
 
 #ifdef SPARK
@@ -268,6 +271,7 @@ extern unsigned long uptime ;
   extern Ticker Tick_jeedom;
   extern bool   reboot; /* Flag to reboot the ESP */
   extern bool   ota_blink;
+  extern bool   got_first;
 #endif
 
 

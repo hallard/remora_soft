@@ -24,8 +24,6 @@
 
 #ifdef SPARK
   #include "LibMCP23017.h"
-  #include "LibSSD1306.h"
-  #include "LibGFX.h"
   #include "LibULPNode_RF_Protocol.h"
   #include "LibLibTeleinfo.h"
   //#include "WebServer.h"
@@ -48,7 +46,7 @@
   #include <ESP8266WiFi.h>
   #include <ESP8266HTTPClient.h>
   // #include <ESP8266WebServer.h>
-  // #include <ESP8266mDNS.h>
+  #include <ESP8266mDNS.h>
   #include <ESPAsyncTCP.h>
   #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
@@ -58,9 +56,9 @@
   #include <Ticker.h>
   #include <NeoPixelBus.h>
   #include <BlynkSimpleEsp8266.h>
+  #include <SSD1306Wire.h>
+  #include <OLEDDisplayUi.h>
   #include "./LibMCP23017.h"
-  #include "./LibSSD1306.h"
-  #include "./LibGFX.h"
   #include "./LibULPNode_RF_Protocol.h"
   #include "./LibLibTeleinfo.h"
   #include "./LibRadioHead.h"
@@ -74,6 +72,7 @@
 uint16_t status = 0;
 unsigned long uptime = 0;
 bool first_setup;
+bool got_first = false;
 
 // Nombre de deconexion cloud detectée
 int my_cloud_disconnect = 0;
@@ -519,16 +518,34 @@ void mysetup()
     // OTA callbacks
     ArduinoOTA.onStart([]() {
       if (ArduinoOTA.getCommand() == U_SPIFFS) {
-        SPIFFS.end();
+        SPIFFS.end(); // Arret du SPIFFS, sinon plantage de la mise à jour
       }
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
+      // On affiche le début de la mise à jour OTA sur l'afficheur
+      if (status & STATUS_OLED) {
+        ui->disableAutoTransition();
+        display->clear();
+        display->setFont(Roboto_Condensed_Bold_Bold_16);
+        display->setTextAlignment(TEXT_ALIGN_CENTER_BOTH);
+        display->drawString(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 - 16, "OTA Update");
+        display->display();
+      }
       ota_blink = true;
     });
 
     ArduinoOTA.onEnd([]() {
       LedRGBOFF();
       DebuglnF("Update finished restarting");
+      // On affiche le message de fin sur l'afficheur
+      if (status & STATUS_OLED) {
+        ui->disableAutoTransition();
+        display->clear();
+        display->setFont(Roboto_Condensed_Bold_Bold_16);
+        display->setTextAlignment(TEXT_ALIGN_CENTER_BOTH);
+        display->drawString(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 - 16, "Restart");
+        display->display();
+      }
     });
 
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -538,17 +555,41 @@ void mysetup()
         LedRGBOFF();
       }
       ota_blink = !ota_blink;
-      //Debugf("Progress: %u%%\n", (progress / (total / 100)));
+      // On affiche la progression sur l'afficheur
+      if (status & STATUS_OLED) {
+        ui->disableAutoTransition();
+        display->clear();
+        display->setTextAlignment(TEXT_ALIGN_CENTER);
+        display->setFont(Roboto_Condensed_Bold_Bold_16);
+        display->drawString(DISPLAY_WIDTH/2, 10, "OTA Update");
+        display->drawProgressBar(2, 28, 124, 10, progress / (total / 100));
+        display->display();
+      }
     });
 
     ArduinoOTA.onError([](ota_error_t error) {
       LedRGBON(COLOR_RED);
       DEBUG_SERIAL.printf("Update Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) DebuglnF("Auth Failed");
-      else if (error == OTA_BEGIN_ERROR) DebuglnF("Begin Failed");
-      else if (error == OTA_CONNECT_ERROR) DebuglnF("Connect Failed");
-      else if (error == OTA_RECEIVE_ERROR) DebuglnF("Receive Failed");
-      else if (error == OTA_END_ERROR) DebuglnF("End Failed");
+
+      char strErr[15]; // Contient le message d'erreur
+
+      if (error == OTA_AUTH_ERROR) {sprintf_P(strErr, PSTR("Auth Failed")); Debugln(strErr);}
+      else if (error == OTA_BEGIN_ERROR) {sprintf_P(strErr, PSTR("Begin Failed")); DebuglnF(strErr);}
+      else if (error == OTA_CONNECT_ERROR) {sprintf_P(strErr, PSTR("Connect Failed")); DebuglnF(strErr);}
+      else if (error == OTA_RECEIVE_ERROR) {sprintf_P(strErr, PSTR("Receive Failed")); DebuglnF(strErr);}
+      else if (error == OTA_END_ERROR) {sprintf_P(strErr, PSTR("End Failed")); DebuglnF(strErr);}
+
+      // On affiche l'erreur sur l'afficheur
+      if (status & STATUS_OLED) {
+        ui->disableAutoTransition();
+        display->clear();
+        display->setFont(Roboto_Condensed_Bold_Bold_16);
+        display->setTextAlignment(TEXT_ALIGN_CENTER);
+        display->drawString(DISPLAY_WIDTH/2, 10, "OTA Error");
+        display->setFont(Roboto_Condensed_Bold_14);
+        display->drawString(DISPLAY_WIDTH/2, 30, strErr);
+        display->display();
+      }
       //reboot = true;
     });
 
@@ -647,18 +688,21 @@ void mysetup()
 
   #ifdef MOD_OLED
     // Initialisation de l'afficheur
-    if (display_setup())
-    {
-      status |= STATUS_OLED ;
-      // Splash screen
-      display_splash();
+    DebugF("Initializing Display...");
+    if (initDisplay(true)) {
+      DebuglnF("OK");
+      status |= STATUS_OLED; // Statut OLED ajouté
+      // On lance l'initialisation des frames
+      initDisplayUI();
+    } else {
+      DebuglnF("Fail");
     }
   #endif
 
   #ifdef MOD_RF69
     // Initialisation RFM69 Module
-    if ( rfm_setup())
-      status |= STATUS_RFM ;
+    if (rfm_setup())
+      status |= STATUS_RFM; // Statut RFM ajouté
   #endif
 
   // Feed the dog
@@ -782,13 +826,15 @@ void loop()
   #endif
 
   #ifdef MOD_OLED
-    // pour le moment on se contente d'afficher la téléinfo
-    screen_state = screen_teleinfo;
-
-    // Modification d'affichage et afficheur présent ?
-    if (refreshDisplay && (status & STATUS_OLED))
-      display_loop();
-      _yield();
+    if (status & STATUS_OLED) {
+      int remainingTimeBudget = ui->update();
+      if (remainingTimeBudget > 0) {
+        // You can do some work here
+        // Don't do stuff if you are below your
+        // time budget.
+        // delay(remainingTimeBudget);
+      }
+    }
   #endif
 
   // çà c'est fait

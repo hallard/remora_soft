@@ -15,218 +15,377 @@
 // **********************************************************************************
 #include "display.h"
 
-// Instantiate OLED (no reset pin)
-Adafruit_SSD1306 display(-1);
+SSD1306Wire * ssd1306 = NULL; // for SSD1306 Instance
+OLEDDisplay * display = NULL; // Display will point on the OLED instance
+OLEDDisplayUi * ui = NULL;    // Display User Interface
 
-// Différents état de l'affichage possible
-const char * screen_name[] = {"RF", "System", "Teleinfo"};
-screen_e screen_state;
-
-/* ======================================================================
-Function: displaySplash
-Purpose : display setup splash screen OLED screen
-Input   : -
-Output  : -
-Comments: -
-====================================================================== */
-void display_splash(void)
-{
-  display.clearDisplay() ;
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.setTextSize(2);
-  display.print("  REMORA\n");
-  display.print("Fil Pilote\n");
-  display.setTextSize(1);
-  //display.print(WiFi.localIP());
-  display.display();
-}
+// this array keeps function pointers to all frames
+// frames are the single views that slide from right to left
+FrameCallback frames[] = { 
+    drawFrameLogo,
+    drawFrameTinfo,
+    drawFrameWifi,
+    // Frame RF is activated if MOD_RF69 is defined
+    #ifdef MOD_RF69
+    drawFrameRF
+    #endif
+};
 
 /* ======================================================================
-Function: displaySys
-Purpose : display Téléinfo related information on OLED screen
+Function: initDisplay
+Purpose : Initialise l'afficheur OLED
 Input   : -
-Output  : -
+Output  : Etat de l'initialisation
 Comments: -
 ====================================================================== */
-void displayTeleinfo(void)
-{
-  uint percent = 0;
+bool initDisplay(void) {
 
-  // Effacer le buffer de l'affichage
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
+  // in case of dynamic change of OLED display
+  delete ui; 
+  delete ssd1306;
+  ui  = NULL;
+  display = NULL;
+  ssd1306 = NULL;
 
-  // si en heure pleine inverser le texte sur le compteur HP
-  if (ptec == PTEC_HP )
-    display.setTextColor(BLACK, WHITE); // 'inverted' text
-
-  display.print("Pleines ");
-  display.printf("%09ld\n", myindexHP);
-  display.setTextColor(WHITE); // normaltext
-
-  // si en heure creuse inverser le texte sur le compteur HC
-  if (ptec == PTEC_HC )
-    display.setTextColor(BLACK, WHITE); // 'inverted' text
-
-  display.print("Creuses ");
-  display.printf("%09ld\n", myindexHC);
-  display.setTextColor(WHITE); // normaltext
-
-  // Poucentrage de la puissance totale
-  percent = (uint) myiInst * 100 / myisousc ;
-
-  //Serial.print("myiInst="); Serial.print(myiInst);
-  //Serial.print("  myisousc="); Serial.print(myisousc);
-  //Serial.print("  percent="); Serial.println(percent);
-
-  // Information additionelles
-  display.printf("%d W %d%%  %3d A", mypApp, percent, myiInst);
-
-  // etat des fils pilotes
-  display.setCursor(0,32);
-  display.setTextSize(2);
-  #ifdef SPARK
-  display.printf("%02d:%02d:%02d",Time.hour(),Time.minute(),Time.second());
-  #endif
-
-  display.setCursor(0,48);
-  // On transcrit l'état de fonctionnement du relais en une lettre
-  // S: arrêt, F: marche forcée, A: auto
-  char dFnctRelais = 'A';
-  if (fnctRelais == FNCT_RELAIS_ARRET) {
-    dFnctRelais = 'S';
-  } else if (fnctRelais == FNCT_RELAIS_FORCE) {
-    dFnctRelais = 'F';
-  }
-  display.printf("%s %c%c", etatFP, dFnctRelais, etatrelais+'0' );
-
-  // Bargraphe de puissance
-  display.drawVerticalBargraph(114,0,12,40,1, percent);
-
-  display.setTextColor(BLACK, WHITE); // 'inverted' text
-}
-
-/* ======================================================================
-Function: displaySys
-Purpose : display system related information on OLED screen
-Input   : -
-Output  : -
-Comments: -
-====================================================================== */
-void displaySys(void)
-{
-  // To DO
-}
-
-
-/* ======================================================================
-Function: displayRf
-Purpose : display RF related information on OLED screen
-Input   : -
-Output  : -
-Comments: -
-====================================================================== */
-void displayRf(void)
-{/*
-  int16_t percent;
-
-  display.printf("RF69 G%d I%d", NETWORK_ID, NODE_ID);
-
-  // rssi range 0 (0%) to 115 (100%)
-  percent = ((module.rssi+115) * 100) / 115;
-
-  //displayClearline(current_line);
-  //display.setCursor(0,current_line);
-  //display.print(F("["));
-  //display.print(module.size);
-  display.printf("G%d I%d %d%%\n", module.groupid, module.nodeid,percent);
-  display.printf("[%02X] ", module.size);
-
-  byte n = module.size;
-  uint8_t * p = module.data;
-
-  // Max 4 data per line on LCD
-  if (n>12)
-    n=12;
-
-  for (byte i = 0; i < n; ++i)
-    display.printf("%02X ", *p++);
-
-  //display.drawHorizontalBargraph(106,current_line+1, 22, 6, 1, percent);
-
-  display.printf("%d%% ", percent);
-  */
-}
-
-/* ======================================================================
-Function: display_setup
-Purpose : prepare and init stuff, configuration, ..
-Input   : -
-Output  : true if OLED module found, false otherwise
-Comments: -
-====================================================================== */
-bool display_setup(void)
-{
-  bool ret = false;
-
-  Debug("Initializing OLED...Searching...");
-  Debugflush();
-
-  // Par defaut affichage des infos de téléinfo
-  screen_state = screen_teleinfo;
-
-  // Init et detection des modules I2C
-  if (!i2c_detect(OLED_I2C_ADDRESS)) {
-    Debugln("Not found!");
-  } else {
-    Debug("Setup...");
-    Serial.flush();
-
-    // initialize with the I2C addr for the 128x64
-    display.begin(OLED_I2C_ADDRESS);
-    display.clearDisplay() ;
-    display.display();
-    Debugln("OK!");
-    ret = true;
+  // Scan I2C Bus to check for OLED
+  if (i2c_detect(I2C_DISPLAY_ADDRESS)) {
+    config.config |= CFG_LCD;
   }
 
-  Serial.flush();
+  if (config.config & CFG_LCD) {
+    DebuglnF("Display found");
 
-  return (ret);
+    // Instantiate the display
+    ssd1306 = new SSD1306Wire(I2C_DISPLAY_ADDRESS, SDA_PIN, SDC_PIN);
+    display = ssd1306;
+
+    // We got all fine
+    if (display) {
+      // Instantiate the User Interface
+      ui = new OLEDDisplayUi( display );
+
+      // initialize display
+      display->init();
+      //display->flipScreenVertically();
+      display->clear();
+      // Display CH2I Logo
+      display->drawXbm((128-ch2i_width)/2, 0, ch2i_width, ch2i_height, ch2i_bits);
+      display->display();
+
+      display->setFont(ArialMT_Plain_10);
+      display->setTextAlignment(TEXT_ALIGN_CENTER);
+      display->setContrast(255);
+      return true;
+    }
+  }
+  return false;
 }
 
 /* ======================================================================
-Function: display_loop
-Purpose : main loop for OLED display
+Function: initDisplayUI
+Purpose : Initialise la bibliothèque UI pour les frames
 Input   : -
 Output  : -
 Comments: -
 ====================================================================== */
-void display_loop(void)
-{
-  // Si pas de heartbeat via la teleinfo, le faire
-  // via l'affichage
-  #ifndef MOD_TELEINFO
-    LedRGBON(COLOR_BLUE);
-  #endif
+void initDisplayUI(void) {
+  if ( display && (config.config & CFG_LCD) ) {
+    ui->setTargetFPS(DISPLAY_FPS);
+    ui->setFrameAnimation(SLIDE_LEFT);
+    ui->setFrames(frames, DISPLAY_FRAME_COUNT);
+    ui->disableAllIndicators();
+    ui->init();
+    if (config.config & CFG_FLIP_LCD) {
+      //display->flipScreenVertically();
+    }
+  }
+}
 
-  display.setCursor(0,0);
+/* ======================================================================
+Function: drawProgress
+Purpose : Permet de créer une barre de progression avec un texte
+          au dessus et en dessous de la barre de progression
+Input   : Pointeur sur l'instance de l'afficheur
+          Pourcentage de la progression
+          Titre au dessus de la barre de progression
+          Titre en dessous de la barre de progression
+Output  : -
+Comments: -
+====================================================================== */
+void drawProgress(OLEDDisplay *display, int percentage, String labeltop, String labelbot) {
+  if (config.config & CFG_LCD) {
+    display->clear();
+    display->setTextAlignment(TEXT_ALIGN_CENTER);
+    display->setFont(Roboto_Condensed_Bold_Bold_16);
+    display->drawString(64, 8, labeltop);
+    display->drawProgressBar(10, 28, 108, 12, percentage);
+    display->drawString(64, 48, labelbot);
+    display->display();
+  }
+}
 
-  if (screen_state==screen_sys)
-    displaySys();
-  else if (screen_state==screen_rf)
-    displayRf();
-  else if (screen_state==screen_teleinfo)
-    displayTeleinfo();
+/* ======================================================================
+Function: drawProgress
+Purpose : Permet de créer une barre de progression avec un texte
+          au dessus de la barre de progression
+Input   : Pointeur sur l'instance de l'afficheur
+          Pourcentage de la progression
+          Titre au dessus de la barre de progression
+Output  : -
+Comments: -
+====================================================================== */
+void drawProgress(OLEDDisplay *display, int percentage, String labeltop ) {
+  if (config.config & CFG_LCD) {
+    drawProgress(display, percentage, labeltop, String(""));
+  }
+}
 
-  // Affichage physique sur l'écran
-  display.display();
+/* ======================================================================
+Function: drawFrameWifi
+Purpose : Fonction d'affichage de l'adresse IP de la Remora
+Input   : Pointeur sur l'instance de l'afficheur
+          Etat de la frame
+          Coordonnées X
+          Coordonnées Y
+Output  : -
+Comments: -
+====================================================================== */
+void drawFrameWifi(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  display->clear();
+  display->setTextAlignment(TEXT_ALIGN_CENTER);
+  display->setFont(Roboto_Condensed_Bold_Bold_16);
+  // see http://blog.squix.org/2015/05/esp8266-nodemcu-how-to-create-xbm.html
+  // on how to create xbm files
+  display->drawXbm(x + (128-WiFi_width)/2, y, WiFi_width, WiFi_height, WiFi_bits);
+  display->drawString(x + 64, y + WiFi_height+4, WiFi.localIP().toString());
+  //ui->disableIndicator();
+}
 
-  #ifndef MOD_TELEINFO
-    LedRGBOFF();
-  #endif
+void drawProgressBarVert(OLEDDisplay *display, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t progress) {
+  uint16_t radius = width >> 1;
+  uint16_t xRadius = x + radius;
+  uint16_t yRadius = y + radius;
+  uint16_t doubleRadius = 2 * radius;
+  uint16_t innerRadius = radius - 2;
 
+  display->setColor(WHITE);
+  display->drawCircleQuads(xRadius, yRadius, radius, 0b0000011);
+  display->drawVerticalLine(x, yRadius, height);
+  display->drawVerticalLine(x+width, yRadius, height);
+  display->drawCircleQuads(xRadius, yRadius+height-1, radius, 0b0001100);
+
+  uint16_t maxProgress = ceil((progress * (height + doubleRadius)) / 100);
+  uint16_t maxProgressHeight = ceil((progress * height) / 100);
+
+  if (maxProgress > 0 && maxProgress <= radius) {
+    //                    120         46              5
+    display->fillCircle(xRadius, yRadius+height, radius-1);
+  }
+  else if (maxProgress > 0 && maxProgress <= height + radius) {
+    display->fillCircle(xRadius, yRadius+height, radius-1);
+    display->fillRect(x, (y  + height) - maxProgressHeight, width, maxProgressHeight);
+  }
+  else if (maxProgress > 0 && maxProgress <= height + doubleRadius) {
+    display->fillCircle(xRadius, yRadius+height, radius-1);
+    display->fillRect(x, (y  + height) - maxProgressHeight, width, maxProgressHeight);
+    display->fillCircle(xRadius, yRadius, radius-1);
+  }
+}
+
+/* ======================================================================
+Function: drawFrameTinfo
+Purpose : Fonction d'affichage de la téléinfo
+Input   : Pointeur sur l'instance de l'afficheur
+          Etat de la frame
+          Coordonnées X
+          Coordonnées Y
+Output  : -
+Comments: -
+====================================================================== */
+void drawFrameTinfo(OLEDDisplay *oled, OLEDDisplayUiState *state, int16_t x, int16_t y) {
+  uint8_t percent = 0;
+  char buff[20] = "";
+
+  oled->clear();
+  oled->setFont(Roboto_Condensed_Bold_Bold_16);
+  
+  if (!(status & STATUS_TINFO)) {
+    oled->setTextAlignment(TEXT_ALIGN_CENTER);
+    oled->setColor(INVERSE);
+    oled->drawString(x + 64, 10, "Teleinfo");
+    oled->drawString(x + 64, 24, "not");
+    oled->drawString(x + 64, 38, "initialized");
+  }
+  else {
+    // Effacer le buffer de l'affichage
+    oled->setTextAlignment(TEXT_ALIGN_LEFT);
+    //oled->setFont(Roboto_Condensed_Bold_14);
+    oled->setFont(ArialMT_Plain_10);
+    oled->setColor(WHITE);
+  
+    // si en heure pleine inverser le texte sur le compteur HP
+    //if (ptec == PTEC_HP )
+      //oled->setColor(BLACK); // 'inverted' text
+  
+    //uint16_t lenLabel = oled->getStringWidth("Pleines ");
+    sprintf_P(buff, PSTR("Pleines %09ld"), myindexHP);
+    oled->drawString(x + 0, y + 0, buff);
+    //oled->setColor(WHITE); // normaltext
+  
+    // si en heure creuse inverser le texte sur le compteur HC
+    //if (ptec == PTEC_HC )
+      //oled->setColor(INVERSE); // 'inverted' text
+  
+    //oled->drawString(x + 0, 14 + y, "Creuses ");
+    memset(buff, 0, 20);
+    sprintf_P(buff, PSTR("Creuses %09ld"), myindexHC);
+    oled->drawString(x + 0, 14 + y, buff);
+    oled->setColor(WHITE); // normaltext
+  
+    // Poucentrage de la puissance totale
+    percent = (uint) myiInst * 100 / myisousc;
+  
+    //Serial.print("myiInst="); Serial.print(myiInst);
+    //Serial.print("  myisousc="); Serial.print(myisousc);
+    //Serial.print("  percent="); Serial.println(percent);
+  
+    // Information additionelles
+    memset(buff, 0, 20);
+    sprintf_P(buff, PSTR("%d W %d%%  %3d A"), mypApp, percent, myiInst);
+    oled->drawString(x + 0, 28 + y, buff);
+  
+    // etat des fils pilotes
+    // On transcrit l'état de fonctionnement du relais en une lettre
+    // S: arrêt, F: marche forcée, A: auto
+    char dFnctRelais = 'A';
+    if (fnctRelais == FNCT_RELAIS_ARRET) {
+      dFnctRelais = 'S';
+    } else if (fnctRelais == FNCT_RELAIS_FORCE) {
+      dFnctRelais = 'F';
+    }
+    memset(buff, 0, 20);
+    sprintf_P(buff, PSTR("%s %c%c"), etatFP, dFnctRelais, etatrelais+'0');
+    oled->drawString(x + 0, 48 + y, buff);
+  
+    // Bargraphe de puissance
+    drawProgressBarVert(oled, 114, 6, 12, 40, percent);
+  }
+}
+
+/* ======================================================================
+Function: drawFrameLogo
+Purpose : Fonction d'affichage du logo de la Remora
+Input   : Pointeur sur l'instance de l'afficheur
+          Etat de la frame
+          Coordonnées X
+          Coordonnées Y
+Output  : -
+Comments: -
+====================================================================== */
+void drawFrameLogo(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  display->clear();
+  display->drawXbm(x + (128-remora_width)/2, y, remora_width, remora_height, remora_bits);
+  //ui->disableIndicator();
+}
+
+/* ======================================================================
+Function: drawFrameRF
+Purpose : Fonction d'affichage des données radio
+Input   : Pointeur sur l'instance de l'afficheur
+          Etat de la frame
+          Coordonnées X
+          Coordonnées Y
+Output  : -
+Comments: -
+====================================================================== */
+void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+    char buff[32];
+    int16_t percent;
+    volatile uint8_t * p;
+    int8_t line = 0;
+    byte n;
+  
+    n = rfData.size;
+    p = rfData.buffer;
+  
+    display->clear();
+    display->setFont(Roboto_Condensed_Bold_Bold_16);
+
+    if (!(status & STATUS_RFM)) {
+      display->setTextAlignment(TEXT_ALIGN_CENTER);
+      display->drawString(x + 64, 10, "Radio");
+      display->drawString(x + 64, 24, "not");
+      display->drawString(x + 64, 38, "initialized");
+    }
+    else if (!got_first) {
+      display->setTextAlignment(TEXT_ALIGN_CENTER);
+      display->drawString(x + 64, 14, "No radio data");
+      display->drawString(x + 64, 34, "received yet");
+    } else {
+  
+  
+      display->setTextAlignment(TEXT_ALIGN_LEFT);
+      if (rfData.type == RF_MOD_RFM69) {
+        sprintf_P(buff, PSTR("NODE %d"), rfData.nodeid );
+        display->drawString(x + 0, 0, buff);
+  
+        // rssi 
+        percent = (int16_t) rfData.rssi;
+  
+        // rssi for RFM69 is -115 (0%) to 0 (100%)
+  //      if (driver) {
+          // rssi range now 0 (0%) to 115 (100%)
+          percent += 115;
+          // now calc percentage
+          percent = (percent * 100) / 115;
+  //      }
+  
+        if (percent > 100) percent = 100;
+        if (percent < 0  ) percent = 0;
+  
+        // display bargraph on lcd
+        display->drawProgressBar( x + 62, 4, 64 , 12, percent);
+  
+        //display->setFont(Roboto_Condensed_12);
+        display->setTextAlignment(TEXT_ALIGN_LEFT);
+        /*
+        line++; *buff='\0';
+        if (sensorData.temp != SENSOR_NOT_A_TEMP) {
+          sprintf_P(buff+strlen(buff), PSTR("%.1f°C  "), sensorData.temp/100.0f );
+        }
+        if (sensorData.bat != SENSOR_NOT_A_BAT) {
+          //sprintf_P(buff+strlen(buff), PSTR("%.2fV"), sensorData.bat/1000.0f );
+          display->drawXbm(x + 127 - bat_width, y + 20, bat_width, bat_height, 
+                            sensorData.bat>1500?bat_100_bits:
+                            sensorData.bat>1400?bat_090_bits:
+                            sensorData.bat>1300?bat_080_bits:
+                            sensorData.bat>1200?bat_070_bits:
+                            sensorData.bat>1100?bat_060_bits:
+                            sensorData.bat>1000?bat_050_bits:
+                            sensorData.bat> 900?bat_040_bits:
+                            sensorData.bat> 800?bat_030_bits:
+                            sensorData.bat> 700?bat_020_bits:
+                            sensorData.bat> 600?bat_010_bits:bat_000_bits
+                            );
+        }
+        display->drawString(x + 0, y + line * 16, buff);
+  
+        display->setTextAlignment(TEXT_ALIGN_CENTER);
+        line++; *buff='\0';
+        if (sensorData.lux != SENSOR_NOT_A_LUX) {
+          sprintf_P(buff+strlen(buff), PSTR("%.0f Lux  "), sensorData.lux/10.0f );
+        }
+        if (sensorData.hum != SENSOR_NOT_A_HUM) {
+          sprintf_P(buff+strlen(buff), PSTR("%.0f %%RH"), sensorData.hum/10.0f );
+        }*/
+        display->drawString(x + 64, y + line * 16, buff);
+  
+        display->setFont(Roboto_Condensed_12);
+        display->setTextAlignment(TEXT_ALIGN_CENTER);
+        display->drawString(x + 64, 48, timeAgo(uptime-packet_last_seen));
+      }
+    }
+  //}
+
+  //ui->disableIndicator();
 }
