@@ -7,9 +7,9 @@
 //
 // Written by Charles-Henri Hallard (http://hallard.me)
 //
-// History : V1.00 2015-01-22 - First release
-//
-// 15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
+// History : 22/01/2015 : First release
+//           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
+//           12/08/2017 Manuel Hervo: Changement de library Adafruit => OLEDDisplay
 //
 // All text above must be included in any redistribution.
 // **********************************************************************************
@@ -21,7 +21,7 @@ OLEDDisplayUi * ui = NULL;    // Display User Interface
 
 // this array keeps function pointers to all frames
 // frames are the single views that slide from right to left
-FrameCallback frames[] = { 
+FrameCallback frames[] = {
     drawFrameLogo,
     drawFrameTinfo,
     drawFrameWifi,
@@ -41,7 +41,7 @@ Comments: -
 bool initDisplay(void) {
 
   // in case of dynamic change of OLED display
-  delete ui; 
+  delete ui;
   delete ssd1306;
   ui  = NULL;
   display = NULL;
@@ -161,6 +161,18 @@ void drawFrameWifi(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, i
   //ui->disableIndicator();
 }
 
+/* ======================================================================
+Function: drawProgressBarVert
+Purpose : Fonction d'affichage d'une barre de progression verticale
+Input   : Pointeur sur l'instance de l'afficheur
+          Coordonnées X du point haut de la barre
+          Coordonnées Y du point gauche de la barre
+          Largeur de la barre
+          Hauteur de la partie centrale de la barre
+          Pourcentage de la progression
+Output  : -
+Comments: -
+====================================================================== */
 void drawProgressBarVert(OLEDDisplay *display, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t progress) {
   uint16_t radius = width >> 1;
   uint16_t xRadius = x + radius;
@@ -208,7 +220,7 @@ void drawFrameTinfo(OLEDDisplay *oled, OLEDDisplayUiState *state, int16_t x, int
 
   oled->clear();
   oled->setFont(Roboto_Condensed_Bold_Bold_16);
-  
+
   if (!(status & STATUS_TINFO)) {
     oled->setTextAlignment(TEXT_ALIGN_CENTER);
     oled->setColor(INVERSE);
@@ -222,38 +234,38 @@ void drawFrameTinfo(OLEDDisplay *oled, OLEDDisplayUiState *state, int16_t x, int
     //oled->setFont(Roboto_Condensed_Bold_14);
     oled->setFont(ArialMT_Plain_10);
     oled->setColor(WHITE);
-  
+
     // si en heure pleine inverser le texte sur le compteur HP
     //if (ptec == PTEC_HP )
       //oled->setColor(BLACK); // 'inverted' text
-  
+
     //uint16_t lenLabel = oled->getStringWidth("Pleines ");
     sprintf_P(buff, PSTR("Pleines %09ld"), myindexHP);
     oled->drawString(x + 0, y + 0, buff);
     //oled->setColor(WHITE); // normaltext
-  
+
     // si en heure creuse inverser le texte sur le compteur HC
     //if (ptec == PTEC_HC )
       //oled->setColor(INVERSE); // 'inverted' text
-  
+
     //oled->drawString(x + 0, 14 + y, "Creuses ");
     memset(buff, 0, 20);
     sprintf_P(buff, PSTR("Creuses %09ld"), myindexHC);
     oled->drawString(x + 0, 14 + y, buff);
     oled->setColor(WHITE); // normaltext
-  
+
     // Poucentrage de la puissance totale
     percent = (uint) myiInst * 100 / myisousc;
-  
+
     //Serial.print("myiInst="); Serial.print(myiInst);
     //Serial.print("  myisousc="); Serial.print(myisousc);
     //Serial.print("  percent="); Serial.println(percent);
-  
+
     // Information additionelles
     memset(buff, 0, 20);
     sprintf_P(buff, PSTR("%d W %d%%  %3d A"), mypApp, percent, myiInst);
     oled->drawString(x + 0, 28 + y, buff);
-  
+
     // etat des fils pilotes
     // On transcrit l'état de fonctionnement du relais en une lettre
     // S: arrêt, F: marche forcée, A: auto
@@ -266,7 +278,7 @@ void drawFrameTinfo(OLEDDisplay *oled, OLEDDisplayUiState *state, int16_t x, int
     memset(buff, 0, 20);
     sprintf_P(buff, PSTR("%s %c%c"), etatFP, dFnctRelais, etatrelais+'0');
     oled->drawString(x + 0, 48 + y, buff);
-  
+
     // Bargraphe de puissance
     drawProgressBarVert(oled, 114, 6, 12, 40, percent);
   }
@@ -304,10 +316,10 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
     volatile uint8_t * p;
     int8_t line = 0;
     byte n;
-  
+
     n = rfData.size;
     p = rfData.buffer;
-  
+
     display->clear();
     display->setFont(Roboto_Condensed_Bold_Bold_16);
 
@@ -322,16 +334,16 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
       display->drawString(x + 64, 14, "No radio data");
       display->drawString(x + 64, 34, "received yet");
     } else {
-  
-  
+
+
       display->setTextAlignment(TEXT_ALIGN_LEFT);
       if (rfData.type == RF_MOD_RFM69) {
         sprintf_P(buff, PSTR("NODE %d"), rfData.nodeid );
         display->drawString(x + 0, 0, buff);
-  
-        // rssi 
+
+        // rssi
         percent = (int16_t) rfData.rssi;
-  
+
         // rssi for RFM69 is -115 (0%) to 0 (100%)
   //      if (driver) {
           // rssi range now 0 (0%) to 115 (100%)
@@ -339,13 +351,13 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
           // now calc percentage
           percent = (percent * 100) / 115;
   //      }
-  
+
         if (percent > 100) percent = 100;
         if (percent < 0  ) percent = 0;
-  
+
         // display bargraph on lcd
         display->drawProgressBar( x + 62, 4, 64 , 12, percent);
-  
+
         //display->setFont(Roboto_Condensed_12);
         display->setTextAlignment(TEXT_ALIGN_LEFT);
         /*
@@ -355,7 +367,7 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
         }
         if (sensorData.bat != SENSOR_NOT_A_BAT) {
           //sprintf_P(buff+strlen(buff), PSTR("%.2fV"), sensorData.bat/1000.0f );
-          display->drawXbm(x + 127 - bat_width, y + 20, bat_width, bat_height, 
+          display->drawXbm(x + 127 - bat_width, y + 20, bat_width, bat_height,
                             sensorData.bat>1500?bat_100_bits:
                             sensorData.bat>1400?bat_090_bits:
                             sensorData.bat>1300?bat_080_bits:
@@ -369,7 +381,7 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
                             );
         }
         display->drawString(x + 0, y + line * 16, buff);
-  
+
         display->setTextAlignment(TEXT_ALIGN_CENTER);
         line++; *buff='\0';
         if (sensorData.lux != SENSOR_NOT_A_LUX) {
@@ -379,7 +391,7 @@ void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int
           sprintf_P(buff+strlen(buff), PSTR("%.0f %%RH"), sensorData.hum/10.0f );
         }*/
         display->drawString(x + 64, y + line * 16, buff);
-  
+
         display->setFont(Roboto_Condensed_12);
         display->setTextAlignment(TEXT_ALIGN_CENTER);
         display->drawString(x + 64, 48, timeAgo(uptime-packet_last_seen));
