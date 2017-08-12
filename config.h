@@ -54,6 +54,11 @@
 #define CFG_LCD				  0x0001	// Enable display
 #define CFG_DEBUG			  0x0002	// Enable serial debug
 #define CFG_RGB_LED     0x0004  // Enable RGB LED
+#define CFG_LED_AWAKE   0x0008 // Enable led blink when awake (take care, consumption)
+#define CFG_LED_TX      0x0010 // Enable led blink when RF transmitting (take care, consumption)
+#define CFG_FLIP_LCD    0x0020 // Flip display
+#define CFG_RF_NOSEND   0x0040 // Disable this gateway to send packet (including ACK)
+#define CFG_RF_ACK      0x0080 // Enable this gateway to request ACK on send
 #define CFG_BAD_CRC     0x8000  // Bad CRC when reading configuration
 
 // Web Interface Configuration Form field names
