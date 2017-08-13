@@ -1,5 +1,4 @@
 # Version Logicielle pour toutes les versions du matériel
----------------------------------------------------------
 
 Cette version logicielle est compatible avec la version matérielle [1.2][1] ainsi que les anciennes versions des cartes electroniques. Elle est aussi compatible avec les cartes à base d'ESP8266 via un [adaptateur][5]
 
@@ -59,13 +58,13 @@ Pour les mêmes raisons, et afin d'afficher les informations de debug dans une c
 
 
 ## Installation
----------------
+
 Voici un [tutoriel d'installation de la Remora][9] qui vous permettra d'installer correctement votre **Remora** et de la configurer lors de votre premier accès.
 
 ## API Exposées
 
 ### Particle
-----------------------
+------------
 
 Toutes les API se font via des requêtes HTTP sur le cloud Particle.
 
@@ -73,7 +72,7 @@ A documenter!
 
 
 ### ESP8266 NodeMCU / Wemos d1 mini
------------------------------
+-----------------------------------
 
 Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles si l'on veut récupérer des données ou exécuter des action avec le Remora. Chaque requête se verra retourner des données (ou un code de bonne éxécution) au format JSON.
 
@@ -185,6 +184,7 @@ Les API d'action se presentent sous la forme
 
 Note, il est possible d'enchainer les actions en une requête mais un seul code d'erreur sera retourné pour l'ensemble, si une des commandes échoue, il faudra intérroger afin de savoir laquelle n'a pas fonctionnée.
 
+##### Système
 - Faire un reset (reboot) `http://ip_du_remora/reset`
 ````shell
 		# curl http://192.168.1.201/reset
@@ -197,6 +197,7 @@ Note, il est possible d'enchainer les actions en une requête mais un seul code 
 		OK, Redémarrage en cours
 ````
 
+##### Relais
 - Activer le relais `http://ip_du_remora/?relais=1`
 ````shell
 		# curl http://192.168.1.201/?relais=1
@@ -232,6 +233,8 @@ Il est aussi possible de forcer le relais jusqu'au prochain changement de pério
 		# curl http://192.168.1.201/?relais=1
 		{ "response": 0 }
 ````
+
+##### Fils pilotes
 - selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)
   Fil pilote 1 en arret
 ````shell
@@ -279,7 +282,7 @@ Il est aussi possible de forcer le relais jusqu'au prochain changement de pério
 		curl http://192.168.1.201/?fp=E-CHA12
 		{ "response": -1 }
 ````
-Erreur car les modes ECO-1 et ECO-1 ne sont pas gérés pour le moment.
+Erreur car les modes ECO-1 et ECO-2 ne sont pas gérés pour le moment.
 
 ## Afficheur OLED (Only Arduino ESP8266)
 ----------------------------------------
