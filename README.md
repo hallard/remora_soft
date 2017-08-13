@@ -3,7 +3,7 @@
 
 Cette version logicielle est compatible avec la version matérielle [1.2][1] ainsi que les anciennes versions des cartes electroniques. Elle est aussi compatible avec les cartes à base d'ESP8266 via un [adaptateur][5]
 
-## Installation
+## Configuration
 
 ### Particle
 -----------------------
@@ -57,6 +57,10 @@ Pour les mêmes raisons, et afin d'afficher les informations de debug dans une c
 
 - La procédure OTA (télédéversement sans fil) est disponible [ici][8]
 
+
+## Installation
+---------------
+Voici un [tutoriel d'installation de la Remora][9] qui vous permettra d'installer correctement votre **Remora** et de la configurer lors de votre premier accès.
 
 ## API Exposées
 
@@ -292,7 +296,7 @@ L'afficheur affiche dorénavant plusieurs écrans en boucle:
  - La téléinfo
  - L'adresse IP WiFi
  - Les infos RF (Seulement si le **MOD_RF69** est activé)
- 
+
 Vous pouvez modifier la fréquence de changement d'affichage des frames avec la variable **DISPLAY_FPS** dans le fichier `display.h`.
 Pour le moment, seuls les afficheurs OLED 128*64 sont gérés.
 
@@ -348,3 +352,4 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
 [7]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.3
 [8]: http://hallard.me/esp8266-ota/
+[9]: https://www.aufilelec.fr/installation-remora/
