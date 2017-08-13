@@ -573,11 +573,15 @@ void mysetup()
 
       char strErr[15]; // Contient le message d'erreur
 
-      if (error == OTA_AUTH_ERROR) {sprintf_P(strErr, PSTR("Auth Failed")); Debugln(strErr);}
-      else if (error == OTA_BEGIN_ERROR) {sprintf_P(strErr, PSTR("Begin Failed")); DebuglnF(strErr);}
-      else if (error == OTA_CONNECT_ERROR) {sprintf_P(strErr, PSTR("Connect Failed")); DebuglnF(strErr);}
-      else if (error == OTA_RECEIVE_ERROR) {sprintf_P(strErr, PSTR("Receive Failed")); DebuglnF(strErr);}
-      else if (error == OTA_END_ERROR) {sprintf_P(strErr, PSTR("End Failed")); DebuglnF(strErr);}
+      switch (error) {
+        case OTA_AUTH_ERROR: sprintf_P(strErr, PSTR("Auth Failed")); break;
+        case OTA_BEGIN_ERROR: sprintf_P(strErr, PSTR("Begin Failed")); break;
+        case OTA_CONNECT_ERROR: sprintf_P(strErr, PSTR("Connect Failed")); break;
+        case OTA_RECEIVE_ERROR: sprintf_P(strErr, PSTR("Receive Failed")); break;
+        case OTA_END_ERROR: sprintf_P(strErr, PSTR("End Failed")); break;
+        default: sprintf_P(strErr, PSTR("Unknown Error")); break;
+      }
+      Debugln(strErr);
 
       // On affiche l'erreur sur l'afficheur
       if (status & STATUS_OLED) {
@@ -689,7 +693,7 @@ void mysetup()
   #ifdef MOD_OLED
     // Initialisation de l'afficheur
     DebugF("Initializing Display...");
-    if (initDisplay(true)) {
+    if (initDisplay()) {
       DebuglnF("OK");
       status |= STATUS_OLED; // Statut OLED ajouté
       // On lance l'initialisation des frames
