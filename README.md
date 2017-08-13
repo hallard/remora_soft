@@ -304,7 +304,6 @@ Vous pouvez modifier la fréquence de changement d'affichage des frames avec la 
 Pour le moment, seuls les afficheurs OLED 128*64 sont gérés.
 
 ## A faire
-----------
 
 - Mettre des icones plus sympas sur l'afficheur
 - Gérer les retour de sondes RF, pour le moment seules les trames sont affichées sur la serial, rien n'est encore fait
@@ -313,7 +312,7 @@ Pour le moment, seuls les afficheurs OLED 128*64 sont gérés.
 - tout autre idée est bienvenue
 
 ## Historiques des Modifications
------------------------------
+
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
@@ -335,7 +334,6 @@ Pour le moment, seuls les afficheurs OLED 128*64 sont gérés.
 13/08/2017 : Affichage de plusieurs frames sur l'écran OLED
 
 ## Exemple
-----------
 
 Pour les photos la téléinfo n'était pas branchée sur la carte, c'est pour celà que les compteurs et le bargraphe sont à 0
 
