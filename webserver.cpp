@@ -854,8 +854,10 @@ void handleFormConfig(AsyncWebServerRequest *request)
     strncpy(config.jeedom.url,    request->getParam("jdom_url", true)->value().c_str(),   CFG_JDOM_URL_SIZE );
     strncpy(config.jeedom.apikey, request->getParam("jdom_apikey", true)->value().c_str(),CFG_JDOM_APIKEY_SIZE );
     strncpy(config.jeedom.adco,   request->getParam("jdom_adco", true)->value().c_str(),CFG_JDOM_ADCO_SIZE );
-    itemp = request->getParam("jdom_port", true)->value().toInt();
-    config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT ;
+    if (request->hasParam("jdom_port", true)) {
+			itemp = request->getParam("jdom_port", true)->value().toInt();
+			config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT;
+		}
     itemp = request->getParam("jdom_freq", true)->value().toInt();
     if (itemp>0 && itemp<=86400){
       // Emoncms Update if needed
