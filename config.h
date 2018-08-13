@@ -43,7 +43,7 @@
 #define CFG_JDOM_DEFAULT_PORT 80
 #define CFG_JDOM_DEFAULT_HOST "jeedom.local"
 #define CFG_JDOM_DEFAULT_URL  "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php"
-#define CFG_JDOM_DEFAULT_ADCO "0000111122223333"
+#define CFG_JDOM_DEFAULT_ADCO "000011112222"
 
 // Port pour l'OTA
 #define DEFAULT_OTA_PORT     8266
