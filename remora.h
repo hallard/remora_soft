@@ -79,7 +79,7 @@
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
   #define DEBUG_SERIAL  Serial
-  //#define DEBUG_INIT
+  //#define DEBUG_INIT            /* Permet d'initialiser la connexion série pour debug */
   #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 
   // Définir ici les identifiants de
@@ -132,13 +132,13 @@ extern "C" {
 #define Debugflush()
 #endif
 
-  #include "./LibMCP23017.h"
-  //#include "./RFM69registers.h"
-  //#include "./RFM69.h"
-  #include "./LibULPNode_RF_Protocol.h"
-  #include "./LibLibTeleinfo.h"
-  #include "./LibRadioHead.h"
-  #include "./LibRHReliableDatagram.h"
+#include "./LibMCP23017.h"
+//#include "./RFM69registers.h"
+//#include "./RFM69.h"
+#include "./LibULPNode_RF_Protocol.h"
+#include "./LibLibTeleinfo.h"
+#include "./LibRadioHead.h"
+#include "./LibRHReliableDatagram.h"
 
 // Includes du projets remora
 #include "config.h"

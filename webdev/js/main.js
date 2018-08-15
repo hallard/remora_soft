@@ -12,7 +12,7 @@
   var Timer_sys,
       Timer_tinfo,
       elapsed = 0,
-      debug = true;
+      debug = false;
 
   function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
     $('body').addClass('loaded');
@@ -137,12 +137,12 @@
 
   function activeZone(id, state) {
     if (debug) console.log('activeZone', id, state);
-    
+
     var $div = $('div.thumbnail[data-zone="'+id+'"]'),
         $icon = $('span.icon', $div),
         active,
         img;
-    
+
     switch (state) {
       case 'C':
         active = 'a.conf';
@@ -272,7 +272,9 @@
       } else if (target == '#tab_cfg') {
         $.getJSON( "/config.json", function(form_data) {
             $("#frm_config").autofill(form_data);
+
             if (debug) console.log('jdom_port: ', form_data.jdom_port);
+            // On affiche le champ de l'empreinte numérique si le port est 443
             if (form_data.jdom_port == 443) {
               $('.jdom_finger').show();
             }
