@@ -12,7 +12,7 @@
   var Timer_sys,
       Timer_tinfo,
       elapsed = 0,
-      debug = false;
+      debug = true;
 
   function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
     $('body').addClass('loaded');
@@ -271,7 +271,11 @@
         .fail(function() { console.error( "error while requestiong spiffs data" );  })
       } else if (target == '#tab_cfg') {
         $.getJSON( "/config.json", function(form_data) {
-          $("#frm_config").autofill(form_data);
+            $("#frm_config").autofill(form_data);
+            if (debug) console.log('jdom_port: ', form_data.jdom_port);
+            if (form_data.jdom_port == 443) {
+              $('.jdom_finger').show();
+            }
           })
           .fail(function() { console.error( "error while requestiong configuration data" ); })
 
@@ -408,6 +412,11 @@
         e.preventDefault();
         if (debug) console.log("Form Submit");
 
+        // Suppression de l'empreinte numérique, si le port de Jeedom est différent de 443
+        if ($('#jdom_port').val() != 443) {
+          $('#jdom_finger').val('');
+        }
+
         $.post('/config_form.json', $("#frm_config").serialize())
           .done( function(msg, textStatus, xhr) {
             Notify(2, 'ok', 'success', 'Enregistrement effectué', xhr.status+' '+msg);
@@ -491,6 +500,17 @@
     });
 
     $('#btn_test').click(function(){ waitReboot(); });
+
+    // Gestion du champ finger print de Jeedom
+    $('.jdom_finger').hide();
+    $('#jdom_port').change(function() {
+      $('.jdom_finger').hide();
+      $("#jdom_port option:selected" ).each(function() {
+        if ($(this).val() == 443) {
+          $('.jdom_finger').show();
+        }
+      });
+    });
 
     var url = document.location.toString(),
         full = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');

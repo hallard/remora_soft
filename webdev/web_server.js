@@ -32,27 +32,27 @@ var teleinfo = false;
 
 
 var config = {
-"ssid":"CH2I-HOTSPOT",
-"psk":"DummyOne",
-"host":"NRJMeter_115F0B",
-"appsk":"",
-"apssid":"OTA_NRJMeter",
-"ip":"0.0.0.0",
-"mask":"0.0.0.0",
-"gw":"0.0.0.0",
-"dns":"0.0.0.0",
-"emon_host":"emoncms.org",
-"emon_port":80,
-"emon_url":"/input/post.json",
-"emon_apikey":"",
-"emon_node":0,
-"emon_freq":0,
-"jdom_host":"",
-"jdom_port":80,
-"jdom_url":"",
-"jdom_apikey":"",
-"jdom_adco":"",
-"jdom_freq":0,
+	"ssid": "CH2I-HOTSPOT",
+	"psk": "DummyOne",
+	"host": "Remora_115F0B",
+	"emon_port": "80",
+	"emon_host": "emoncms.org",
+	"emon_url": "/input/post.json",
+	"emon_apikey": "",
+	"emon_freq": 0,
+	"emon_node": 0,
+	"jdom_port": 80,
+	"jdom_finger": "11 07 2a a2 cd fc ea 83 16 be 7e ef 46 87 63 d2 cd 8d f2 7f",
+	"jdom_host": "jeedom.local",
+	"jdom_url": "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php",
+	"jdom_apikey": "12345678901234567890123456789012345678901234567890",
+	"jdom_freq": "0",
+	"jdom_adco": "123456789012",
+	"ap_psk": "",
+	"ota_auth": "WifInfo_8266",
+	"ota_port": "8266",
+};
+/*
 "domz_host":"domoticz.local",
 "domz_port":80,
 "domz_url":"/json.htm?type=command&param=udevice&nvalue=0",
@@ -60,18 +60,7 @@ var config = {
 "domz_pass":"",
 "domz_idx":0,
 "domz_freq":0,
-"cnt_io_1":255,
-"cnt_dly_1":10,
-"cnt_val_1":0,
-"cnt_io_2":255,
-"cnt_dly_2":10,
-"cnt_val_2":0,
-"ota_auth":"",
-"ota_port":8266,
-"sens_si7021":0,
-"sens_sht10":0,
-"sens_hum_led":"29,66",
-"sens_temp_led":"8,58",
+
 "cfg_rgb":1,
 "cfg_debug":1,
 "cfg_oled":0,
@@ -81,7 +70,7 @@ var config = {
 "cfg_led_bright":50,
 "cfg_led_hb":1,
 "sens_freq":300
-}
+*/
 
 var fp ={
 	"fp1": "A",
@@ -359,9 +348,22 @@ dispatcher.onGet("/spiffs", function(req, res) {
       res.end(JSON.stringify(spiffs));
 });
 
-dispatcher.onGet("/config", function(req, res) {
+dispatcher.onGet("/config.json", function(req, res) {
       res.writeHead(200, {"Content-Type": "text/json"});
       res.end(JSON.stringify(config));
+});
+dispatcher.onPost("/config_form.json", function(req, res) {
+    for (var p in req.params) {
+    	if (config.hasOwnProperty(p)) {
+    		config[p] = req.params[p];
+		} else if (p != 'save') {
+			res.writeHead(400, {'Content-Type': 'text/plain'});
+			res.end('Missing or too many Form Field');
+			return;
+		}
+	}
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('OK');
 });
 
 dispatcher.onGet("/fp", function(req, res) {

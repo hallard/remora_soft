@@ -197,12 +197,18 @@ void showConfig()
   _wdt_feed();
 
   DebuglnF("\r\n===== Jeedom"); 
-  DebugF("host     :"); Debugln(config.jeedom.host); 
-  DebugF("port     :"); Debugln(config.jeedom.port); 
-  DebugF("url      :"); Debugln(config.jeedom.url); 
-  DebugF("key      :"); Debugln(config.jeedom.apikey); 
-  DebugF("compteur :"); Debugln(config.jeedom.adco); 
-  DebugF("freq     :"); Debugln(config.jeedom.freq); 
+  DebugF("host     :"); Debugln(config.jeedom.host);
+  DebugF("port     :"); Debugln(config.jeedom.port);
+  DebugF("url      :"); Debugln(config.jeedom.url);
+  DebugF("key      :"); Debugln(config.jeedom.apikey);
+  DebugF("finger   :");
+  for (int i=0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
+    DEBUG_SERIAL.print(config.jeedom.fingerprint[i], HEX);
+    DebugF(" ");
+  }
+  Debugln();
+  DebugF("compteur :"); Debugln(config.jeedom.adco);
+  DebugF("freq     :"); Debugln(config.jeedom.freq);
   _wdt_feed();
 }
 
@@ -239,6 +245,9 @@ void resetConfig(void)
   strcpy_P(config.jeedom.url, CFG_JDOM_DEFAULT_URL);
   strcpy_P(config.jeedom.adco, CFG_JDOM_DEFAULT_ADCO);
   config.jeedom.apikey[0] = '\0';
+  for (int i=0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
+    config.jeedom.fingerprint[i] = 0;
+  }
   config.jeedom.freq = 0;
 
 

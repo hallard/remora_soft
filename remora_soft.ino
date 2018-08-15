@@ -46,7 +46,7 @@
   #include <EEPROM.h>
   #include <FS.h>
   #include <ESP8266WiFi.h>
-  #include <ESP8266HTTPClient.h>
+  //#include <ESP8266HTTPClient.h>
   // #include <ESP8266WebServer.h>
   // #include <ESP8266mDNS.h>
   #include <ESPAsyncTCP.h>
@@ -370,8 +370,9 @@ void setup()
     waitUntil(Particle.connected);
 
   #endif
-  #if defined DEBUG_INIT || !defined MOD_TELEINFO
+  #if defined DEBUG && (defined DEBUG_INIT || !defined MOD_TELEINFO)
     DEBUG_SERIAL.begin(115200);
+    DEBUG_SERIAL.setDebugOutput(true);
   #endif
 
   // says main loop to do setup
@@ -512,6 +513,7 @@ void mysetup()
 
       DebuglnF("Reset to default");
     }
+    showConfig();
 
     // Connection au Wifi ou Vérification
     WifiHandleConn(true);
@@ -848,10 +850,14 @@ void loop()
     ArduinoOTA.handle();
 
     if (task_emoncms) {
-      emoncmsPost();
+      if (!emoncmsPost()) {
+        DebuglnF("Erreur push Emoncms");
+      }
       task_emoncms=false;
     } else if (task_jeedom) {
-      jeedomPost();
+      if (!jeedomPost()) {
+        DebuglnF("Erreur push Jeedom");
+      }
       task_jeedom=false;
     }
   #endif

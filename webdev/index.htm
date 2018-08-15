@@ -304,6 +304,13 @@
                           </select>
                         </div>
                       </div>
+                      <div class="form-group jdom_finger">
+                        <label class="col-sm-3 control-label">Finger print SSL</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="jdom_finger" name="jdom_finger" maxlength="59" placeholder="35 85 74 EF 67 35 A7 CE 40 69 50 F3 C0 F6 80 CF 80 3B 2E 19" pattern="^([0-9a-fA-F]{2} ){19}([0-9a-fA-F]{2})$" data-valid-example="35 85 74 EF 67 35 A7 CE 40 69 50 F3 C0 F6 80 CF 80 3B 2E 19">
+                          <small id="fingerHelp" class="form-text text-muted">Récupérez l'empreinte numérique SHA1 du certificat de votre serveur Jeedom.</small>
+                        </div>
+                      </div>
                       <div class="form-group">
                         <label class="col-sm-3 control-label">Serveur Jeedom</label>
                         <div class="col-sm-9">

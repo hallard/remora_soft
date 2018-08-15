@@ -36,14 +36,15 @@
 #define CFG_EMON_DEFAULT_HOST "emoncms.org"
 #define CFG_EMON_DEFAULT_URL  "/input/post.json"
 
-#define CFG_JDOM_HOST_SIZE    32
-#define CFG_JDOM_APIKEY_SIZE  48
-#define CFG_JDOM_URL_SIZE     64
-#define CFG_JDOM_ADCO_SIZE    12
-#define CFG_JDOM_DEFAULT_PORT 80
-#define CFG_JDOM_DEFAULT_HOST "jeedom.local"
-#define CFG_JDOM_DEFAULT_URL  "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php"
-#define CFG_JDOM_DEFAULT_ADCO "000011112222"
+#define CFG_JDOM_HOST_SIZE         32
+#define CFG_JDOM_APIKEY_SIZE       48
+#define CFG_JDOM_URL_SIZE          64
+#define CFG_JDOM_ADCO_SIZE         12
+#define CFG_JDOM_FINGER_PRINT_SIZE 20
+#define CFG_JDOM_DEFAULT_PORT      80
+#define CFG_JDOM_DEFAULT_HOST      "jeedom.local"
+#define CFG_JDOM_DEFAULT_URL       "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php"
+#define CFG_JDOM_DEFAULT_ADCO      "000011112222"
 
 // Port pour l'OTA
 #define DEFAULT_OTA_PORT     8266
@@ -77,6 +78,7 @@
 #define CFG_FORM_JDOM_KEY   FPSTR("jdom_apikey")
 #define CFG_FORM_JDOM_ADCO  FPSTR("jdom_adco")
 #define CFG_FORM_JDOM_FREQ  FPSTR("jdom_freq")
+#define CFG_FORM_JDOM_FING  FPSTR("jdom_finger")
 
 #define CFG_FORM_IP  FPSTR("wifi_ip");
 #define CFG_FORM_GW  FPSTR("wifi_gw");
@@ -102,13 +104,14 @@ typedef struct
 // 256 Bytes
 typedef struct 
 {
-  char  host[CFG_JDOM_HOST_SIZE+1];     // FQDN 
-  char  apikey[CFG_JDOM_APIKEY_SIZE+1]; // Secret
-  char  url[CFG_JDOM_URL_SIZE+1];       // Post URL
-  char  adco[CFG_JDOM_ADCO_SIZE+1];     // Identifiant compteur
-  uint16_t port;                        // Protocol port (HTTP/HTTPS)
-  uint32_t freq;                        // refresh rate
-  uint8_t filler[90];                   // in case adding data in config avoiding loosing current conf by bad crc*/
+  char     host[CFG_JDOM_HOST_SIZE+1];              // FQDN
+  char     apikey[CFG_JDOM_APIKEY_SIZE+1];          // Secret
+  char     url[CFG_JDOM_URL_SIZE+1];                // Post URI
+  char     adco[CFG_JDOM_ADCO_SIZE+1];              // Identifiant compteur
+  uint8_t  fingerprint[CFG_JDOM_FINGER_PRINT_SIZE]; // Finger print SHA1 SSL
+  uint16_t port;                                    // Protocol port (HTTP/HTTPS)
+  uint32_t freq;                                    // refresh rate
+  uint8_t  filler[70];                              // in case adding data in config avoiding loosing current conf by bad crc*/
 } _jeedom;
 
 // Config saved into eeprom
