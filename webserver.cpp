@@ -831,9 +831,11 @@ void handleFormConfig(AsyncWebServerRequest *request)
       strncpy(config.ota_auth, request->getParam("ota_auth", true)->value().c_str(), CFG_PSK_SIZE );
       reboot = true;
     }
-    itemp = request->getParam("ota_port", true)->value().toInt();
-    config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT;
-    if (request->hasParam("cfg_led_bright")) {
+    if (request->hasParam("ota_port", true)) {
+      itemp = request->getParam("ota_port", true)->value().toInt();
+      config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT;
+    }
+    if (request->hasParam("cfg_led_bright", true)) {
       DebugF("cfg_led_bright: "); Debugln(request->getParam("cfg_led_bright", true)->value()); Debugflush();
       config.led_bright = map(request->getParam("cfg_led_bright", true)->value().toInt(), 0, 100, 0, 255);
       rgb_brightness = config.led_bright;
