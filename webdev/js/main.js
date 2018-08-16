@@ -275,9 +275,12 @@
         $.getJSON( "/config.json", function(form_data) {
             $("#frm_config").autofill(form_data);
             if ($('#slider_led_bright').length <= 0 && form_data.hasOwnProperty('cfg_led_bright')) {
-              ledBrightSlider.slider({ id:"slider_led_bright", value:form_data.cfg_led_bright, formatter: function(v){return v+'%';} });
+              ledBrightSlider.slider({ id:"slider_led_bright", value:parseInt(form_data.cfg_led_bright,10), formatter: function(v){return v+'%';} });
+              $('#pan_advanced').on('shown.bs.collapse', function () {
+                // do something…
+                ledBrightSlider.slider('refresh');
+              });
             }
-            setTimeout(function() {ledBrightSlider.slider('refresh');}, 500);
           })
           .fail(function() { console.error( "error while requestiong configuration data" ); });
         $('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});
