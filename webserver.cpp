@@ -439,25 +439,26 @@ void getConfJSONData(String & r)
   r = FPSTR(FP_JSON_START);
 
   r+="\"";
-  r+=CFG_FORM_SSID;      r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_PSK;       r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_HOST;      r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_AP_PSK;    r+=FPSTR(FP_QCQ); r+=config.ap_psk;         r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_HOST; r+=FPSTR(FP_QCQ); r+=config.emoncms.host;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_PORT; r+=FPSTR(FP_QCQ); r+=config.emoncms.port;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_URL;  r+=FPSTR(FP_QCQ); r+=config.emoncms.url;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_KEY;  r+=FPSTR(FP_QCQ); r+=config.emoncms.apikey; r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_NODE; r+=FPSTR(FP_QCQ); r+=config.emoncms.node;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_FREQ; r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_OTA_AUTH;  r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_OTA_PORT;  r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_SSID;       r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_PSK;        r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_HOST;       r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_AP_PSK;     r+=FPSTR(FP_QCQ); r+=config.ap_psk;         r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_HOST;  r+=FPSTR(FP_QCQ); r+=config.emoncms.host;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_PORT;  r+=FPSTR(FP_QCQ); r+=config.emoncms.port;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_URL;   r+=FPSTR(FP_QCQ); r+=config.emoncms.url;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_KEY;   r+=FPSTR(FP_QCQ); r+=config.emoncms.apikey; r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_NODE;  r+=FPSTR(FP_QCQ); r+=config.emoncms.node;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_FREQ;  r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_OTA_AUTH;   r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_OTA_PORT;   r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_LED_BRIGHT; r+=FPSTR(FP_QCQ); r+=config.led_bright;     r+= FPSTR(FP_QCNL);
 
-  r+=CFG_FORM_JDOM_HOST; r+=FPSTR(FP_QCQ); r+=config.jeedom.host;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_PORT; r+=FPSTR(FP_QCQ); r+=config.jeedom.port;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_URL;  r+=FPSTR(FP_QCQ); r+=config.jeedom.url;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_KEY;  r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey; r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_ADCO; r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_FREQ; r+=FPSTR(FP_QCQ); r+=config.jeedom.freq;
+  r+=CFG_FORM_JDOM_HOST;  r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_PORT;  r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_URL;   r+=FPSTR(FP_QCQ); r+=config.jeedom.url;     r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_KEY;   r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey;  r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_ADCO;  r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_FREQ;  r+=FPSTR(FP_QCQ); r+=config.jeedom.freq;
 
   r+= F("\"");
   // Json end
@@ -578,19 +579,19 @@ void wifiScanJSON(AsyncWebServerRequest *request)
     response += F("\"result\": [");
     for (uint8_t i = 0; i < scanStatus; ++i) {
       int8_t rssi = WiFi.RSSI(i);
-  
+
       uint8_t percent;
-  
+
       // dBm to Quality
       if(rssi<=-100)      percent = 0;
       else if (rssi>=-50) percent = 100;
       else                percent = 2 * (rssi + 100);
-  
+
       if (first)
         first = false;
       else
         response += F(",");
-  
+
       response += F("{\"ssid\":\"");
       response += WiFi.SSID(i);
       response += F("\",\"rssi\":") ;
@@ -831,7 +832,12 @@ void handleFormConfig(AsyncWebServerRequest *request)
       reboot = true;
     }
     itemp = request->getParam("ota_port", true)->value().toInt();
-    config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT ;
+    config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT;
+    if (request->hasParam("cfg_led_bright")) {
+      DebugF("cfg_led_bright: "); Debugln(request->getParam("cfg_led_bright", true)->value()); Debugflush();
+      config.led_bright = map(request->getParam("cfg_led_bright", true)->value().toInt(), 0, 100, 0, 255);
+      rgb_brightness = config.led_bright;
+    }
 
     // Emoncms
     strncpy(config.emoncms.host,   request->getParam("emon_host", true)->value().c_str(),  CFG_EMON_HOST_SIZE );
@@ -860,15 +866,17 @@ void handleFormConfig(AsyncWebServerRequest *request)
 			itemp = request->getParam("jdom_port", true)->value().toInt();
 			config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT;
 		}
-    itemp = request->getParam("jdom_freq", true)->value().toInt();
-    if (itemp>0 && itemp<=86400){
-      // Emoncms Update if needed
-      Tick_jeedom.detach();
-      Tick_jeedom.attach(itemp, Task_jeedom);
-    } else {
-      itemp = 0 ;
-    }
-    config.jeedom.freq = itemp;
+   if (request->hasParam("jdom_freq", true)) {
+      itemp = request->getParam("jdom_freq", true)->value().toInt();
+      if (itemp>0 && itemp<=86400){
+        // Emoncms Update if needed
+        Tick_jeedom.detach();
+        Tick_jeedom.attach(itemp, Task_jeedom);
+      } else {
+        itemp = 0 ;
+      }
+      config.jeedom.freq = itemp;
+   }
 
     if ( saveConfig() ) {
       ret = 200;
@@ -936,7 +944,7 @@ void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t in
       Debug(".");
     }
   }
-  
+
   if (final) {
     DebuglnF("* Upload Finished.");
     if (Update.end(true)) {

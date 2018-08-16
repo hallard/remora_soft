@@ -114,8 +114,8 @@ extern "C" {
 
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
-  #define DEBUG_SERIAL  Serial
-  //#define DEBUG_INIT
+  #define DEBUG_SERIAL  Serial1
+  #define DEBUG_INIT
   #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 #endif
 

@@ -12,6 +12,7 @@
   var Timer_sys,
       Timer_tinfo,
       elapsed = 0,
+      ledBrightSlider,
       debug = false;
 
   function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
@@ -137,12 +138,12 @@
 
   function activeZone(id, state) {
     if (debug) console.log('activeZone', id, state);
-    
+
     var $div = $('div.thumbnail[data-zone="'+id+'"]'),
         $icon = $('span.icon', $div),
         active,
         img;
-    
+
     switch (state) {
       case 'C':
         active = 'a.conf';
@@ -270,11 +271,15 @@
         })
         .fail(function() { console.error( "error while requestiong spiffs data" );  })
       } else if (target == '#tab_cfg') {
+        ledBrightSlider = $("#cfg_led_bright").slider();
         $.getJSON( "/config.json", function(form_data) {
-          $("#frm_config").autofill(form_data);
+            $("#frm_config").autofill(form_data);
+            if ($('#slider_led_bright').length <= 0 && form_data.hasOwnProperty('cfg_led_bright')) {
+              ledBrightSlider.slider({ id:"slider_led_bright", value:form_data.cfg_led_bright, formatter: function(v){return v+'%';} });
+            }
+            setTimeout(function() {ledBrightSlider.slider('refresh');}, 500);
           })
-          .fail(function() { console.error( "error while requestiong configuration data" ); })
-
+          .fail(function() { console.error( "error while requestiong configuration data" ); });
         $('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});
       }
       // Onglet de gestion des zones
@@ -491,6 +496,10 @@
     });
 
     $('#btn_test').click(function(){ waitReboot(); });
+
+    // Gestion du slider Brightness RGB
+    //$("#cfg_led_bright")
+    //.on('slideStop',function(){ wsSend('$rgbb:'+$('#cfg_led_bright').slider('getValue'));});
 
     var url = document.location.toString(),
         full = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
