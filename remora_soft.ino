@@ -512,6 +512,8 @@ void mysetup()
 
       DebuglnF("Reset to default");
     }
+    rgb_brightness = config.led_bright;
+    DebugF("RGB Brightness: "); Debugln(rgb_brightness);
 
     // Connection au Wifi ou Vérification
     WifiHandleConn(true);
