@@ -451,7 +451,8 @@ void getConfJSONData(String & r)
   r+=CFG_FORM_EMON_FREQ;  r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_OTA_AUTH;   r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_OTA_PORT;   r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_LED_BRIGHT; r+=FPSTR(FP_QCQ); r+=config.led_bright;     r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_LED_BRIGHT; r+=FPSTR(FP_QCQ);
+    r+=map(config.led_bright, 0, 255, 0, 100);   r+= FPSTR(FP_QCNL);
 
   r+=CFG_FORM_JDOM_HOST;  r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_JDOM_PORT;  r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
