@@ -145,6 +145,7 @@ bool readConfig(bool clear_on_error=true);
 bool saveConfig(void);
 void showConfig(void);
 void resetConfig(void);
+String getFingerPrint(void);
 
 #endif // ESP8266 
 #endif // CONFIG_h

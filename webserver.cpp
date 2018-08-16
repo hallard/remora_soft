@@ -452,16 +452,12 @@ void getConfJSONData(String & r)
   r+=CFG_FORM_OTA_AUTH;  r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_OTA_PORT;  r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
 
-  r+=CFG_FORM_JDOM_HOST; r+=FPSTR(FP_QCQ); r+=config.jeedom.host;        r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_PORT; r+=FPSTR(FP_QCQ); r+=config.jeedom.port;        r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_URL;  r+=FPSTR(FP_QCQ); r+=config.jeedom.url;         r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_KEY;  r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey;      r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_ADCO; r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;        r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_FING; r+=FPSTR(FP_QCQ);
-  for (int i=0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
-    r+= String(config.jeedom.fingerprint[i]) + " ";
-  }
-  r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_HOST; r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_PORT; r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_URL;  r+=FPSTR(FP_QCQ); r+=config.jeedom.url;     r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_KEY;  r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey;  r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_ADCO; r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_FING; r+=FPSTR(FP_QCQ); r+=getFingerPrint();      r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_JDOM_FREQ; r+=FPSTR(FP_QCQ); r+=config.jeedom.freq;
 
   r+= F("\"");
@@ -583,19 +579,19 @@ void wifiScanJSON(AsyncWebServerRequest *request)
     response += F("\"result\": [");
     for (uint8_t i = 0; i < scanStatus; ++i) {
       int8_t rssi = WiFi.RSSI(i);
-  
+
       uint8_t percent;
-  
+
       // dBm to Quality
       if(rssi<=-100)      percent = 0;
       else if (rssi>=-50) percent = 100;
       else                percent = 2 * (rssi + 100);
-  
+
       if (first)
         first = false;
       else
         response += F(",");
-  
+
       response += F("{\"ssid\":\"");
       response += WiFi.SSID(i);
       response += F("\",\"rssi\":") ;
@@ -1003,7 +999,7 @@ void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t in
       Debug(".");
     }
   }
-  
+
   if (final) {
     DebuglnF("* Upload Finished.");
     if (Update.end(true)) {
