@@ -1,9 +1,10 @@
-Version Logicielle pour toutes les versions du matériel
-=======================================================
+# Version Logicielle pour toutes les versions du matériel
 
 Cette version logicielle est compatible avec la version matérielle [1.2][1] ainsi que les anciennes versions des cartes electroniques. Elle est aussi compatible avec les cartes à base d'ESP8266 via un [adaptateur][5]
 
-Installation (Particle)
+## Configuration
+
+### Particle
 -----------------------
 
 - Télécharger l'environnement de développement [Particle-Dev][2] puis lancer l'IDE.
@@ -18,7 +19,7 @@ Installation (Particle)
 - Lancer la compilation+upload (icone éclair en haut à gauche)
 - Si vous avez une erreur de type "App code was invalid" durant la compilation, supprimer le ficher README.md du dossier
 
-Installation (Arduino ESP8266 NodeMCU)
+### Arduino ESP8266 NodeMCU / Wemos d1 mini
 --------------------------------------
 
 - Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention ~~Arduino 1.6.5 pas 1.6.6~~ Maintenant c'est compatible Arduino 1.6.7 et je vous conseille d'utiliser la version git
@@ -28,6 +29,7 @@ Installation (Arduino ESP8266 NodeMCU)
 - Installer la librairie [Blynk](https://github.com/blynkkk/blynk-library) depuis l'IDE Menu Sketch / Include Library / Manage Library / Blynk by Volodymyr Shymanskyy
 - Installer la bibliothèque [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
 - Installer la bibliothèque [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
+- Installer la bibliothèque [esp8266-oled-ssd1306](https://github.com/squix78/esp8266-oled-ssd1306) depuis l'IDE Menu Sketch / Include Library / Manage Library => **ESP8266 Oled Driver for SSD1306 display**
 - Lancer ensuite l'IDE Arduino et ouvrir depuis celui-ci le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L22-L26) (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L28-L32) (les defines MOD_xxxx)
@@ -55,23 +57,29 @@ Pour les mêmes raisons, et afin d'afficher les informations de debug dans une c
 - La procédure OTA (télédéversement sans fil) est disponible [ici][8]
 
 
-API Exposée (Particle)
-----------------------
+## Installation
+
+Voici un [tutoriel d'installation de la Remora][9] qui vous permettra d'installer correctement votre **Remora** et de la configurer lors de votre premier accès.
+
+## API Exposées
+
+### Particle
+------------
 
 Toutes les API se font via des requêtes HTTP sur le cloud Particle.
 
 A documenter!
 
 
-API Exposée (ESP8266 NodeMCU)
------------------------------
+### ESP8266 NodeMCU / Wemos d1 mini
+-----------------------------------
 
 Toutes les API se font via des requêtes HTTP sur le Remora. Il existe deux formats possibles si l'on veut récupérer des données ou exécuter des action avec le Remora. Chaque requête se verra retourner des données (ou un code de bonne éxécution) au format JSON.
 
 Toute requête sera donc adressée sous la forme
 `http://adresse_ip_du_remora/requete_plus_ou_moins_longue` dans les exemples ci dessous l'adresse IP de mon Remora est la 192.168.1.201, veillez à bien la changer pour mettre la vôtre. Les exemples ont été exécutés depuis la ligne de commande avec curl mais ils pourraient l'être depuis la barre d'addresse de votre navigateur.
 
-**Les Etats de fil pilote**
+#### Les Etats de fil pilote
 
 Les différents états possibles de fil pilote dans l'API correspondent à la notation suivante, une lettre représente l'état lu ou le mode à positionner tel que :
 ```
@@ -83,7 +91,7 @@ H = Hors gel
 2 = Eco-2 (non géré pour le moment)
 ```
 
-**Les Etats du mode de fonctionnement du relais**
+#### Les Etats du mode de fonctionnement du relais
 
 Voici les différents modes de fonctionnement du relais que vous pourrez trouver dans l'API:
 ```
@@ -92,7 +100,8 @@ Voici les différents modes de fonctionnement du relais que vous pourrez trouver
 2: automatique
 ```
 
-**Les API d'intérrogation**
+#### Les API d'intérrogation
+----------------------------
 
 Les API d'intérrogation se presentent sous la forme
 `http://adresse_ip_du_remora/ma_donnee` et la/les donnée(s) sont retournées au format JSON (j'ai volontairement supprimé certains sauts de lignes de sortie pour une meilleure lecture)
@@ -164,7 +173,8 @@ Si le délestage est désactivé `http://ip_du_remora/delestage`
 A noter la présence de certaines étiquettes virtuelles commencant par un `_`
 
 
-**Les API d'action**
+#### Les API d'action
+---------------------
 
 Les API d'action se presentent sous la forme
 `http://adresse_ip_du_remora/?action=ma_donnee`, notez la différence avec les intérrogations, le `?`. Le résultat est retourné au format JSON avec un code réponse, il est :
@@ -174,6 +184,7 @@ Les API d'action se presentent sous la forme
 
 Note, il est possible d'enchainer les actions en une requête mais un seul code d'erreur sera retourné pour l'ensemble, si une des commandes échoue, il faudra intérroger afin de savoir laquelle n'a pas fonctionnée.
 
+##### Système
 - Faire un reset (reboot) `http://ip_du_remora/reset`
 ````shell
 		# curl http://192.168.1.201/reset
@@ -186,6 +197,7 @@ Note, il est possible d'enchainer les actions en une requête mais un seul code 
 		OK, Redémarrage en cours
 ````
 
+##### Relais
 - Activer le relais `http://ip_du_remora/?relais=1`
 ````shell
 		# curl http://192.168.1.201/?relais=1
@@ -221,6 +233,8 @@ Il est aussi possible de forcer le relais jusqu'au prochain changement de pério
 		# curl http://192.168.1.201/?relais=1
 		{ "response": 0 }
 ````
+
+##### Fils pilotes
 - selectionne le mode d'un des fils pilotes `http://ip_du_remora/?setfp=na` avec n=numéro du fil pilote et a=le mode à positionner (non sensible à la casse)
   Fil pilote 1 en arret
 ````shell
@@ -268,10 +282,28 @@ Il est aussi possible de forcer le relais jusqu'au prochain changement de pério
 		curl http://192.168.1.201/?fp=E-CHA12
 		{ "response": -1 }
 ````
-Erreur car les modes ECO-1 et ECO-1 ne sont pas gérés pour le moment.
+Erreur car les modes ECO-1 et ECO-2 ne sont pas gérés pour le moment.
 
-A faire
--------
+## Afficheur OLED (Only Arduino ESP8266)
+----------------------------------------
+
+### Activation de l'afficheur
+
+Pour activer l'afficheur sur votre **Remora**, il vous faut décommenter la variable **MOD_OLED** dans le fichier `remora.h`.
+
+### Fonctionnement
+
+L'afficheur affiche dorénavant plusieurs écrans en boucle:
+
+ - Le logo de la Remora
+ - La téléinfo
+ - L'adresse IP WiFi
+ - Les infos RF (Seulement si le **MOD_RF69** est activé)
+
+Vous pouvez modifier la fréquence de changement d'affichage des frames avec la variable **DISPLAY_FPS** dans le fichier `display.h`.
+Pour le moment, seuls les afficheurs OLED 128*64 sont gérés.
+
+## A faire
 
 - Mettre des icones plus sympas sur l'afficheur
 - Gérer les retour de sondes RF, pour le moment seules les trames sont affichées sur la serial, rien n'est encore fait
@@ -279,8 +311,8 @@ A faire
 - pour le moment seul les [OLED][4] I2C sont gérés
 - tout autre idée est bienvenue
 
-Historiques des Modifications
------------------------------
+## Historiques des Modifications
+
 16/02/2015 : Ajout délestage cascadocyclique / Possibilité de ne récupérer l'état que d'un seul fil pilote
 
 14/04/2015 : Ajout d'une variable spark pour la teleinfo. Passage en un seul appel pour script jeedom. Les variables d'origine restent utilisables.
@@ -299,8 +331,9 @@ Historiques des Modifications
 
 04/03/2017 : Ajout des connexions TCP Asynchrones
 
-Exemple
--------
+13/08/2017 : Affichage de plusieurs frames sur l'écran OLED
+
+## Exemple
 
 Pour les photos la téléinfo n'était pas branchée sur la carte, c'est pour celà que les compteurs et le bargraphe sont à 0
 
@@ -320,3 +353,4 @@ Avec la téléinfo branchée sur la carte, le bargraph indique la puissance inst
 [6]: https://community.hallard.me/topic/92/nouvelle-version-remora-compatible-esp8266
 [7]: https://github.com/thibdct/programmateur-fil-pilote-wifi/tree/master/Mat%C3%A9riel/1.3
 [8]: http://hallard.me/esp8266-ota/
+[9]: https://www.aufilelec.fr/installation-remora/
