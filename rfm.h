@@ -44,6 +44,8 @@
 // used to display or send to serial
 typedef struct
 {
+  uint8_t  type;     /* Module type  */
+  uint8_t  gwid;     /* Gateway ID   */
   uint8_t  nodeid;   /* Node ID      */
   uint8_t  groupid;  /* Group ID     */
   uint8_t  size;     /* Data Size    */
@@ -58,8 +60,10 @@ typedef struct
 // Variables exported to other source file
 // ========================================
 // define RF var for whole project
-extern unsigned long rf_rgb_led_timer;
-extern RH_RF69 driver;
+extern unsigned long  rf_rgb_led_timer;
+extern RH_RF69        driver;
+extern RFData         rfData;     // data received
+extern unsigned long  packet_last_seen;// second since last packet received
 
 // Function exported for other source file
 // =======================================

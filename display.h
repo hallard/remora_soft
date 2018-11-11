@@ -7,9 +7,9 @@
 //
 // Written by Charles-Henri Hallard (http://hallard.me)
 //
-// History : V1.00 2015-01-22 - First release
-//
-// 15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
+// History : 22/01/2015 : First release
+//           15/09/2015 Charles-Henri Hallard : Ajout compatibilité ESP8266
+//           12/08/2017 Manuel Hervo: Changement de library Adafruit => OLEDDisplay
 //
 // All text above must be included in any redistribution.
 //
@@ -20,44 +20,42 @@
 
 #include "remora.h"
 
-#define OLED_I2C_ADDRESS    0x3C
-
-// OLED Parameters
-#define OLED_LINE_0 0
-#define OLED_LINE_1 8
-#define OLED_LINE_2 16
-#define OLED_LINE_3 24
-#define OLED_LINE_4 32
-#define OLED_LINE_5 40
-#define OLED_LINE_6 48
-#define OLED_LINE_7 56
-//#define OLED_CHAR_SIZE  5
-#define OLED_CHAR_SIZE  7
-
-#define OLED_SPACE1 OLED_CHAR_SIZE
-#define OLED_SPACE2 OLED_CHAR_SIZE*2
-#define OLED_SPACE3 OLED_CHAR_SIZE*3
-#define OLED_SPACE4 OLED_CHAR_SIZE*4
-
-// The various screen states supported
-typedef enum
-{
-  screen_rf = 0,
-  screen_sys,
-  screen_teleinfo,
-  screen_end
-} screen_e;
+#define I2C_DISPLAY_ADDRESS 0x3C
+#define SDA_PIN  4
+#define SDC_PIN  5
 
 // Variables exported for other source file
 // ========================================
-extern Adafruit_SSD1306 display; /* OLED */
-extern const char * screen_name[] ;
-extern screen_e screen_state ;
+extern OLEDDisplay *display;
+extern OLEDDisplayUi *ui;
+extern FrameCallback frames[];
+
+// Number frames to display
+#define DISPLAY_FRAME_COUNT 3
+// Frame RF is activated if MOD_RF69 is defined
+#ifdef MOD_RF69
+  #define DISPLAY_FRAME_COUNT 4
+#endif
+#define DISPLAY_FPS 50 // Time to display a frame
+
 
 // Function exported for other source file
 // =======================================
-void display_splash();
-bool display_setup();
-void display_loop();
+bool initDisplay(void);
+void initDisplayUI(void);
+void updateData(OLEDDisplay *display) ;
+void drawProgress(OLEDDisplay *display, int percentage, String labeltop, String labelbot);
+void drawProgress(OLEDDisplay *display, int percentage, String labeltop);
+void drawProgressBarVert(OLEDDisplay *display, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t progress);
+void drawFrameWifi(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void drawFrameTinfo(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void drawFrameLogo(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void drawFrameRF(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void setReadyForUpdate();
+
+void doDisplay(void * extented = NULL);
+void displaySplash(bool _config_ok);
+void displayCommand(void);
+void displayTest(void);
 
 #endif

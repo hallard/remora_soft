@@ -108,6 +108,7 @@ void DataCallback(ValueList * me, uint8_t flags)
     // To DO : gérer les autres types de contrat
     if (!strcmp(me->value, "HP..")) ptec= PTEC_HP;
     if (!strcmp(me->value, "HC..")) ptec= PTEC_HC;
+    if (!strcmp(me->value, "TH..")) ptec= PTEC_HP;
 
     //=============================================================
     //    Ajout de la gestion du relais aux heures creuses
@@ -131,6 +132,7 @@ void DataCallback(ValueList * me, uint8_t flags)
   if (!strcmp(me->name, "HCHC"))   myindexHC = atol(me->value);
   if (!strcmp(me->name, "HCHP"))   myindexHP = atol(me->value);
   if (!strcmp(me->name, "IMAX"))   myimax    = atoi(me->value);
+  if (!strcmp(me->name, "BASE"))   { myindexHP = atol(me->value); myindexHC = 0; }
 
   // Isousc permet de connaitre l'intensité max pour le delestage
   if (!strcmp(me->name, "ISOUSC")) {
