@@ -13,7 +13,8 @@
 //
 // ======================================================================
 
-var uglify = require('uglify-js');
+var compressor = require('node-minify');
+//var uglify = require('uglify-js');
 var concat = require('concat-files');
 var zlib = require('zlib');
 var fs = require('fs');
@@ -31,57 +32,68 @@ var gzhtm = "../data/" + htmfile + ".gz";
 // =================
 // javascript Files
 // =================
-var stream = fs.createWriteStream(jsfile);
-stream.once('open', function(fd) {
-
-  console.log('Uglifying .js files');
-  uglified = uglify.minify([
+console.log('Uglifying .js files');
+compressor.minify({
+  compressor: 'yui-js',
+  input: [
     "js/ajaxq.js",
     "js/autofill.js",
     "js/validator.js",
     'js/main.js'
-  ]);
+  ],
+  output: jsfile,
+  sync: true,
+  callback: function(err, value) {
+    if (err) {
+      console.log("Error minify JS: ", err);
+      return;
+    }
+    console.log('Concataining already minified .js files');
+    concat([
+      'js/jquery-2.1.4.min.js',
+      'js/bootstrap.min.js',
+      'js/bootstrap-table.min.js',
+      'js/bootstrap-table-fr-FR.min.js',
+      'js/bootstrap-notify.min.js',
+      'js/bootstrap-slider.min.js',
+       jsfile
+    ], jsfile, function() {
+                var gzip = zlib.createGzip();
+                var inp = fs.createReadStream(jsfile);
+                var out = fs.createWriteStream(gzjs);
 
-  stream.write(uglified.code);
-  stream.end();
-
-  console.log('Concataining already minified .js files');
-  concat([
-    'js/jquery-2.1.4.min.js',
-    'js/bootstrap.min.js',
-    'js/bootstrap-table.min.js',
-    'js/bootstrap-table-fr-FR.min.js',
-    'js/bootstrap-notify.min.js',
-     jsfile
-  ], jsfile, function() {
-              var gzip = zlib.createGzip();
-              var inp = fs.createReadStream(jsfile);
-              var out = fs.createWriteStream(gzjs);
-
-              console.log('Compressing '+gzjs+' file');
-              inp.pipe(gzip).pipe(out);
-              console.log('finished!');
-            });
+                console.log('Compressing '+gzjs+' file');
+                inp.pipe(gzip).pipe(out);
+                console.log('finished!');
+              });
+  }
 });
-
 
 // =================
 // CSS Files
 // =================
-console.log('Concataining already minified .css files');
-concat([
-  'css/bootstrap.min.css',
-  'css/bootstrap-table.min.css',
-  'css/remora.min.css'
-], cssfile, function() {
-            var gzip = zlib.createGzip();
-            var inp = fs.createReadStream(cssfile);
-            var out = fs.createWriteStream(gzcss);
+compressor.minify({
+  compressor: 'yui',
+  input: 'css/main.css',
+  output: cssfile,
+  callback: function(err, min) {
+    console.log('Concataining already minified .css files');
+    concat([
+      'css/bootstrap.min.css',
+      'css/bootstrap-table.min.css',
+      'css/bootstrap-slider.min.css',
+      cssfile
+    ], cssfile, function() {
+          var gzip = zlib.createGzip();
+          var inp = fs.createReadStream(cssfile);
+          var out = fs.createWriteStream(gzcss);
 
-            console.log('Compressing '+gzcss+' file');
-            inp.pipe(gzip).pipe(out);
-            console.log('finished!');
-          });
+          console.log('Compressing '+gzcss+' file');
+          inp.pipe(gzip).pipe(out);
+          console.log('finished!');
+        });
+  }
+});
 
 
 // =================

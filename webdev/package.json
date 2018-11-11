@@ -23,6 +23,7 @@
   "dependencies": {
     "formidable": "1.0.17",
     "httpdispatcher": "2.0.1",
+    "node-minify": "^3.3.0",
     "mime": "1.4.1",
     "websocket": "1.0.24"
   },
