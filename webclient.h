@@ -29,7 +29,7 @@
 
 // declared exported function from route.cpp
 // ===================================================
-boolean httpPost(char * host, uint16_t port, char * url);
+boolean httpPost(const char * host, const uint16_t port, const char * url, const uint8_t fingerprint[]);
 boolean emoncmsPost(void);
 boolean jeedomPost(void);
 

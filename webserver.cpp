@@ -439,27 +439,29 @@ void getConfJSONData(String & r)
   r = FPSTR(FP_JSON_START);
 
   r+="\"";
-  r+=CFG_FORM_SSID;       r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_PSK;        r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_HOST;       r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_AP_PSK;     r+=FPSTR(FP_QCQ); r+=config.ap_psk;         r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_HOST;  r+=FPSTR(FP_QCQ); r+=config.emoncms.host;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_PORT;  r+=FPSTR(FP_QCQ); r+=config.emoncms.port;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_URL;   r+=FPSTR(FP_QCQ); r+=config.emoncms.url;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_KEY;   r+=FPSTR(FP_QCQ); r+=config.emoncms.apikey; r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_NODE;  r+=FPSTR(FP_QCQ); r+=config.emoncms.node;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_EMON_FREQ;  r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_OTA_AUTH;   r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_OTA_PORT;   r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
+<<<<<<< HEAD
+  r+=CFG_FORM_SSID;      r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_PSK;       r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_HOST;      r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_AP_PSK;    r+=FPSTR(FP_QCQ); r+=config.ap_psk;         r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_HOST; r+=FPSTR(FP_QCQ); r+=config.emoncms.host;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_PORT; r+=FPSTR(FP_QCQ); r+=config.emoncms.port;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_URL;  r+=FPSTR(FP_QCQ); r+=config.emoncms.url;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_KEY;  r+=FPSTR(FP_QCQ); r+=config.emoncms.apikey; r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_NODE; r+=FPSTR(FP_QCQ); r+=config.emoncms.node;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_EMON_FREQ; r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_OTA_AUTH;  r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_OTA_PORT;  r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_LED_BRIGHT; r+=FPSTR(FP_QCQ);
     r+=map(config.led_bright, 0, 255, 0, 100);   r+= FPSTR(FP_QCNL);
 
-  r+=CFG_FORM_JDOM_HOST;  r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_PORT;  r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_URL;   r+=FPSTR(FP_QCQ); r+=config.jeedom.url;     r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_KEY;   r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey;  r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_ADCO;  r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;    r+= FPSTR(FP_QCNL);
-  r+=CFG_FORM_JDOM_FREQ;  r+=FPSTR(FP_QCQ); r+=config.jeedom.freq;
+  r+=CFG_FORM_JDOM_HOST; r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_PORT; r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_URL;  r+=FPSTR(FP_QCQ); r+=config.jeedom.url;     r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_KEY;  r+=FPSTR(FP_QCQ); r+=config.jeedom.apikey;  r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_ADCO; r+=FPSTR(FP_QCQ); r+=config.jeedom.adco;    r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_FING; r+=FPSTR(FP_QCQ); r+=getFingerPrint();      r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_JDOM_FREQ; r+=FPSTR(FP_QCQ); r+=config.jeedom.freq;
 
   r+= F("\"");
   // Json end
@@ -806,6 +808,59 @@ void handleReset(AsyncWebServerRequest *request)
 }
 
 /* ======================================================================
+Function: parseHexNibble
+Purpose : converti un caractère en valeur numérique
+Input   : pb  - caractère a convertir
+          res - la variable qui contient le résultat
+Output  : bool
+Comments: -
+====================================================================== */
+static bool parseHexNibble(char pb, uint8_t* res)
+{
+  if (pb >= '0' && pb <= '9') {
+    *res = (uint8_t) (pb - '0'); return true;
+  } else if (pb >= 'a' && pb <= 'f') {
+    *res = (uint8_t) (pb - 'a' + 10); return true;
+  } else if (pb >= 'A' && pb <= 'F') {
+    *res = (uint8_t) (pb - 'A' + 10); return true;
+  }
+  return false;
+}
+
+/* ======================================================================
+Function: convertFinger
+Purpose : converti la chaine fingerprint en tableau hexa
+Input   : fp   - chaine finger print
+          sha1 - tableau hexa
+Output  : bool
+Comments: -
+====================================================================== */
+bool convertFinger(const char* fp, uint8_t sha1[]) {
+  int len = strlen(fp);
+  int pos = 0;
+  for (size_t i = 0; i < CFG_JDOM_FINGER_PRINT_SIZE; ++i) {
+      while (pos < len && ((fp[pos] == ' ') || (fp[pos] == ':'))) {
+          ++pos;
+      }
+      if (pos > len - 2) {
+          Debugf("pos:%d len:%d fingerprint too short\r\n", pos, len);
+          return false;
+      }
+      uint8_t high, low;
+      if (!parseHexNibble(fp[pos], &high) || !parseHexNibble(fp[pos+1], &low)) {
+          Debugf("pos:%d len:%d invalid hex sequence: %c%c\r\n", pos, len, fp[pos], fp[pos+1]);
+          return false;
+      }
+      //Debugf("fp[%d-%d]: %c%c ", pos, i, fp[pos], fp[pos+1]);
+      // Debugflush();
+      pos += 2;
+      sha1[i] = low | (high << 4);
+      //Debugf("%X %d\n", sha1[i], sha1[i]);
+  }
+  return true;
+}
+
+/* ======================================================================
 Function: handleFormConfig
 Purpose : handle main configuration page
 Input   : -
@@ -815,7 +870,7 @@ Comments: -
 void handleFormConfig(AsyncWebServerRequest *request)
 {
   String response="";
-  int ret ;
+  int ret;
   boolean showconfig = false;
 
   // We validated config ?
@@ -861,10 +916,19 @@ void handleFormConfig(AsyncWebServerRequest *request)
     config.emoncms.freq = itemp;
 
     // jeedom
-    strncpy(config.jeedom.host,   request->getParam("jdom_host", true)->value().c_str(),  CFG_JDOM_HOST_SIZE );
-    strncpy(config.jeedom.url,    request->getParam("jdom_url", true)->value().c_str(),   CFG_JDOM_URL_SIZE );
-    strncpy(config.jeedom.apikey, request->getParam("jdom_apikey", true)->value().c_str(),CFG_JDOM_APIKEY_SIZE );
-    strncpy(config.jeedom.adco,   request->getParam("jdom_adco", true)->value().c_str(),CFG_JDOM_ADCO_SIZE );
+    strncpy(config.jeedom.host,        request->getParam("jdom_host", true)->value().c_str(),   CFG_JDOM_HOST_SIZE );
+    strncpy(config.jeedom.url,         request->getParam("jdom_url", true)->value().c_str(),    CFG_JDOM_URL_SIZE );
+    strncpy(config.jeedom.apikey,      request->getParam("jdom_apikey", true)->value().c_str(), CFG_JDOM_APIKEY_SIZE );
+    strncpy(config.jeedom.adco,        request->getParam("jdom_adco", true)->value().c_str(),   CFG_JDOM_ADCO_SIZE );
+    // On transforme la chaine fingerprint en tableau de valeurs hexadecimales
+    if (request->getParam("jdom_finger", true)->value().length() == 59) {
+      convertFinger(request->getParam("jdom_finger", true)->value().c_str(), config.jeedom.fingerprint);
+    } else {
+      // Si la chaine n'est pas correcte, on vide le tableau fingerprint
+      for (size_t i = 0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
+        config.jeedom.fingerprint[i] = 0;
+      }
+    }
     if (request->hasParam("jdom_port", true)) {
 			itemp = request->getParam("jdom_port", true)->value().toInt();
 			config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT;

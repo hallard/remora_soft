@@ -10,7 +10,8 @@
     "emon_node":"0",
 
     "jdom_host":"jeedom.local",
-    "jdom_port":"12",
+    "jdom_port":"443",
+    "jdom_finger": "11 07 2a a2 cd fc ea 83 16 be 7e ef 46 87 63 d2 cd 8d f2 7f",
     "jdom_url":"/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php",
     "jdom_apikey":"12345678901234567890123456789012345678901234567890",
     "jdom_adco":"123456789012",

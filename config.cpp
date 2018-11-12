@@ -201,6 +201,12 @@ void showConfig()
   DebugF("port     :"); Debugln(config.jeedom.port);
   DebugF("url      :"); Debugln(config.jeedom.url);
   DebugF("key      :"); Debugln(config.jeedom.apikey);
+  DebugF("finger   :");
+  for (int i=0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
+    DEBUG_SERIAL.print(config.jeedom.fingerprint[i], HEX);
+    DebugF(" ");
+  }
+  Debugln();
   DebugF("compteur :"); Debugln(config.jeedom.adco);
   DebugF("freq     :"); Debugln(config.jeedom.freq);
   _wdt_feed();
@@ -241,6 +247,9 @@ void resetConfig(void)
   strcpy_P(config.jeedom.url, CFG_JDOM_DEFAULT_URL);
   strcpy_P(config.jeedom.adco, CFG_JDOM_DEFAULT_ADCO);
   config.jeedom.apikey[0] = '\0';
+  for (int i=0; i < CFG_JDOM_FINGER_PRINT_SIZE; i++) {
+    config.jeedom.fingerprint[i] = 0;
+  }
   config.jeedom.freq = 0;
 
   config.led_bright = DEFAULT_LED_BRIGHTNESS;
@@ -248,6 +257,18 @@ void resetConfig(void)
 
   // save back
   saveConfig();
+}
+
+String getFingerPrint(void) {
+  char buffer[61] = { 0 };
+
+  sprintf(buffer, "%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X"
+    , config.jeedom.fingerprint[0], config.jeedom.fingerprint[1], config.jeedom.fingerprint[2], config.jeedom.fingerprint[3]
+    , config.jeedom.fingerprint[4], config.jeedom.fingerprint[5], config.jeedom.fingerprint[6], config.jeedom.fingerprint[7]
+    , config.jeedom.fingerprint[8], config.jeedom.fingerprint[9], config.jeedom.fingerprint[10], config.jeedom.fingerprint[11]
+    , config.jeedom.fingerprint[12], config.jeedom.fingerprint[13], config.jeedom.fingerprint[14], config.jeedom.fingerprint[15]
+    , config.jeedom.fingerprint[16], config.jeedom.fingerprint[17], config.jeedom.fingerprint[18], config.jeedom.fingerprint[19]);
+  return String(buffer);
 }
 
 #endif // ESP8266

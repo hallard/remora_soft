@@ -274,6 +274,12 @@
         ledBrightSlider = $("#cfg_led_bright").slider();
         $.getJSON( "/config.json", function(form_data) {
             $("#frm_config").autofill(form_data);
+
+            if (debug) console.log('jdom_port: ', form_data.jdom_port);
+            // On affiche le champ de l'empreinte numérique si le port est 443
+            if (form_data.jdom_port == 443) {
+              $('.jdom_finger').show();
+            }
             if ($('#slider_led_bright').length <= 0 && form_data.hasOwnProperty('cfg_led_bright')) {
               ledBrightSlider.slider({ id:"slider_led_bright", value:parseInt(form_data.cfg_led_bright,10), formatter: function(v){return v+'%';} });
               $('#pan_advanced').on('shown.bs.collapse', function () {
@@ -416,6 +422,11 @@
         e.preventDefault();
         if (debug) console.log("Form Submit");
 
+        // Suppression de l'empreinte numérique, si le port de Jeedom est différent de 443
+        if ($('#jdom_port').val() != 443) {
+          $('#jdom_finger').val('');
+        }
+
         $.post('/config_form.json', $("#frm_config").serialize())
           .done( function(msg, textStatus, xhr) {
             Notify(2, 'ok', 'success', 'Enregistrement effectué', xhr.status+' '+msg);
@@ -500,6 +511,16 @@
 
     $('#btn_test').click(function(){ waitReboot(); });
 
+    // Gestion du champ finger print de Jeedom
+    $('.jdom_finger').hide();
+    $('#jdom_port').change(function() {
+      $('.jdom_finger').hide();
+      $("#jdom_port option:selected" ).each(function() {
+        if ($(this).val() == 443) {
+          $('.jdom_finger').show();
+        }
+      });
+    });
     // Gestion du slider Brightness RGB
     //$("#cfg_led_bright")
     //.on('slideStop',function(){ wsSend('$rgbb:'+$('#cfg_led_bright').slider('getValue'));});

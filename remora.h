@@ -35,7 +35,7 @@
 #define MOD_ADPS          /* Délestage */
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.6"
+#define REMORA_VERSION "1.3.7"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
@@ -74,6 +74,12 @@
   #error "La version ESP8266 NodeMCU n'est pas compatible avec les cartes V1.1x"
   #endif
 
+  #define _yield  yield
+  #define _wdt_feed ESP.wdtFeed
+  #define DEBUG_SERIAL  Serial
+  //#define DEBUG_INIT            /* Permet d'initialiser la connexion série pour debug */
+  #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
+
   // Définir ici les identifiants de
   // connexion à votre réseau Wifi
   // =====================================
@@ -88,6 +94,7 @@
   #include <EEPROM.h>
   #include <FS.h>
   #include <ESP8266WiFi.h>
+  #include <WiFiClientSecure.h>
   #include <ESP8266HTTPClient.h>
   #include <ESP8266mDNS.h>
   #include <ESPAsyncTCP.h>
@@ -105,19 +112,6 @@ extern "C" {
 #include "user_interface.h"
 }
 
-  #include "./LibMCP23017.h"
-  //#include "./RFM69registers.h"
-  //#include "./RFM69.h"
-  #include "./LibULPNode_RF_Protocol.h"
-  #include "./LibLibTeleinfo.h"
-  #include "./LibRadioHead.h"
-  #include "./LibRHReliableDatagram.h"
-
-  #define _yield  yield
-  #define _wdt_feed ESP.wdtFeed
-  #define DEBUG_SERIAL  Serial1
-  #define DEBUG_INIT
-  #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 #endif
 
 #define DEBUG // Décommenter cette ligne pour activer le DEBUG serial
@@ -141,6 +135,19 @@ extern "C" {
 #define Debugflush()
 #endif
 
+#ifdef ESP8266
+
+  #include "./LibMCP23017.h"
+  //#include "./RFM69registers.h"
+  //#include "./RFM69.h"
+  #include "./LibSSD1306.h"
+  #include "./LibULPNode_RF_Protocol.h"
+  #include "./LibLibTeleinfo.h"
+  #include "./LibRadioHead.h"
+  #include "./LibRHReliableDatagram.h"
+
+#endif
+
 // Includes du projets remora
 #include "config.h"
 #include "linked_list.h"
@@ -153,6 +160,7 @@ extern "C" {
 #include "tinfo.h"
 #include "webserver.h"
 #include "webclient.h"
+
 
 // RGB LED related MACROS
 #if defined (SPARK)
