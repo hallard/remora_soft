@@ -22,7 +22,7 @@ Cette version logicielle est compatible avec la version matérielle [1.2][1] ain
 ### Arduino ESP8266 NodeMCU / Wemos d1 mini
 --------------------------------------
 
-- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention ~~Arduino 1.6.5 pas 1.6.6~~ Maintenant c'est compatible Arduino 1.6.7 et je vous conseille d'utiliser la version git
+- Suivre la procédure détaillée [ici](https://github.com/esp8266/Arduino), Attention ~~Arduino 1.6.5 pas 1.6.6~~ Maintenant c'est compatible Arduino 1.8.3 et je vous conseille d'utiliser la version git
 - Installer le plugins SPIFFS pour l'IDE Arduino comme indiqué [ici](https://github.com/esp8266/arduino-esp8266fs-plugin)
 - Lancer l'IDE Arduino
 - Installer la librairie [NeoPixelBus](https://github.com/Makuna/NeoPixelBus) depuis l'IDE Menu Sketch / Include Library / Manage Library => NeoPixelBus by Makuna

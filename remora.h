@@ -137,14 +137,16 @@ extern "C" {
 
 #ifdef ESP8266
 
-#include "./LibMCP23017.h"
-//#include "./RFM69registers.h"
-//#include "./RFM69.h"
-#include "./LibSSD1306.h"
-#include "./LibULPNode_RF_Protocol.h"
-#include "./LibLibTeleinfo.h"
-#include "./LibRadioHead.h"
-#include "./LibRHReliableDatagram.h"
+  #include "./LibMCP23017.h"
+  //#include "./RFM69registers.h"
+  //#include "./RFM69.h"
+  #include "./LibSSD1306.h"
+  #include "./LibULPNode_RF_Protocol.h"
+  #include "./LibLibTeleinfo.h"
+  #include "./LibRadioHead.h"
+  #include "./LibRHReliableDatagram.h"
+
+#endif
 
 // Includes du projets remora
 #include "config.h"
@@ -159,7 +161,6 @@ extern "C" {
 #include "webserver.h"
 #include "webclient.h"
 
-#endif
 
 // RGB LED related MACROS
 #if defined (SPARK)

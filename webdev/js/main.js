@@ -12,6 +12,7 @@
   var Timer_sys,
       Timer_tinfo,
       elapsed = 0,
+      ledBrightSlider,
       debug = false;
 
   function Notify(mydelay, myicon, mytype, mytitle, mymsg) {
@@ -270,6 +271,7 @@
         })
         .fail(function() { console.error( "error while requestiong spiffs data" );  })
       } else if (target == '#tab_cfg') {
+        ledBrightSlider = $("#cfg_led_bright").slider();
         $.getJSON( "/config.json", function(form_data) {
             $("#frm_config").autofill(form_data);
 
@@ -278,9 +280,15 @@
             if (form_data.jdom_port == 443) {
               $('.jdom_finger').show();
             }
+            if ($('#slider_led_bright').length <= 0 && form_data.hasOwnProperty('cfg_led_bright')) {
+              ledBrightSlider.slider({ id:"slider_led_bright", value:parseInt(form_data.cfg_led_bright,10), formatter: function(v){return v+'%';} });
+              $('#pan_advanced').on('shown.bs.collapse', function () {
+                // do something…
+                ledBrightSlider.slider('refresh');
+              });
+            }
           })
-          .fail(function() { console.error( "error while requestiong configuration data" ); })
-
+          .fail(function() { console.error( "error while requestiong configuration data" ); });
         $('#tab_scan_data').bootstrapTable('refresh',{silent:true, showLoading:true, url:'/wifiscan.json'});
       }
       // Onglet de gestion des zones
@@ -513,6 +521,9 @@
         }
       });
     });
+    // Gestion du slider Brightness RGB
+    //$("#cfg_led_bright")
+    //.on('slideStop',function(){ wsSend('$rgbb:'+$('#cfg_led_bright').slider('getValue'));});
 
     var url = document.location.toString(),
         full = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');

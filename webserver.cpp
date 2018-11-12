@@ -439,6 +439,7 @@ void getConfJSONData(String & r)
   r = FPSTR(FP_JSON_START);
 
   r+="\"";
+<<<<<<< HEAD
   r+=CFG_FORM_SSID;      r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_PSK;       r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_HOST;      r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
@@ -451,6 +452,8 @@ void getConfJSONData(String & r)
   r+=CFG_FORM_EMON_FREQ; r+=FPSTR(FP_QCQ); r+=config.emoncms.freq;   r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_OTA_AUTH;  r+=FPSTR(FP_QCQ); r+=config.ota_auth;       r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_OTA_PORT;  r+=FPSTR(FP_QCQ); r+=config.ota_port;       r+= FPSTR(FP_QCNL);
+  r+=CFG_FORM_LED_BRIGHT; r+=FPSTR(FP_QCQ);
+    r+=map(config.led_bright, 0, 255, 0, 100);   r+= FPSTR(FP_QCNL);
 
   r+=CFG_FORM_JDOM_HOST; r+=FPSTR(FP_QCQ); r+=config.jeedom.host;    r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_JDOM_PORT; r+=FPSTR(FP_QCQ); r+=config.jeedom.port;    r+= FPSTR(FP_QCNL);
@@ -884,8 +887,15 @@ void handleFormConfig(AsyncWebServerRequest *request)
       strncpy(config.ota_auth, request->getParam("ota_auth", true)->value().c_str(), CFG_PSK_SIZE );
       reboot = true;
     }
-    itemp = request->getParam("ota_port", true)->value().toInt();
-    config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT ;
+    if (request->hasParam("ota_port", true)) {
+      itemp = request->getParam("ota_port", true)->value().toInt();
+      config.ota_port = (itemp>=0 && itemp<=65535) ? itemp : DEFAULT_OTA_PORT;
+    }
+    if (request->hasParam("cfg_led_bright", true)) {
+      DebugF("cfg_led_bright: "); Debugln(request->getParam("cfg_led_bright", true)->value()); Debugflush();
+      config.led_bright = map(request->getParam("cfg_led_bright", true)->value().toInt(), 0, 100, 0, 255);
+      rgb_brightness = config.led_bright;
+    }
 
     // Emoncms
     strncpy(config.emoncms.host,   request->getParam("emon_host", true)->value().c_str(),  CFG_EMON_HOST_SIZE );
@@ -923,15 +933,17 @@ void handleFormConfig(AsyncWebServerRequest *request)
 			itemp = request->getParam("jdom_port", true)->value().toInt();
 			config.jeedom.port = (itemp>=0 && itemp<=65535) ? itemp : CFG_JDOM_DEFAULT_PORT;
 		}
-    itemp = request->getParam("jdom_freq", true)->value().toInt();
-    if (itemp>0 && itemp<=86400){
-      // Jeedom Update if needed
-      Tick_jeedom.detach();
-      Tick_jeedom.attach(itemp, Task_jeedom);
-    } else {
-      itemp = 0 ;
-    }
-    config.jeedom.freq = itemp;
+   if (request->hasParam("jdom_freq", true)) {
+      itemp = request->getParam("jdom_freq", true)->value().toInt();
+      if (itemp>0 && itemp<=86400){
+        // Emoncms Update if needed
+        Tick_jeedom.detach();
+        Tick_jeedom.attach(itemp, Task_jeedom);
+      } else {
+        itemp = 0 ;
+      }
+      config.jeedom.freq = itemp;
+   }
 
     if ( saveConfig() ) {
       ret = 200;

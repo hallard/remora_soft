@@ -513,6 +513,8 @@ void mysetup()
       DebuglnF("Reset to default");
     }
     showConfig();
+    rgb_brightness = config.led_bright;
+    DebugF("RGB Brightness: "); Debugln(rgb_brightness);
 
     // Connection au Wifi ou Vérification
     WifiHandleConn(true);
@@ -720,6 +722,13 @@ void mysetup()
     // Initialiser la téléinfo et attente d'une trame valide
     // Le status est mis à jour dans les callback de la teleinfo
     tinfo_setup(true);
+    // Initialise la mise à jour de Emoncms si la config est définie
+    if (strlen(config.emoncms.host) > 0 && strlen(config.emoncms.url) > 0
+      && strlen(config.emoncms.apikey) > 0 && (config.emoncms.freq > 0 && config.emoncms.freq < 86400)) {
+      // Jeedom Update if needed
+      Tick_emoncms.detach();
+      Tick_emoncms.attach(config.emoncms.freq, Task_emoncms);
+    }
     // Initialise la mise à jour de Jeedom si la config est définie
     if (strlen(config.jeedom.host) > 0 && strlen(config.jeedom.url) > 0
       && strlen(config.jeedom.apikey) > 0 && (config.jeedom.freq > 0 && config.jeedom.freq < 86400)) {

@@ -46,6 +46,8 @@
 #define CFG_JDOM_DEFAULT_URL       "/jeedom/plugins/teleinfo/core/php/jeeTeleinfo.php"
 #define CFG_JDOM_DEFAULT_ADCO      "000011112222"
 
+#define DEFAULT_LED_BRIGHTNESS  50                // 50%
+
 // Port pour l'OTA
 #define DEFAULT_OTA_PORT     8266
 #define DEFAULT_OTA_AUTH     "OTA_Remora"
@@ -85,6 +87,8 @@
 #define CFG_FORM_JDOM_FREQ  FPSTR("jdom_freq")
 #define CFG_FORM_JDOM_FING  FPSTR("jdom_finger")
 
+#define CFG_FORM_LED_BRIGHT FPSTR("cfg_led_bright");
+
 #define CFG_FORM_IP  FPSTR("wifi_ip");
 #define CFG_FORM_GW  FPSTR("wifi_gw");
 #define CFG_FORM_MSK FPSTR("wifi_msk");
@@ -94,9 +98,9 @@
 
 // Config for emoncms
 // 128 Bytes
-typedef struct 
+typedef struct
 {
-  char  host[CFG_EMON_HOST_SIZE+1]; 		// FQDN 
+  char  host[CFG_EMON_HOST_SIZE+1]; 		// FQDN
   char  apikey[CFG_EMON_APIKEY_SIZE+1]; // Secret
   char  url[CFG_EMON_URL_SIZE+1];  			// Post URL
   uint16_t port;    								    // Protocol port (HTTP/HTTPS)
@@ -107,7 +111,7 @@ typedef struct
 
 // Config for jeedom
 // 256 Bytes
-typedef struct 
+typedef struct
 {
   char     host[CFG_JDOM_HOST_SIZE+1];              // FQDN
   char     apikey[CFG_JDOM_APIKEY_SIZE+1];          // Secret
@@ -121,16 +125,17 @@ typedef struct
 
 // Config saved into eeprom
 // 1024 bytes total including CRC
-typedef struct 
+typedef struct
 {
-  char  ssid[CFG_SSID_SIZE+1]; 		 // SSID     
+  char  ssid[CFG_SSID_SIZE+1]; 		 // SSID
   char  psk[CFG_PSK_SIZE+1]; 		   // Pre shared key
-  char  host[CFG_HOSTNAME_SIZE+1]; // Hostname 
+  char  host[CFG_HOSTNAME_SIZE+1]; // Hostname
   char  ap_psk[CFG_PSK_SIZE+1];    // Access Point Pre shared key
   char  ota_auth[CFG_PSK_SIZE+1];  // OTA Authentication password
-  uint32_t config;           		   // Bit field register 
-  uint16_t ota_port;         		   // OTA port 
-  uint8_t  filler[131];      		   // in case adding data in config avoiding loosing current conf by bad crc
+  uint32_t config;           		   // Bit field register
+  uint16_t ota_port;         		   // OTA port
+  uint8_t led_bright;              // RGB Led brightness 252
+  uint8_t  filler[130];      		   // in case adding data in config avoiding loosing current conf by bad crc
   _emoncms emoncms;                // Emoncms configuration
   _jeedom  jeedom;                 // jeedom configuration
   uint8_t  filler1[256];           // Another filler in case we need more
@@ -143,7 +148,7 @@ typedef struct
 extern _Config config;
 
 #pragma pack(pop)
- 
+
 // Declared exported function from route.cpp
 // ===================================================
 bool readConfig(bool clear_on_error=true);
@@ -152,6 +157,5 @@ void showConfig(void);
 void resetConfig(void);
 String getFingerPrint(void);
 
-#endif // ESP8266 
+#endif // ESP8266
 #endif // CONFIG_h
-
