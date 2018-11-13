@@ -24,6 +24,9 @@
 #define SDA_PIN  4
 #define SDC_PIN  5
 
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 64
+
 // Variables exported for other source file
 // ========================================
 extern OLEDDisplay *display;
