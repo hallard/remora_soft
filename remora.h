@@ -140,7 +140,6 @@ extern "C" {
   #include "./LibMCP23017.h"
   //#include "./RFM69registers.h"
   //#include "./RFM69.h"
-  #include "./LibSSD1306.h"
   #include "./LibULPNode_RF_Protocol.h"
   #include "./LibLibTeleinfo.h"
   #include "./LibRadioHead.h"
