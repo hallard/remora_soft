@@ -134,8 +134,9 @@ typedef struct
   char  ota_auth[CFG_PSK_SIZE+1];  // OTA Authentication password
   uint32_t config;           		   // Bit field register
   uint16_t ota_port;         		   // OTA port
-  uint8_t led_bright;              // RGB Led brightness 252
-  uint8_t  filler[130];      		   // in case adding data in config avoiding loosing current conf by bad crc
+  uint8_t  led_bright;             // RGB Led brightness 0-255
+  uint16_t oled_type;              // Display OLED type (1306 or 1106)
+  uint8_t  filler[128];      		   // in case adding data in config avoiding loosing current conf by bad crc
   _emoncms emoncms;                // Emoncms configuration
   _jeedom  jeedom;                 // jeedom configuration
   uint8_t  filler1[256];           // Another filler in case we need more
