@@ -439,7 +439,6 @@ void getConfJSONData(String & r)
   r = FPSTR(FP_JSON_START);
 
   r+="\"";
-<<<<<<< HEAD
   r+=CFG_FORM_SSID;      r+=FPSTR(FP_QCQ); r+=config.ssid;           r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_PSK;       r+=FPSTR(FP_QCQ); r+=config.psk;            r+= FPSTR(FP_QCNL);
   r+=CFG_FORM_HOST;      r+=FPSTR(FP_QCQ); r+=config.host;           r+= FPSTR(FP_QCNL);
