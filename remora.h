@@ -30,9 +30,13 @@
 //  Définir ici les modules utilisés sur la carte Remora
 //#define MOD_RF69      /* Module RF  */
 #define MOD_OLED      /* Afficheur  */
-#define MOD_TELEINFO  /* Teleinfo   */
+//#define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
 #define MOD_ADPS          /* Délestage */
+
+// Type of OLED
+#define OLED_SH1106
+#define OLED_SSD1306
 
 // Version logicielle remora
 #define REMORA_VERSION "1.3.7"
@@ -105,7 +109,14 @@
   #include <ArduinoOTA.h>
   #include <Wire.h>
   #include <SPI.h>
+  #if defined (OLED_SSD1306)
   #include <SSD1306Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
+  #if defined (OLED_SH1106)
+  #include <SH1106Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
   #include <OLEDDisplayUi.h>
 
 extern "C" {
@@ -150,11 +161,11 @@ extern "C" {
 // Includes du projets remora
 #include "config.h"
 #include "linked_list.h"
+#include "display.h"
 #include "i2c.h"
 #include "rfm.h"
 #include "./icons.h"
 #include "./fonts.h"
-#include "display.h"
 #include "pilotes.h"
 #include "tinfo.h"
 #include "webserver.h"
