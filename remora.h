@@ -29,13 +29,17 @@
 
 //  Définir ici les modules utilisés sur la carte Remora
 //#define MOD_RF69      /* Module RF  */
-#define MOD_OLED      /* Afficheur  */
+//#define MOD_OLED      /* Afficheur  */
 #define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
 #define MOD_ADPS          /* Délestage */
 
+// Type of OLED
+#define OLED_SH1106
+#define OLED_SSD1306
+
 // Version logicielle remora
-#define REMORA_VERSION "1.3.7"
+#define REMORA_VERSION "1.3.6"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
@@ -76,7 +80,7 @@
 
   #define _yield  yield
   #define _wdt_feed ESP.wdtFeed
-  #define DEBUG_SERIAL  Serial
+  #define DEBUG_SERIAL  Serial1
   //#define DEBUG_INIT            /* Permet d'initialiser la connexion série pour debug */
   #define REBOOT_DELAY    100     /* Delay for rebooting once reboot flag is set */
 
@@ -105,7 +109,14 @@
   #include <ArduinoOTA.h>
   #include <Wire.h>
   #include <SPI.h>
+  #if defined (OLED_SSD1306)
   #include <SSD1306Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
+  #if defined (OLED_SH1106)
+  #include <SH1106Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
   #include <OLEDDisplayUi.h>
 
 extern "C" {
@@ -150,11 +161,11 @@ extern "C" {
 // Includes du projets remora
 #include "config.h"
 #include "linked_list.h"
+#include "display.h"
 #include "i2c.h"
 #include "rfm.h"
 #include "./icons.h"
 #include "./fonts.h"
-#include "display.h"
 #include "pilotes.h"
 #include "tinfo.h"
 #include "webserver.h"
@@ -229,7 +240,7 @@ extern "C" {
 #elif defined (REMORA_BOARD_V13) || defined(REMORA_BOARD_V14)
   #define LED_PIN    8
   #define RELAIS_PIN 9
-  #define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
+  //#define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
 
   // Creation macro unique et indépendante du type de
   // carte pour le controle des I/O

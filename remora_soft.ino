@@ -56,8 +56,6 @@
   #include <Ticker.h>
   #include <NeoPixelBus.h>
   #include <BlynkSimpleEsp8266.h>
-  #include <SSD1306Wire.h>
-  #include <OLEDDisplayUi.h>
   #include "./LibMCP23017.h"
   #include "./LibULPNode_RF_Protocol.h"
   #include "./LibLibTeleinfo.h"
@@ -655,6 +653,7 @@ void mysetup()
 
   // Init bus I2C
   i2c_init();
+  i2c_scan();
 
   Debug("Remora Version ");
   Debugln(REMORA_VERSION);

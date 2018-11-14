@@ -24,6 +24,7 @@
 #define SDA_PIN  4
 #define SDC_PIN  5
 
+#ifdef MOD_OLED
 // Variables exported for other source file
 // ========================================
 extern OLEDDisplay *display;
@@ -58,4 +59,5 @@ void displaySplash(bool _config_ok);
 void displayCommand(void);
 void displayTest(void);
 
+#endif
 #endif
