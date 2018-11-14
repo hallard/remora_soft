@@ -16,6 +16,7 @@
 #include "display.h"
 
 SSD1306Wire * ssd1306 = NULL; // for SSD1306 Instance
+SH1106Wire  * sh1106 = NULL;  // for SH1106 Instance
 OLEDDisplay * display = NULL; // Display will point on the OLED instance
 OLEDDisplayUi * ui = NULL;    // Display User Interface
 
@@ -39,25 +40,47 @@ Output  : Etat de l'initialisation
 Comments: -
 ====================================================================== */
 bool initDisplay(void) {
+  uint8_t oled_addr;
 
   // in case of dynamic change of OLED display
   delete ui;
   delete ssd1306;
+  delete sh1106;
   ui  = NULL;
   display = NULL;
   ssd1306 = NULL;
+  sh1106 = NULL;
+
+  DebugF("config & CFG_LCD ...");
+  // Clear display configuration to force init
+  // and OLED detection
+  config.config &= ~CFG_LCD;
+
+  // default OLED I2C address (0x3C or 0x3D)
+  oled_addr = I2C_DISPLAY_ADDRESS;
 
   // Scan I2C Bus to check for OLED
-  if (i2c_detect(I2C_DISPLAY_ADDRESS)) {
+  if (i2c_detect(oled_addr)) {
     config.config |= CFG_LCD;
+    DebugF(" SSD1306");
+  } else if (i2c_detect(++oled_addr)) {
+    config.config |= CFG_LCD;
+    DebugF(" SH1106");
+  } else {
+    DebuglnF("\ni2c_scan not found display");
   }
 
   if (config.config & CFG_LCD) {
-    DebuglnF("Display found");
+    DebuglnF(" ... Display found");
 
     // Instantiate the display
-    ssd1306 = new SSD1306Wire(I2C_DISPLAY_ADDRESS, SDA_PIN, SDC_PIN);
-    display = ssd1306;
+    if (config.oled_type == 1306) {
+      ssd1306 = new SSD1306Wire(oled_addr, SDA, SCL);
+      display = ssd1306;
+    } else if (config.oled_type == 1106) {
+      sh1106 = new SH1106Wire(oled_addr, SDA, SCL);
+      display = sh1106;
+    }
 
     // We got all fine
     if (display) {
@@ -78,6 +101,7 @@ bool initDisplay(void) {
       return true;
     }
   }
+
   return false;
 }
 

@@ -16,6 +16,7 @@
 #define I2C_h
 
 #include "remora.h"
+#include "display.h"
 
 #ifdef ESP8266
 #include <Wire.h>
