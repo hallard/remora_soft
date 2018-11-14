@@ -29,7 +29,7 @@ Cette version logicielle est compatible avec la version matérielle [1.2][1] ain
 - Installer la librairie [Blynk](https://github.com/blynkkk/blynk-library) depuis l'IDE Menu Sketch / Include Library / Manage Library / Blynk by Volodymyr Shymanskyy
 - Installer la bibliothèque [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
 - Installer la bibliothèque [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) depuis l'IDE. Télécharger la dernière release au format *zip*, puis Menu **Croquis** / **Inclure une bibliothèque** / **Ajouter la bibliothèque .ZIP**
-- Installer la bibliothèque [esp8266-oled-ssd1306](https://github.com/squix78/esp8266-oled-ssd1306) depuis l'IDE Menu Sketch / Include Library / Manage Library => **ESP8266 Oled Driver for SSD1306 display**
+- Installer la bibliothèque [esp8266-oled-ssd1306 v4.0.0](https://github.com/ThingPulse/esp8266-oled-ssd1306/releases/tag/4.0.0) depuis l'IDE Menu Sketch / Include Library / Manage Library => **ESP8266 Oled Driver for SSD1306 display**
 - Lancer ensuite l'IDE Arduino et ouvrir depuis celui-ci le ficher `remora_soft.ino`
 - Selectionner la version de carte utilisé dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L22-L26) (les defines REMORA_BOARD_Vxx)
 - Selectionner les modules utilisés dans le fichier [remora.h](https://github.com/hallard/remora_soft/blob/master/remora.h#L28-L32) (les defines MOD_xxxx)
