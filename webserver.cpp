@@ -285,6 +285,8 @@ void getSysJSONData(String & response)
     response += F("V1.3 avec MCP23017");
   #elif defined (REMORA_BOARD_V14)
     response += F("V1.4 avec MCP23017");
+  #elif defined (REMORA_BOARD_V15)
+    response += F("V1.5 avec MCP23017");
   #else
     response += F("Non définie");
   #endif

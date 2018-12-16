@@ -686,6 +686,8 @@ void mysetup()
     Debug("BOARD V1.3 MCP23017 ");
   #elif defined (REMORA_BOARD_V14)
     Debug("BOARD V1.4 MCP23017 ");
+  #elif defined (REMORA_BOARD_V15)
+    Debug("BOARD V1.5 MCP23017 ");
   #else
     Debug("BOARD Inconnue");
   #endif
