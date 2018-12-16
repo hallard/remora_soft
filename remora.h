@@ -156,21 +156,20 @@ extern "C" {
   #include "./LibRadioHead.h"
   #include "./LibRHReliableDatagram.h"
 
+  // Includes du projets remora
+  #include "./config.h"
+  #include "./linked_list.h"
+  #include "./display.h"
+  #include "./i2c.h"
+  #include "./rfm.h"
+  #include "./icons.h"
+  #include "./fonts.h"
+  #include "./pilotes.h"
+  #include "./tinfo.h"
+  #include "./webserver.h"
+  #include "./webclient.h"
+
 #endif
-
-// Includes du projets remora
-#include "config.h"
-#include "linked_list.h"
-#include "display.h"
-#include "i2c.h"
-#include "rfm.h"
-#include "./icons.h"
-#include "./fonts.h"
-#include "pilotes.h"
-#include "tinfo.h"
-#include "webserver.h"
-#include "webclient.h"
-
 
 // RGB LED related MACROS
 #if defined (SPARK)
@@ -240,7 +239,7 @@ extern "C" {
 #elif defined (REMORA_BOARD_V13) || defined(REMORA_BOARD_V14)
   #define LED_PIN    8
   #define RELAIS_PIN 9
-  //#define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
+  #define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
 
   // Creation macro unique et indépendante du type de
   // carte pour le controle des I/O
