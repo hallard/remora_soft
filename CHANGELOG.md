@@ -1,8 +1,8 @@
 # Change Log
 
-## [Unreleased](https://github.com/hallard/remora_soft/tree/HEAD)
+## [v1.4.0](https://github.com/hallard/remora_soft/tree/v1.4.0) (2018-12-16)
 
-[Full Changelog](https://github.com/hallard/remora_soft/compare/v1.3.5...HEAD)
+[Full Changelog](https://github.com/hallard/remora_soft/compare/v1.3.5...v1.4.0)
 
 **Implemented enhancements:**
 
