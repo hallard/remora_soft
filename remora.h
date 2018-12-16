@@ -40,7 +40,7 @@
 #define OLED_SSD1306
 
 // Version logicielle remora
-#define REMORA_VERSION "1.3.6"
+#define REMORA_VERSION "1.4.0"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
@@ -240,7 +240,7 @@ extern "C" {
 #elif defined (REMORA_BOARD_V13) || defined(REMORA_BOARD_V14) || defined(REMORA_BOARD_V15)
   #define LED_PIN    8
   #define RELAIS_PIN 9
-  #define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
+  //#define RELAIS_REVERSE // Decommenter pour inverser le relais (si problème de relais on au lieu de off)
 
   // Creation macro unique et indépendante du type de
   // carte pour le controle des I/O
