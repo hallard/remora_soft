@@ -55,6 +55,15 @@
   #include <SPI.h>
   #include <Ticker.h>
   #include <NeoPixelBus.h>
+  #if defined (OLED_SSD1306)
+  #include <SSD1306Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
+  #if defined (OLED_SH1106)
+  #include <SH1106Wire.h>
+  #include <OLEDDisplayUi.h>
+  #endif
+  #include <OLEDDisplayUi.h>
   #include <BlynkSimpleEsp8266.h>
   #include "./LibMCP23017.h"
   #include "./LibULPNode_RF_Protocol.h"
@@ -525,6 +534,7 @@ void mysetup()
       LedRGBON(COLOR_MAGENTA);
       DebugF("\r\nUpdate Started..");
       // On affiche le début de la mise à jour OTA sur l'afficheur
+      #ifdef MOD_OLED
       if (status & STATUS_OLED) {
         ui->disableAutoTransition();
         display->clear();
@@ -533,6 +543,7 @@ void mysetup()
         display->drawString(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 - 16, "OTA Update");
         display->display();
       }
+      #endif
       ota_blink = true;
     });
 
@@ -540,6 +551,7 @@ void mysetup()
       LedRGBOFF();
       DebuglnF("Update finished restarting");
       // On affiche le message de fin sur l'afficheur
+      #ifdef MOD_OLED
       if (status & STATUS_OLED) {
         ui->disableAutoTransition();
         display->clear();
@@ -548,6 +560,7 @@ void mysetup()
         display->drawString(DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 - 16, "Restart");
         display->display();
       }
+      #endif
     });
 
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -558,6 +571,7 @@ void mysetup()
       }
       ota_blink = !ota_blink;
       // On affiche la progression sur l'afficheur
+      #ifdef MOD_OLED
       if (status & STATUS_OLED) {
         ui->disableAutoTransition();
         display->clear();
@@ -567,6 +581,7 @@ void mysetup()
         display->drawProgressBar(2, 28, 124, 10, progress / (total / 100));
         display->display();
       }
+      #endif
     });
 
     ArduinoOTA.onError([](ota_error_t error) {
@@ -586,6 +601,7 @@ void mysetup()
       Debugln(strErr);
 
       // On affiche l'erreur sur l'afficheur
+      #ifdef MOD_OLED
       if (status & STATUS_OLED) {
         ui->disableAutoTransition();
         display->clear();
@@ -596,6 +612,7 @@ void mysetup()
         display->drawString(DISPLAY_WIDTH/2, 30, strErr);
         display->display();
       }
+      #endif
       //reboot = true;
     });
 
