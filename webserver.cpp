@@ -884,7 +884,7 @@ void handleFormConfig(AsyncWebServerRequest *request)
     strncpy(config.psk ,    request->getParam("psk", true)->value().c_str(),      CFG_PSK_SIZE );
     strncpy(config.host ,   request->getParam("host", true)->value().c_str(),     CFG_HOSTNAME_SIZE );
     strncpy(config.ap_psk , request->getParam("ap_psk", true)->value().c_str(),   CFG_PSK_SIZE );
-    if (config.ota_auth != request->getParam("ota_auth", true)->value().c_str()) {
+    if (strcmp(config.ota_auth, request->getParam("ota_auth", true)->value().c_str()) != 0) {
       strncpy(config.ota_auth, request->getParam("ota_auth", true)->value().c_str(), CFG_PSK_SIZE );
       reboot = true;
     }
